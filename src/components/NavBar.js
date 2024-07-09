@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/NavBar.css';
-import { Settings, Music } from 'lucide-react';
+import { Settings } from 'lucide-react';
 
 const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound }) => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -36,9 +36,10 @@ const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound }) => {
                             </div>
                             <div className="dropdown-menu" id="settings-menu" role="menu">
                                 <div className="dropdown-content has-background-dark">
+                                   
                                     <div className="dropdown-item">
                                         <div className="field">
-                                            <label className="label has-text-light">Chord complexity</label>
+                                            <label className="label has-text-light">Chord Complexity</label>
                                             <div className="control">
                                                 <div className="select is-fullwidth">
                                                     <select
@@ -56,20 +57,12 @@ const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound }) => {
                                         </div>
                                     </div>
                                     <div className="dropdown-item">
-                                        <div className="field">
-                                            <label className="label has-text-light">Piano Sound:</label>
-                                            <div className="control">
-                                                <button
-                                                    className={`button is-fullwidth ${pianoSound ? 'is-success' : 'is-danger'}`}
-                                                    onClick={() => setPianoSound(!pianoSound)}
-                                                >
-                                                    <span className="icon">
-                                                        <Music size={18} />
-                                                    </span>
-                                                    <span>{pianoSound ? 'On' : 'Off'}</span>
-                                                </button>
-                                            </div>
-                                        </div>
+                                        <button
+                                            className={`button piano-sound-btn ${pianoSound ? 'is-active' : ''}`}
+                                            onClick={() => setPianoSound(!pianoSound)}
+                                        >
+                                            Piano Sound
+                                        </button>
                                     </div>
                                 </div>
                             </div>

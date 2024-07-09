@@ -7,7 +7,7 @@
 }
 
 .navbar-end .button {
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .navbar-end .button:hover {
@@ -52,21 +52,29 @@
     border-color: #3273dc;
 }
 
-/* Two-state button styles */
-.dropdown-item .button {
+/* Piano Sound Button Styles */
+.piano-sound-btn {
+    background-color: #363636;
+    color: #ffffff;
+    border: none;
     transition: all 0.3s ease;
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
 }
 
-.dropdown-item .button.is-success {
-    background-color: #48c774;
+.piano-sound-btn:hover {
+    background-color: #4a4a4a;
 }
 
-.dropdown-item .button.is-danger {
-    background-color: #f14668;
+.piano-sound-btn.is-active {
+    background-color: #1a5f2a;
+    box-shadow: 0 0 10px rgba(26, 95, 42, 0.5);
 }
 
-.dropdown-item .button:hover {
-    opacity: 0.9;
+.piano-sound-btn.is-active:hover {
+    background-color: #236b34;
 }
 
 /* Dark theme adjustments */

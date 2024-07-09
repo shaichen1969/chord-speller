@@ -3,11 +3,11 @@ import '../styles/NavBar.css';
 
 const Navbar = ({ numNotes, setNumNotes }) => {
     return (
-        <nav className="navbar is-link" aria-label="main navigation">
+        <nav className="navbar is-dark" aria-label="main navigation">
             <div className="navbar-brand">
-                <a className="navbar-item" href="/">
-                    <strong className="is-size-3">zzHARMONIC EAR TRAINER</strong>
-                </a>
+               <span>
+                    <strong className="is-size-4">HARMONIC EAR TRAINER</strong>
+                </span>
             </div>
 
             <div className="navbar-menu">

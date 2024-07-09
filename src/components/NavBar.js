@@ -39,7 +39,7 @@ const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound }) => {
                                    
                                     <div className="dropdown-item">
                                         <div className="field">
-                                            <label className="label has-text-light">Chord Complexity:</label>
+                                            <label className="label has-text-light">Chord Complexity</label>
                                             <div className="control">
                                                 <div className="select is-fullwidth">
                                                     <select

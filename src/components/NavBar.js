@@ -38,7 +38,7 @@ const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound }) => {
                                 <div className="dropdown-content has-background-dark">
                                     <div className="dropdown-item">
                                         <div className="field">
-                                            <label className="label has-text-light">Notes in Chord:</label>
+                                            <label className="label has-text-light">Chord complexity</label>
                                             <div className="control">
                                                 <div className="select is-fullwidth">
                                                     <select

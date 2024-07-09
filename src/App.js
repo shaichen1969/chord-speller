@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './styles/App.css';
-import Navbar from './components/NavBar.js';
-import GameCenter from './components/GameControlCenter.js';
-import Piano from './components/Piano.js';
-import { PianoProvider, usePiano } from './PianoContext.js';
+import Navbar from './components/NavBar';
+import GameCenter from './components/GameControlCenter';
+import Piano from './components/Piano';
+import { PianoProvider, usePiano } from './PianoContext';
 
 function AppContent() {
   const { playNote, notes } = usePiano();
@@ -11,11 +11,12 @@ function AppContent() {
   const [gameState, setGameState] = useState('ready');
   const [currentQuestion, setCurrentQuestion] = useState([]);
   const [guessedNotes, setGuessedNotes] = useState([]);
-  const [numNotes, setNumNotes] = useState(4);  // Default to 4 notes
+  const [numNotes, setNumNotes] = useState(4);
+  const [pianoSound, setPianoSound] = useState(true);
 
   useEffect(() => {
     generateNewQuestion();
-  }, [numNotes]); // Regenerate question when numNotes changes
+  }, [numNotes]);
 
   const generateUniqueNotes = (availableNotes, count) => {
     const uniqueNotes = [];
@@ -42,20 +43,16 @@ function AppContent() {
     setGuessedNotes([]);
     setFeedback({});
     setGameState('ready');
-    console.log('New question generated:', newQuestion);
   };
 
   const handleGuess = (note) => {
     if (gameState !== 'playing') return;
 
-    console.log(`User guessed: ${note}`);
     if (currentQuestion.includes(note) && !guessedNotes.includes(note)) {
       setFeedback(prev => ({ ...prev, [note]: 'correct' }));
       setGuessedNotes(prev => [...prev, note]);
-      console.log('Correct guess!');
     } else {
       setFeedback(prev => ({ ...prev, [note]: 'incorrect' }));
-      console.log('Incorrect guess!');
     }
 
     if (guessedNotes.length + 1 === numNotes) {
@@ -65,7 +62,12 @@ function AppContent() {
 
   return (
     <div className="App">
-      <Navbar numNotes={numNotes} setNumNotes={setNumNotes} />
+      <Navbar
+        numNotes={numNotes}
+        setNumNotes={setNumNotes}
+        pianoSound={pianoSound}
+        setPianoSound={setPianoSound}
+      />
       <div className="section has-background-white">
         <div className="container">
           <GameCenter
@@ -84,6 +86,8 @@ function AppContent() {
             gameState={gameState}
             currentQuestion={currentQuestion}
             onGuess={handleGuess}
+            pianoSound={pianoSound}
+            playNote={playNote}
           />
         </div>
       </div>

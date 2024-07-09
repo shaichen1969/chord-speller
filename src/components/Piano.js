@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
-import { usePiano } from '../PianoContext';
 import '../styles/Piano.css';
 
-const Piano = ({ feedback, gameState, currentQuestion, onGuess }) => {
-    const { playNote } = usePiano();
+const Piano = ({ feedback, gameState, currentQuestion, onGuess, pianoSound, playNote }) => {
     const [activeKey, setActiveKey] = useState(null);
     const notes = ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'];
 
     const handleKeyClick = (note) => {
-        if (gameState !== 'playing' || feedback[note]) return;
+        // Always respect the user's pianoSound preference
+        if (pianoSound) {
+            playNote(note);
+        }
 
-        playNote(note);
         setActiveKey(note);
         setTimeout(() => setActiveKey(null), 200);
 
-        if (onGuess) {
+        // Only trigger game logic if the game is in 'playing' state
+        if (gameState === 'playing' && onGuess && !feedback[note]) {
             onGuess(note);
         }
     };

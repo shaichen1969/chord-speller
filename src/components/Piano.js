@@ -1,20 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import '../styles/Piano.css';
 
 const Piano = ({ feedback, gameState, currentQuestion, onGuess, pianoSound, playNote }) => {
-    const [activeKey, setActiveKey] = useState(null);
     const notes = ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'];
 
     const handleKeyClick = (note) => {
-        // Always respect the user's pianoSound preference
         if (pianoSound) {
             playNote(note);
         }
 
-        setActiveKey(note);
-        setTimeout(() => setActiveKey(null), 200);
-
-        // Only trigger game logic if the game is in 'playing' state
         if (gameState === 'playing' && onGuess && !feedback[note]) {
             onGuess(note);
         }
@@ -25,12 +19,17 @@ const Piano = ({ feedback, gameState, currentQuestion, onGuess, pianoSound, play
             <div className="piano">
                 {notes.map((note, index) => (
                     <div
-                        key={index}
-                        className={`key ${note.includes('b') ? 'black' : 'white'} ${activeKey === note ? 'active' : ''} ${feedback[note] || ''}`}
+                        key={note}
+                        className={`key ${note.includes('b') ? 'black' : 'white'}`}
                         onClick={() => handleKeyClick(note)}
                     >
-                        {feedback[note] === 'correct' && <span className="checkmark">✓</span>}
-                        {feedback[note] === 'incorrect' && <span className="cross">✗</span>}
+                        <div className="key-content">
+                            {feedback[note] && (
+                                <span className={`feedback-indicator ${feedback[note]}`}>
+                                    {feedback[note] === 'correct' ? '✓' : '✗'}
+                                </span>
+                            )}
+                        </div>
                     </div>
                 ))}
             </div>

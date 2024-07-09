@@ -2,112 +2,120 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 300px;
-    background: linear-gradient(to bottom, #1a1a1a, #2a2a2a);
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    height: 240px;
+    /* Doubled from 120px */
+    background: linear-gradient(to bottom, #2a2a2a, #1a1a1a);
+    padding: 20px 0;
+    /* Increased padding */
 }
 
 .piano {
     display: flex;
     position: relative;
     width: 560px;
+    /* Doubled from 280px */
+    height: 200px;
+    /* Doubled from 100px */
+    background-color: #111;
+    border-radius: 16px;
+    /* Increased for larger size */
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    /* Adjusted shadow */
 }
 
 .key {
     position: relative;
+    height: 100%;
     transition: all 0.1s ease;
 }
 
 .white {
     width: 80px;
-    height: 240px;
+    /* Doubled from 40px */
     background: linear-gradient(to bottom, #f8f8f8, #fff);
-    border: 1px solid #ccc;
-    border-radius: 0 0 5px 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 0 0 8px 8px;
+    /* Increased for larger size */
+    border-right: 2px solid #ccc;
+    /* Increased border width */
     z-index: 1;
 }
 
+.white:last-child {
+    border-right: none;
+}
+
 .black {
-    width: 46px;
-    height: 160px;
+    width: 48px;
+    /* Doubled from 24px */
+    height: 60%;
     background: linear-gradient(to bottom, #333, #000);
-    border-radius: 0 0 3px 3px;
     position: absolute;
     top: 0;
     z-index: 2;
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+    border-radius: 0 0 6px 6px;
+    /* Increased for larger size */
 }
 
-.white:active {
+.white:active,
+.white.active {
     background: linear-gradient(to bottom, #e6e6e6, #f2f2f2);
-    transform: translateY(2px);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2);
+    /* Adjusted shadow */
 }
 
-.black:active {
-    background: linear-gradient(to bottom, #1a1a1a, #000);
-    transform: translateY(2px);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+.black:active,
+.black.active {
+    background: linear-gradient(to bottom, #222, #000);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+    /* Adjusted shadow */
 }
 
 .key:nth-of-type(2) {
-    left: 55px;
+    left: 56px;
 }
 
+/* Doubled from 28px */
 .key:nth-of-type(4) {
-    left: 135px;
+    left: 136px;
 }
 
+/* Doubled from 68px */
 .key:nth-of-type(7) {
-    left: 295px;
+    left: 296px;
 }
 
+/* Doubled from 148px */
 .key:nth-of-type(9) {
-    left: 375px;
+    left: 376px;
 }
 
+/* Doubled from 188px */
 .key:nth-of-type(11) {
-    left: 455px;
+    left: 456px;
 }
+
+/* Doubled from 228px */
 
 .key-content {
     position: absolute;
     bottom: 10px;
+    /* Increased from 5px */
     left: 0;
     right: 0;
     text-align: center;
 }
 
 .feedback-indicator {
-    font-size: 24px;
+    font-size: 32px;
+    /* Doubled from 16px */
     font-weight: bold;
 }
 
 .feedback-indicator.correct {
-    color: #28a745;
+    color: #4CAF50;
 }
 
 .feedback-indicator.incorrect {
-    color: #dc3545;
-}
-
-@keyframes keyPress {
-    0% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(3px);
-    }
-
-    100% {
-        transform: translateY(0);
-    }
-}
-
-.key:active {
-    animation: keyPress 0.1s ease;
+    color: #F44336;
 }

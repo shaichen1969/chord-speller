@@ -43,6 +43,7 @@ function AppContent() {
     setGuessedNotes([]);
     setFeedback({});
     setGameState('ready');
+    return newQuestion;
   };
 
   const handleGuess = (note) => {
@@ -68,8 +69,8 @@ function AppContent() {
         pianoSound={pianoSound}
         setPianoSound={setPianoSound}
       />
-      <div className="section has-background-white">
-        <div className="container">
+      <div className="game-container">
+        <div className="game-center-wrapper">
           <GameCenter
             feedback={feedback}
             setFeedback={setFeedback}
@@ -81,6 +82,8 @@ function AppContent() {
             playNote={playNote}
             numNotes={numNotes}
           />
+        </div>
+        <div className="piano-wrapper">
           <Piano
             feedback={feedback}
             gameState={gameState}
@@ -104,4 +107,3 @@ function App() {
 }
 
 export default App;
-//test

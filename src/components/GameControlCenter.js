@@ -3,40 +3,50 @@ import '../styles/GameControlCenter.css';
 import { Play, Repeat, SkipForward, Music } from 'lucide-react';
 import * as Tone from 'tone';
 
-const GameControls = ({ onPlay, onReplay, onSkip, onPlayPiano, gameState }) => {
+const GameControls = ({ onPlay, onReplay, onSkip, onPlayPiano, gameState, onGo }) => {
     return (
         <div className="buttons">
-            <button
-                className="button is-primary is-medium"
-                onClick={onPlay}
-                disabled={gameState !== 'ready'}
-                aria-label="Play"
-            >
-                <Play />
-            </button>
-            <button
-                className="button is-info is-medium"
-                onClick={onReplay}
-                disabled={gameState !== 'playing'}
-                aria-label="Replay"
-            >
-                <Repeat />
-            </button>
-            <button
-                className="button is-warning is-medium"
-                onClick={onSkip}
-                disabled={gameState === 'ready'}
-                aria-label="Skip"
-            >
-                <SkipForward />
-            </button>
-            <button
-                className="button is-success is-medium"
-                onClick={onPlayPiano}
-                aria-label="Play Piano"
-            >
-                <Music />
-            </button>
+            {gameState === 'ready' && (
+                <button
+                    className="button is-info is-large go-button"
+                    onClick={onGo}
+                    aria-label="Go"
+                >
+                    Go
+                </button>
+            )}
+            {gameState === 'playing' && (
+                <>
+                    <button
+                        className="button is-primary is-medium"
+                        onClick={onPlay}
+                        aria-label="Play"
+                    >
+                        <Play />
+                    </button>
+                    <button
+                        className="button is-info is-medium"
+                        onClick={onReplay}
+                        aria-label="Replay"
+                    >
+                        <Repeat />
+                    </button>
+                    <button
+                        className="button is-warning is-medium"
+                        onClick={onSkip}
+                        aria-label="Skip"
+                    >
+                        <SkipForward />
+                    </button>
+                    <button
+                        className="button is-success is-medium"
+                        onClick={onPlayPiano}
+                        aria-label="Play Piano"
+                    >
+                        <Music />
+                    </button>
+                </>
+            )}
         </div>
     );
 };
@@ -51,30 +61,38 @@ const GameCenter = ({ gameState, setGameState, currentQuestion, generateNewQuest
             await Tone.start();
         }
         playChord(currentQuestion);
+    };
+
+    const handleGo = () => {
         setGameState('playing');
+        handlePlay();
+    };
+
+    const handleSkip = () => {
+        const newQuestion = generateNewQuestion();
+        playChord(newQuestion);
     };
 
     return (
-        <div className="container">
-            <div className="game-center-content">
-                <h2 className="title is-3">Game Center</h2>
-                <p className="subtitle">Ready to train your harmonic ear?</p>
-                <GameControls
-                    onPlay={handlePlay}
-                    onReplay={() => playChord(currentQuestion)}
-                    onSkip={generateNewQuestion}
-                    onPlayPiano={() => ['C4', 'E4', 'G4', 'C5'].forEach(note => playNote(note))}
-                    gameState={gameState}
-                />
-                {gameState === 'finished' && (
-                    <div className="mt-4">
-                        <p className="is-size-4">Round Complete!</p>
-                        <button className="button is-primary mt-2" onClick={generateNewQuestion}>
-                            Next Round
-                        </button>
-                    </div>
-                )}
-            </div>
+        <div className="game-center-content">
+            <h2 className="title is-3">Harmonic Ear Trainer</h2>
+            <p className="subtitle">Listen to the chord and identify the notes</p>
+            <GameControls
+                onPlay={handlePlay}
+                onReplay={() => playChord(currentQuestion)}
+                onSkip={handleSkip}
+                onPlayPiano={() => ['C4', 'E4', 'G4', 'C5'].forEach(note => playNote(note))}
+                gameState={gameState}
+                onGo={handleGo}
+            />
+            {gameState === 'finished' && (
+                <div className="mt-4">
+                    <p className="is-size-4">Round Complete!</p>
+                    <button className="button is-primary mt-2" onClick={generateNewQuestion}>
+                        Next Round
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

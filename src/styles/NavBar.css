@@ -1,0 +1,70 @@
+/* Navbar.css */
+.navbar {
+    padding: 0.5rem 1rem;
+}
+
+.navbar-brand .navbar-item {
+    font-weight: bold;
+}
+
+.navbar-end {
+    margin-left: auto;
+}
+
+.navbar-item .field {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-item .label {
+    margin-right: 0.5rem;
+    margin-bottom: 0;
+    color: white;
+    font-weight: normal;
+}
+
+.navbar-item .select {
+    margin-bottom: 0;
+}
+
+.navbar-item .select select {
+    background-color: white;
+    border-color: #dbdbdb;
+    color: #363636;
+    padding-right: 2.5em;
+}
+
+.navbar-item .select:not(.is-multiple):not(.is-loading)::after {
+    border-color: #3273dc;
+}
+
+.navbar-item .select:hover::after {
+    border-color: #363636;
+}
+
+@media screen and (max-width: 1023px) {
+    .navbar-end {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .navbar-item {
+        justify-content: flex-end;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .navbar-brand .navbar-item {
+        font-size: 1.25rem;
+    }
+
+    .navbar-item .field {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .navbar-item .label {
+        margin-right: 0;
+        margin-bottom: 0.25rem;
+    }
+}

@@ -1,0 +1,27 @@
+/* Existing styles */
+.App {
+  text-align: center;
+}
+
+/* New styles to ensure light mode throughout the app */
+body {
+  background-color: white;
+  color: #4a4a4a;
+  /* Bulma's default text color */
+}
+
+.App {
+  min-height: 100vh;
+  background-color: white;
+}
+
+/* Override any potential dark mode styles */
+.has-background-dark {
+  background-color: white !important;
+}
+
+.has-text-light {
+  color: #4a4a4a !important;
+}
+
+/* You can add more overrides here if needed */

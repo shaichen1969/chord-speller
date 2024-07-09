@@ -1,0 +1,88 @@
+.game-center-content {
+    padding: 2rem;
+    text-align: center;
+}
+
+.game-center-content .title,
+.game-center-content .subtitle {
+    color: inherit;
+}
+
+.game-controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.game-controls .button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    width: 120px;
+}
+
+.game-controls .button .icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.button.is-primary {
+    background-color: #3273dc;
+}
+
+.button.is-primary:hover {
+    background-color: #2366d1;
+}
+
+.button.is-info {
+    background-color: #209cee;
+}
+
+.button.is-info:hover {
+    background-color: #118fe4;
+}
+
+.button.is-warning {
+    background-color: #ffdd57;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.button.is-warning:hover {
+    background-color: #ffd83d;
+}
+.note-button {
+    margin: 0.5em;
+    padding: 1em;
+    font-size: 1.5em;
+    position: relative;
+}
+
+.note-button.correct {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.note-button.incorrect {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.checkmark {
+    color: green;
+    font-size: 1.5em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.cross {
+    color: red;
+    font-size: 1.5em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

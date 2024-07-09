@@ -36,6 +36,7 @@ const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound }) => {
                             </div>
                             <div className="dropdown-menu" id="settings-menu" role="menu">
                                 <div className="dropdown-content has-background-dark">
+                                   
                                     <div className="dropdown-item">
                                         <div className="field">
                                             <label className="label has-text-light">Chord Complexity:</label>

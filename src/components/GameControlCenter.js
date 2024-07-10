@@ -80,7 +80,8 @@ const GameCenter = ({
     return (
         <div className="container">
             <div className="game-center-content has-background-dark">
-                <h2 className="title is-3 has-text-light">Listen to the chord and guess the notes!</h2>
+                <h2 className="title is-3">Harmonic Ear Trainer</h2>
+                <p className="subtitle">Listen to the chord and identify the notes</p>
                 <div className="level">
                     <div className="level-item has-text-centered">
                         <div>

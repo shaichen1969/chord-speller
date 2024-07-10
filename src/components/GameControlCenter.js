@@ -1,9 +1,9 @@
 import React from 'react';
 import '../styles/GameControlCenter.css';
-import { Play, Repeat, SkipForward, Music } from 'lucide-react';
+import { Play, SkipForward, Music, Square } from 'lucide-react';
 import * as Tone from 'tone';
 
-const GameControls = ({ onPlay, onReplay, onSkip, onPlayReference, gameState, roundActive }) => {
+const GameControls = ({ onPlay, onSkip, onPlayReference, onStop, gameState, roundActive }) => {
     return (
         <div className="buttons">
             <button
@@ -13,14 +13,6 @@ const GameControls = ({ onPlay, onReplay, onSkip, onPlayReference, gameState, ro
                 aria-label="Play"
             >
                 <Play />
-            </button>
-            <button
-                className="button is-info is-medium"
-                onClick={onReplay}
-                disabled={gameState !== 'playing' || !roundActive}
-                aria-label="Replay"
-            >
-                <Repeat />
             </button>
             <button
                 className="button is-warning is-medium"
@@ -33,15 +25,36 @@ const GameControls = ({ onPlay, onReplay, onSkip, onPlayReference, gameState, ro
             <button
                 className="button is-success is-medium"
                 onClick={onPlayReference}
+                disabled={!roundActive}
                 aria-label="Play Reference"
             >
                 <Music />
+            </button>
+            <button
+                className="button is-danger is-medium"
+                onClick={onStop}
+                disabled={!roundActive}
+                aria-label="Stop"
+            >
+                <Square />
             </button>
         </div>
     );
 };
 
-const GameCenter = ({ gameState, setGameState, currentQuestion, generateNewQuestion, playNote, score, timeLeft, roundActive, startRound, onPlayReference }) => {
+const GameCenter = ({
+    gameState,
+    setGameState,
+    currentQuestion,
+    generateNewQuestion,
+    playNote,
+    score,
+    timeLeft,
+    roundActive,
+    startRound,
+    onPlayReference,
+    endRound
+}) => {
     const playChord = (chord) => {
         chord.forEach(note => playNote(note));
     };
@@ -53,6 +66,11 @@ const GameCenter = ({ gameState, setGameState, currentQuestion, generateNewQuest
         playChord(currentQuestion);
     };
 
+    const handleSkip = () => {
+        const newQuestion = generateNewQuestion();
+        playChord(newQuestion);
+    };
+
     const formatTime = (seconds) => {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
@@ -62,8 +80,7 @@ const GameCenter = ({ gameState, setGameState, currentQuestion, generateNewQuest
     return (
         <div className="container">
             <div className="game-center-content has-background-dark">
-                <h2 className="title is-3 has-text-light">Game Center</h2>
-                <p className="subtitle has-text-light">Ready to train your harmonic ear?</p>
+                <h2 className="title is-3 has-text-light">Listen to the chord and guess the notes!</h2>
                 <div className="level">
                     <div className="level-item has-text-centered">
                         <div>
@@ -78,31 +95,25 @@ const GameCenter = ({ gameState, setGameState, currentQuestion, generateNewQuest
                         </div>
                     </div>
                 </div>
-                {!roundActive && (
-                    <button className="button is-large is-primary mb-4" onClick={startRound}>
-                        Go!
-                    </button>
-                )}
-                <GameControls
-                    onPlay={handlePlay}
-                    onReplay={() => playChord(currentQuestion)}
-                    onSkip={generateNewQuestion}
-                    onPlayReference={() => {
-                        onPlayReference();
-                        ['C4', 'E4', 'G4', 'C5'].forEach(note => playNote(note));
-                    }}
-                    gameState={gameState}
-                    roundActive={roundActive}
-                />
-                {gameState === 'finished' && (
-                    <div className="mt-4">
-                        <p className="is-size-4 has-text-light">Round Complete!</p>
-                        <p className="is-size-5 has-text-light">Final Score: {score}</p>
-                        <button className="button is-primary mt-2" onClick={startRound}>
-                            Start New Round
+                <div className="game-controls-wrapper">
+                    {!roundActive ? (
+                        <button className="button is-large is-primary mb-4" onClick={startRound}>
+                            {gameState === 'finished' ? 'New Round' : 'Go!'}
                         </button>
-                    </div>
-                )}
+                    ) : (
+                        <GameControls
+                            onPlay={handlePlay}
+                            onSkip={handleSkip}
+                            onPlayReference={() => {
+                                onPlayReference();
+                                ['C4', 'E4', 'G4', 'C5'].forEach(note => playNote(note));
+                            }}
+                            onStop={endRound}
+                            gameState={gameState}
+                            roundActive={roundActive}
+                        />
+                    )}
+                </div>
             </div>
         </div>
     );

@@ -72,6 +72,7 @@ function AppContent() {
       if (guessedNotes.length + 1 === numNotes) {
         setShowCheckmark(true);
         setScore(prevScore => prevScore + 10);
+        setFeedback({}); // Clear all feedback
 
         setTimeout(() => {
           playDingSound();
@@ -97,7 +98,6 @@ function AppContent() {
       console.error('Error in playDingSound function', err);
     }
   };
-
 
   const playChord = (chord) => {
     chord.forEach(note => playNote(note));
@@ -145,6 +145,7 @@ function AppContent() {
             roundActive={roundActive}
             startRound={startRound}
             onPlayReference={handlePlayReference}
+            endRound={endRound}
           />
           <Piano
             feedback={feedback}

@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/Piano.css';
 
-const Piano = ({ feedback, gameState, currentQuestion, onGuess, pianoSound, playNote }) => {
+const Piano = ({ feedback, gameState, currentQuestion, onGuess, pianoSound, playNote, showCheckmark }) => {
     const notes = ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'];
 
     const handleKeyClick = (note) => {
@@ -33,6 +33,11 @@ const Piano = ({ feedback, gameState, currentQuestion, onGuess, pianoSound, play
                     </div>
                 ))}
             </div>
+            {showCheckmark && (
+                <div className="big-checkmark-overlay">
+                    <span className="big-checkmark">✓</span>
+                </div>
+            )}
         </div>
     );
 };

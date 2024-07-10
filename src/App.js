@@ -13,10 +13,26 @@ function AppContent() {
   const [guessedNotes, setGuessedNotes] = useState([]);
   const [numNotes, setNumNotes] = useState(4);
   const [pianoSound, setPianoSound] = useState(true);
+  const [score, setScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [roundActive, setRoundActive] = useState(false);
+  const [showCheckmark, setShowCheckmark] = useState(false);
 
   useEffect(() => {
     generateNewQuestion();
   }, [numNotes]);
+
+  useEffect(() => {
+    let timer;
+    if (roundActive && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft((prevTime) => prevTime - 1);
+      }, 1000);
+    } else if (timeLeft === 0) {
+      endRound();
+    }
+    return () => clearInterval(timer);
+  }, [roundActive, timeLeft]);
 
   const generateUniqueNotes = (availableNotes, count) => {
     const uniqueNotes = [];
@@ -42,35 +58,78 @@ function AppContent() {
     setCurrentQuestion(newQuestion);
     setGuessedNotes([]);
     setFeedback({});
-    setGameState('ready');
+    setGameState('playing');
     return newQuestion;
   };
 
   const handleGuess = (note) => {
-    if (gameState !== 'playing') return;
+    if (gameState !== 'playing' || !roundActive) return;
 
     if (currentQuestion.includes(note) && !guessedNotes.includes(note)) {
       setFeedback(prev => ({ ...prev, [note]: 'correct' }));
       setGuessedNotes(prev => [...prev, note]);
-    } else {
-      setFeedback(prev => ({ ...prev, [note]: 'incorrect' }));
-    }
 
-    if (guessedNotes.length + 1 === numNotes) {
-      setGameState('finished');
+      if (guessedNotes.length + 1 === numNotes) {
+        setShowCheckmark(true);
+        setScore(prevScore => prevScore + 10);
+
+        setTimeout(() => {
+          playDingSound();
+          setTimeout(() => {
+            setShowCheckmark(false);
+            const newQuestion = generateNewQuestion();
+            playChord(newQuestion);
+          }, 1000);
+        }, 1000);
+      }
+    } else if (!currentQuestion.includes(note)) {
+      setFeedback(prev => ({ ...prev, [note]: 'incorrect' }));
     }
   };
 
+  const playDingSound = () => {
+    try {
+      const audio = new Audio(require('./assets/media/piano/correct.mp3'));
+      audio.play()
+        .then(() => console.log('Audio played successfully'))
+        .catch(err => console.error('Error playing audio', err));
+    } catch (err) {
+      console.error('Error in playDingSound function', err);
+    }
+  };
+
+
+  const playChord = (chord) => {
+    chord.forEach(note => playNote(note));
+  };
+
+  const startRound = () => {
+    setRoundActive(true);
+    setTimeLeft(60);
+    setScore(0);
+    const newQuestion = generateNewQuestion();
+    playChord(newQuestion);
+  };
+
+  const endRound = () => {
+    setRoundActive(false);
+    setGameState('finished');
+  };
+
+  const handlePlayReference = () => {
+    setScore(prevScore => Math.max(0, prevScore - 1));
+  };
+
   return (
-    <div className="App">
+    <div className="App has-background-dark has-text-light">
       <Navbar
         numNotes={numNotes}
         setNumNotes={setNumNotes}
         pianoSound={pianoSound}
         setPianoSound={setPianoSound}
       />
-      <div className="game-container">
-        <div className="game-center-wrapper">
+      <div className="section has-background-dark">
+        <div className="container">
           <GameCenter
             feedback={feedback}
             setFeedback={setFeedback}
@@ -81,9 +140,12 @@ function AppContent() {
             generateNewQuestion={generateNewQuestion}
             playNote={playNote}
             numNotes={numNotes}
+            score={score}
+            timeLeft={timeLeft}
+            roundActive={roundActive}
+            startRound={startRound}
+            onPlayReference={handlePlayReference}
           />
-        </div>
-        <div className="piano-wrapper">
           <Piano
             feedback={feedback}
             gameState={gameState}
@@ -91,6 +153,7 @@ function AppContent() {
             onGuess={handleGuess}
             pianoSound={pianoSound}
             playNote={playNote}
+            showCheckmark={showCheckmark}
           />
         </div>
       </div>

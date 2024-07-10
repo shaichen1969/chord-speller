@@ -98,8 +98,8 @@ const GameCenter = ({
             <div className="game-controls-wrapper">
                 <div className="button-container">
                     {!roundActive ? (
-                        <button className="button is-large is-primary" onClick={startRound}>
-                            {gameState === 'finished' ? 'New Round' : 'Go!'}
+                        <button className="button is-large is-primary is-dark-blue-gray" onClick={startRound}>
+                            Go
                         </button>
                     ) : (
                         <GameControls

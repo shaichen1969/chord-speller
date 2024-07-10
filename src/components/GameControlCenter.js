@@ -78,27 +78,27 @@ const GameCenter = ({
     };
 
     return (
-        <div className="container">
-            <div className="game-center-content has-background-dark">
-                <h2 className="title is-3">Harmonic Ear Trainer</h2>
-                <p className="subtitle">Listen to the chord and identify the notes</p>
-                <div className="level">
-                    <div className="level-item has-text-centered">
-                        <div>
-                            <p className="heading has-text-light">Score</p>
-                            <p className="title has-text-light">{score}</p>
-                        </div>
-                    </div>
-                    <div className="level-item has-text-centered">
-                        <div>
-                            <p className="heading has-text-light">Time Left</p>
-                            <p className="title has-text-light">{formatTime(timeLeft)}</p>
-                        </div>
+        <div className="game-center-content has-background-dark">
+            <h2 className="title is-3">Harmonic Ear Trainer</h2>
+            <p className="subtitle">Listen to the chord and identify the notes</p>
+            <div className="level">
+                <div className="level-item has-text-centered">
+                    <div>
+                        <p className="heading has-text-light">Score</p>
+                        <p className="title has-text-light">{score}</p>
                     </div>
                 </div>
-                <div className="game-controls-wrapper">
+                <div className="level-item has-text-centered">
+                    <div>
+                        <p className="heading has-text-light">Time Left</p>
+                        <p className="title has-text-light">{formatTime(timeLeft)}</p>
+                    </div>
+                </div>
+            </div>
+            <div className="game-controls-wrapper">
+                <div className="button-container">
                     {!roundActive ? (
-                        <button className="button is-large is-primary mb-4" onClick={startRound}>
+                        <button className="button is-large is-primary" onClick={startRound}>
                             {gameState === 'finished' ? 'New Round' : 'Go!'}
                         </button>
                     ) : (

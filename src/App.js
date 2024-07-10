@@ -128,35 +128,33 @@ function AppContent() {
         pianoSound={pianoSound}
         setPianoSound={setPianoSound}
       />
-      <div className="section has-background-dark">
-        <div className="container">
-          <GameCenter
-            feedback={feedback}
-            setFeedback={setFeedback}
-            gameState={gameState}
-            setGameState={setGameState}
-            currentQuestion={currentQuestion}
-            setCurrentQuestion={setCurrentQuestion}
-            generateNewQuestion={generateNewQuestion}
-            playNote={playNote}
-            numNotes={numNotes}
-            score={score}
-            timeLeft={timeLeft}
-            roundActive={roundActive}
-            startRound={startRound}
-            onPlayReference={handlePlayReference}
-            endRound={endRound}
-          />
-          <Piano
-            feedback={feedback}
-            gameState={gameState}
-            currentQuestion={currentQuestion}
-            onGuess={handleGuess}
-            pianoSound={pianoSound}
-            playNote={playNote}
-            showCheckmark={showCheckmark}
-          />
-        </div>
+      <div className="game-container">
+        <GameCenter
+          feedback={feedback}
+          setFeedback={setFeedback}
+          gameState={gameState}
+          setGameState={setGameState}
+          currentQuestion={currentQuestion}
+          setCurrentQuestion={setCurrentQuestion}
+          generateNewQuestion={generateNewQuestion}
+          playNote={playNote}
+          numNotes={numNotes}
+          score={score}
+          timeLeft={timeLeft}
+          roundActive={roundActive}
+          startRound={startRound}
+          onPlayReference={handlePlayReference}
+          endRound={endRound}
+        />
+        <Piano
+          feedback={feedback}
+          gameState={gameState}
+          currentQuestion={currentQuestion}
+          onGuess={handleGuess}
+          pianoSound={pianoSound}
+          playNote={playNote}
+          showCheckmark={showCheckmark}
+        />
       </div>
     </div>
   );

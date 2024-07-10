@@ -85,6 +85,7 @@ function AppContent() {
       }
     } else if (!currentQuestion.includes(note)) {
       setFeedback(prev => ({ ...prev, [note]: 'incorrect' }));
+      setScore(prevScore => prevScore -1);
     }
   };
 

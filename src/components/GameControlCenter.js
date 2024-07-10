@@ -76,11 +76,11 @@ const GameCenter = ({
         const remainingSeconds = seconds % 60;
         return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
     };
+    const instructionText = roundActive ? 'Listen to the chord and guess the notes!' : 'Press "Go" to begin round';
 
     return (
         <div className="game-center-content has-background-dark">
-            <h2 className="title is-3">Harmonic Ear Trainer</h2>
-            <p className="subtitle">Listen to the chord and identify the notes</p>
+            <p className="title is-4">{instructionText}</p>
             <div className="level">
                 <div className="level-item has-text-centered">
                     <div>

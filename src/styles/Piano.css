@@ -8,12 +8,15 @@
     padding: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     position: relative;
+    overflow: hidden;
 }
 
 .piano {
     display: flex;
     position: relative;
     width: 560px;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
 }
 
 .key {

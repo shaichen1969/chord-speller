@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import '../styles/Piano.css';
 
 const Piano = ({ feedback, gameState, currentQuestion, onGuess, pianoSound, playNote, showCheckmark }) => {
     const notes = ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'];
+    const pianoRef = useRef(null);
+
+    useEffect(() => {
+        if (pianoRef.current) {
+            pianoRef.current.style.opacity = '1';
+        }
+    }, [gameState]);
 
     const handleKeyClick = (note) => {
         if (pianoSound) {
@@ -16,7 +23,7 @@ const Piano = ({ feedback, gameState, currentQuestion, onGuess, pianoSound, play
 
     return (
         <div className="piano-container">
-            <div className="piano">
+            <div className="piano" ref={pianoRef}>
                 {notes.map((note, index) => (
                     <div
                         key={note}

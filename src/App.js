@@ -4,6 +4,7 @@ import Navbar from './components/NavBar';
 import GameCenter from './components/GameControlCenter';
 import Piano from './components/Piano';
 import { PianoProvider, usePiano } from './PianoContext';
+import { analyzeChord } from './components/ChordAnalyzer';
 
 function AppContent() {
   const { playNote, notes } = usePiano();
@@ -66,13 +67,21 @@ function AppContent() {
     if (gameState !== 'playing' || !roundActive) return;
 
     if (currentQuestion.includes(note) && !guessedNotes.includes(note)) {
+      const analysis = analyzeChord(currentQuestion.map(n => n.slice(0, -1)));
       setFeedback(prev => ({ ...prev, [note]: 'correct' }));
       setGuessedNotes(prev => [...prev, note]);
 
       if (guessedNotes.length + 1 === numNotes) {
         setShowCheckmark(true);
         setScore(prevScore => prevScore + 10);
-        setFeedback({}); // Clear all feedback
+        setFeedback({});
+
+        // Analyze and log the chord
+        
+        console.log('Chord Analysis:');
+        Object.entries(analysis).forEach(([root, functions]) => {
+          console.log(`  From ${root}: ${functions.join(', ')}`);
+        });
 
         setTimeout(() => {
           playDingSound();
@@ -85,7 +94,7 @@ function AppContent() {
       }
     } else if (!currentQuestion.includes(note)) {
       setFeedback(prev => ({ ...prev, [note]: 'incorrect' }));
-      setScore(prevScore => prevScore -1);
+      setScore(prevScore => Math.max(0, prevScore - 1));
     }
   };
 
@@ -93,8 +102,6 @@ function AppContent() {
     try {
       const audio = new Audio(require('./assets/media/piano/correct.mp3'));
       audio.play()
-        .then(() => console.log('Audio played successfully'))
-        .catch(err => console.error('Error playing audio', err));
     } catch (err) {
       console.error('Error in playDingSound function', err);
     }

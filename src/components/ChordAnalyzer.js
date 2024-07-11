@@ -32,16 +32,14 @@ const harmonicFunctionMap = {
 };
 
 const harmonicFunctionOrder = [
-    '1', '♭9', '9', '♯9', '♭3', '3', '11', '♯11', '♭5', '5', '♯5', '♭7', '7', '♭13', '13'
+    '1', '♭3', '3', '5', '♭7', '7', '♭9', '9', '♯9', '11', '♯11', '13', '♭5', '♯5'
 ];
 
 const harmonicFunctionScores = {
     '1': 0,
     '♭3': 3,
     '3': 3,
-    '♭5': 5,
     '5': 5,
-    '♯5': 5,
     '♭7': 7,
     '7': 7,
     '♭9': 9,
@@ -49,8 +47,9 @@ const harmonicFunctionScores = {
     '♯9': 9,
     '11': 11,
     '♯11': 11,
-    '♭13': 13,
-    '13': 13
+    '13': 13,
+    '♭5': 5,
+    '♯5': 5
 };
 
 const pitchOrder = ['C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B'];
@@ -81,6 +80,9 @@ const handleSpecialCases = (functions) => {
     if (set.has('♯5') && set.has('5')) {
         functions = functions.map(f => (f === '♯5' ? '♭13' : f));
     }
+    if (set.has('♭5') && set.has('♯5')) {
+        functions = functions.map(f => (f === '♯5' ? '♭13' : f));
+    }
 
     return functions;
 };
@@ -105,22 +107,22 @@ const getInversions = (chord) => {
 };
 
 const sortHarmonicFunctions = (functions) => {
-    return functions.sort((a, b) => harmonicFunctionOrder.indexOf(a) - harmonicFunctionOrder.indexOf(b));
+    return harmonicFunctionOrder.filter(func => functions.includes(func));
 };
 
 const calculateInversionScore = (functions) => {
     return functions.reduce((acc, func) => acc + (harmonicFunctionScores[func] || 0), 0);
 };
 
-const findMostStableChord = (inversionsWithScores) => {
+const findMostStableChord = (inversionsWithHarmonicFunctions) => {
     let minScore = Infinity;
     let mostStableInversion = null;
     let mostStableIndex = -1;
 
-    inversionsWithScores.forEach(({ inversion, score }, index) => {
+    inversionsWithHarmonicFunctions.forEach(({ inversion, score, index, functions }) => {
         if (score < minScore) {
             minScore = score;
-            mostStableInversion = inversion;
+            mostStableInversion = functions;  // Store the unsorted functions
             mostStableIndex = index;
         }
     });
@@ -129,7 +131,6 @@ const findMostStableChord = (inversionsWithScores) => {
 };
 
 const ChordAnalyzer = ({ currentQuestion }) => {
-    // Sort the currentQuestion based on pitch order
     const sortedCurrentQuestion = sortNotes(currentQuestion);
 
     const chord = sortedCurrentQuestion.map(note => {
@@ -139,16 +140,15 @@ const ChordAnalyzer = ({ currentQuestion }) => {
 
     const inversions = getInversions(chord);
 
-    const inversionsWithHarmonicFunctions = inversions.map(inversion => {
+    const inversionsWithHarmonicFunctions = inversions.map((inversion, index) => {
         let functions = inversion.map(noteInt => harmonicFunctionMap[noteInt]);
         functions = handleSpecialCases(functions);
         const sortedFunctions = sortHarmonicFunctions(functions);
-        // Invalidate inversions with conflicting harmonic functions
         if (!isValidInversion(functions)) {
             return null;
         }
         const score = calculateInversionScore(sortedFunctions);
-        return { inversion: sortedFunctions.join(' '), score };
+        return { inversion: sortedFunctions.join(' '), score, index, functions };  // Store unsorted functions
     }).filter(Boolean);
 
     if (inversionsWithHarmonicFunctions.length === 0) {
@@ -164,19 +164,21 @@ const ChordAnalyzer = ({ currentQuestion }) => {
     const { mostStableInversion, mostStableIndex } = findMostStableChord(inversionsWithHarmonicFunctions);
     const mostStableRoot = intToNote[chord[mostStableIndex]];
 
-    const inversionLabels = ["First Inversion", "Second Inversion", "Third Inversion", "Fourth Inversion"];
+    // Sort the winning inversion's functions
+    const sortedWinningFunctions = sortHarmonicFunctions(mostStableInversion);
 
     return (
         <div>
+            <p>Hello world. I'm a chord analyzer.</p>
             <p>Current question: {sortedCurrentQuestion.map(question => question.replace(/\d/g, '')).join(', ')}</p>
             <div>
-                {inversionsWithHarmonicFunctions.map(({ inversion }, index) => (
-                    <p key={index}>{inversionLabels[index] || `Inversion ${index + 1}`}: {inversion}</p>
+                {inversionsWithHarmonicFunctions.map(({ inversion, index }) => (
+                    <p key={index}>When {intToNote[chord[index]]} is the root, the harmonic functions are: {inversion}</p>
                 ))}
             </div>
             <div>
                 <p>Strongest root is: {mostStableRoot}</p>
-                <p>Harmonic functions found are: {mostStableInversion}</p>
+                <p>Harmonic functions found are: {sortedWinningFunctions.join(' ')}</p>
             </div>
         </div>
     );

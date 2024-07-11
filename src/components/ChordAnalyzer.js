@@ -96,8 +96,10 @@ const isValidInversion = (functions) => {
     const set = new Set(functions);
     return !(
         (set.has('♭9') && set.has('9')) ||
-        (set.has('11') && set.has('♯11')) ||
+        (set.has('9') && set.has('♯9')) ||
         (set.has('♭7') && set.has('7')) ||
+        (set.has('11') && set.has('♯11')) ||
+        (set.has('♭13') && set.has('13')) ||
         (set.has('1') && set.has('♭3') && set.has('♯5'))
     );
 };
@@ -135,6 +137,30 @@ const findMostStableChord = (inversionsWithHarmonicFunctions) => {
     return { mostStableInversion, mostStableIndex };
 };
 
+const buildChordSymbol = (rootNote, harmonicFunctions) => {
+    const highestOvertone = harmonicFunctions[harmonicFunctions.length - 1];
+    let symbol = rootNote;
+
+    if (harmonicFunctions.includes('♭3')) {
+        symbol += 'm';
+    }
+
+    if (highestOvertone === '7' || highestOvertone === '♭7') {
+        symbol += highestOvertone === '7' ? 'maj7' : '7';
+    } else {
+        symbol += highestOvertone;
+    }
+
+    const hasTypeOf = (types) => types.some(type => harmonicFunctions.includes(type));
+
+    const absentFunctions = ['3', '5', '7', '9', '11', '13'].filter(func => !hasTypeOf([func, `♭${func}`, `♯${func}`]) && harmonicFunctionOrder.indexOf(func) < harmonicFunctionOrder.indexOf(highestOvertone));
+    if (absentFunctions.length > 0) {
+        symbol += ' no ' + absentFunctions.join(' ');
+    }
+
+    return symbol;
+};
+
 const ChordAnalyzer = ({ currentQuestion }) => {
     const sortedCurrentQuestion = sortNotes(currentQuestion);
 
@@ -148,10 +174,10 @@ const ChordAnalyzer = ({ currentQuestion }) => {
     const inversionsWithHarmonicFunctions = inversions.map((inversion, index) => {
         let functions = inversion.map(noteInt => harmonicFunctionMap[noteInt]);
         functions = handleSpecialCases(functions, inversion[0]); // Handle special cases with root note context
-        const sortedFunctions = sortHarmonicFunctions(functions);
         if (!isValidInversion(functions)) {
             return null;
         }
+        const sortedFunctions = sortHarmonicFunctions(functions);
         const score = calculateInversionScore(sortedFunctions);
         return { inversion: sortedFunctions.join(' '), score, index, functions };
     }).filter(Boolean);
@@ -172,6 +198,9 @@ const ChordAnalyzer = ({ currentQuestion }) => {
     // Sort the winning inversion's functions
     const sortedWinningFunctions = sortHarmonicFunctions(mostStableInversion);
 
+    // Build the chord symbol
+    const chordSymbol = buildChordSymbol(mostStableRoot, sortedWinningFunctions);
+
     return (
         <div>
             <p>Hello world. I'm a chord analyzer.</p>
@@ -184,6 +213,7 @@ const ChordAnalyzer = ({ currentQuestion }) => {
             <div>
                 <p>Strongest root is: {mostStableRoot}</p>
                 <p>Harmonic functions found are: {sortedWinningFunctions.join(' ')}</p>
+                <p>Chord symbol: {chordSymbol}</p>
             </div>
         </div>
     );

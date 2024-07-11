@@ -137,18 +137,51 @@ const findMostStableChord = (inversionsWithHarmonicFunctions) => {
     return { mostStableInversion, mostStableIndex };
 };
 
+const adjustRootNote = (rootNote, isMinor) => {
+    const majorRootNoteMap = {
+        'C#': 'Db',
+        'D#': 'Eb',
+        'F#': 'F#',
+        'G#': 'Ab',
+        'A#': 'Bb'
+    };
+
+    const minorRootNoteMap = {
+        'C#': 'C#',
+        'D#': 'Eb',
+        'F#': 'F#',
+        'G#': 'G#',
+        'A#': 'Bb'
+    };
+
+    if (isMinor) {
+        return minorRootNoteMap[rootNote] || rootNote;
+    } else {
+        return majorRootNoteMap[rootNote] || rootNote;
+    }
+};
+
 const buildChordSymbol = (rootNote, harmonicFunctions) => {
     const highestOvertone = harmonicFunctions[harmonicFunctions.length - 1];
+    let isMinor = harmonicFunctions.includes('♭3');
+    let isDiminished = harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♭5');
+    let isAugmented = harmonicFunctions.includes('3') && harmonicFunctions.includes('♯5');
+    rootNote = adjustRootNote(rootNote, isMinor);
     let symbol = rootNote;
 
-    if (harmonicFunctions.includes('♭3')) {
-        symbol += 'm';
-    }
-
-    if (highestOvertone === '7' || highestOvertone === '♭7') {
-        symbol += highestOvertone === '7' ? 'maj7' : '7';
+    if (isDiminished) {
+        symbol += '°';
+    } else if (isAugmented) {
+        symbol += '+';
     } else {
-        symbol += highestOvertone;
+        if (isMinor) {
+            symbol += 'm';
+        }
+        if (highestOvertone === '7' || highestOvertone === '♭7') {
+            symbol += highestOvertone === '7' ? 'maj7' : '7';
+        } else {
+            symbol += highestOvertone;
+        }
     }
 
     const hasTypeOf = (types) => types.some(type => harmonicFunctions.includes(type));

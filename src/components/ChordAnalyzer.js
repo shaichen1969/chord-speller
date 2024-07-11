@@ -29,10 +29,11 @@ const harmonicFunctionMap = {
     9: '13',
     10: '♭7',
     11: '7',
+    '♭13': '♭13' // Adding ♭13 for context-specific interpretation
 };
 
 const harmonicFunctionOrder = [
-    '1', '♭3', '3', '5', '♭7', '7', '♭9', '9', '♯9', '11', '♯11', '13', '♭5', '♯5'
+    '1', '♭3', '3', '♭5', '5', '♯5', '♭7', '7', '♭9', '9', '♯9', '11', '♯11', '13', '♭13'
 ];
 
 const harmonicFunctionScores = {
@@ -49,7 +50,8 @@ const harmonicFunctionScores = {
     '♯11': 11,
     '13': 13,
     '♭5': 5,
-    '♯5': 5
+    '♯5': 5,
+    '♭13': 13
 };
 
 const pitchOrder = ['C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B'];
@@ -68,7 +70,7 @@ const normalize = (arr) => {
     return normalized;
 };
 
-const handleSpecialCases = (functions) => {
+const handleSpecialCases = (functions, rootNoteInt) => {
     const set = new Set(functions);
 
     if (set.has('♭3') && set.has('3')) {
@@ -82,6 +84,9 @@ const handleSpecialCases = (functions) => {
     }
     if (set.has('♭5') && set.has('♯5')) {
         functions = functions.map(f => (f === '♯5' ? '♭13' : f));
+    }
+    if (set.has('6') && (rootNoteInt === 5 || rootNoteInt === 11)) {  // Adding ♭13 in special cases
+        functions = functions.map(f => (f === '6' ? '♭13' : f));
     }
 
     return functions;
@@ -122,7 +127,7 @@ const findMostStableChord = (inversionsWithHarmonicFunctions) => {
     inversionsWithHarmonicFunctions.forEach(({ inversion, score, index, functions }) => {
         if (score < minScore) {
             minScore = score;
-            mostStableInversion = functions;  // Store the unsorted functions
+            mostStableInversion = functions;
             mostStableIndex = index;
         }
     });
@@ -142,13 +147,13 @@ const ChordAnalyzer = ({ currentQuestion }) => {
 
     const inversionsWithHarmonicFunctions = inversions.map((inversion, index) => {
         let functions = inversion.map(noteInt => harmonicFunctionMap[noteInt]);
-        functions = handleSpecialCases(functions);
+        functions = handleSpecialCases(functions, inversion[0]); // Handle special cases with root note context
         const sortedFunctions = sortHarmonicFunctions(functions);
         if (!isValidInversion(functions)) {
             return null;
         }
         const score = calculateInversionScore(sortedFunctions);
-        return { inversion: sortedFunctions.join(' '), score, index, functions };  // Store unsorted functions
+        return { inversion: sortedFunctions.join(' '), score, index, functions };
     }).filter(Boolean);
 
     if (inversionsWithHarmonicFunctions.length === 0) {

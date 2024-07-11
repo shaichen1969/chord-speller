@@ -4,7 +4,7 @@ import Navbar from './components/NavBar';
 import GameCenter from './components/GameControlCenter';
 import Piano from './components/Piano';
 import { PianoProvider, usePiano } from './PianoContext';
-import { analyzeChord } from './components/ChordAnalyzer';
+import ChordAnalyzer  from './components/ChordAnalyzer';
 
 function AppContent() {
   const { playNote, notes } = usePiano();
@@ -67,7 +67,6 @@ function AppContent() {
     if (gameState !== 'playing' || !roundActive) return;
 
     if (currentQuestion.includes(note) && !guessedNotes.includes(note)) {
-      const analysis = analyzeChord(currentQuestion.map(n => n.slice(0, -1)));
       setFeedback(prev => ({ ...prev, [note]: 'correct' }));
       setGuessedNotes(prev => [...prev, note]);
 
@@ -75,13 +74,6 @@ function AppContent() {
         setShowCheckmark(true);
         setScore(prevScore => prevScore + 10);
         setFeedback({});
-
-        // Analyze and log the chord
-        
-        console.log('Chord Analysis:');
-        Object.entries(analysis).forEach(([root, functions]) => {
-          console.log(`  From ${root}: ${functions.join(', ')}`);
-        });
 
         setTimeout(() => {
           playDingSound();
@@ -126,6 +118,7 @@ function AppContent() {
 
   const handlePlayReference = () => {
     setScore(prevScore => Math.max(0, prevScore - 1));
+    playChord(currentQuestion);
   };
 
   return (
@@ -136,6 +129,7 @@ function AppContent() {
         pianoSound={pianoSound}
         setPianoSound={setPianoSound}
       />
+      <ChordAnalyzer currentQuestion={currentQuestion} />
       <div className="game-container">
         <GameCenter
           feedback={feedback}

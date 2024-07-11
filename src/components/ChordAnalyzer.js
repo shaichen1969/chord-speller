@@ -1,61 +1,70 @@
-// ChordAnalyzer.js
+import React from 'react';
 
-const NOTE_ORDER = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+const noteToInt = {
+    'C': 0, 'C#': 1, 'Db': 1,
+    'D': 2, 'D#': 3, 'Eb': 3,
+    'E': 4,
+    'F': 5, 'F#': 6, 'Gb': 6,
+    'G': 7, 'G#': 8, 'Ab': 8,
+    'A': 9, 'A#': 10, 'Bb': 10,
+    'B': 11,
+};
 
-function getHarmonicFunction(interval) {
-    const functionMap = {
-        0: '1', 1: 'b9', 2: '9', 3: 'b3', 4: '3', 5: '11',
-        6: 'b5', 7: '5', 8: 'b13', 9: '13', 10: 'b7', 11: '7'
-    };
-    return functionMap[interval];
-}
+const harmonicFunctionMap = {
+    0: '1',
+    1: '♭9',
+    2: '9',
+    3: '♭3',
+    4: '3',
+    5: '11',
+    6: '♭5',
+    7: '5',
+    8: '♭13',
+    9: '13',
+    10: '♭7',
+    11: '7',
+};
 
-function normalizeHarmonicFunctions(functions) {
-    const orderMap = {
-        '1': 1, 'b9': 2, '9': 2, '#9': 2, 
-        'b3': 3, '3': 3, '11': 5, '#11': 6, 
-        'b5': 6, '5': 7, '#5': 8, 'b13': 8, '13': 9, 
-        'b7': 10, '7': 11
-    };
-    const preferredNames = {
-        1: '1', 2: '9', 3: '3', 5: '11', 6: '#11', 
-        7: '5', 8: '13', 10: 'b7', 11: '7'
-    };
-    
-    const numericFunctions = functions.map(func => orderMap[func] || parseInt(func));
-    numericFunctions.sort((a, b) => a - b);
+const normalize = (arr) => {
+    const base = arr[0];
+    const normalized = arr.map(note => (note - base + 12) % 12);
+    normalized.sort((a, b) => a - b); // Sort the normalized array
+    return normalized;
+};
 
-    return [...new Set(numericFunctions.map(num => preferredNames[num] || getHarmonicFunction(num % 12)))];
-}
-
-function convertToHarmonicFunctions(notes) {
-    const uniqueNotes = [...new Set(notes)];
-    const harmonicFunctions = {};
-
-    for (const root of uniqueNotes) {
-        const rootIndex = NOTE_ORDER.indexOf(root);
-        const intervals = uniqueNotes.map(note => (NOTE_ORDER.indexOf(note) - rootIndex + 12) % 12);
-        const functions = intervals.map(getHarmonicFunction);
-        harmonicFunctions[root] = normalizeHarmonicFunctions(functions);
+const getInversions = (chord) => {
+    const inversions = [];
+    for (let i = 0; i < chord.length; i++) {
+        const rotated = chord.slice(i).concat(chord.slice(0, i));
+        inversions.push(normalize(rotated));
     }
+    return inversions;
+};
 
-    return harmonicFunctions;
-}
+const ChordAnalyzer = ({ currentQuestion }) => {
+    const chord = currentQuestion.map(note => {
+        const pitch = note.slice(0, -1); // Remove octave number
+        return noteToInt[pitch];
+    });
 
-function analyzeChord(chord) {
-    let notes;
-    if (Array.isArray(chord)) {
-        notes = chord;
-    } else if (typeof chord === 'string') {
-        notes = chord.split(',').map(note => note.trim());
-         
-        
-    } else {
-        throw new Error('Invalid input: chord must be an array of notes or a comma-separated string');
-    }
+    const inversions = getInversions(chord);
 
-    notes = notes.map(note => note.replace(/\d+$/, '')); // Remove any octave numbers
-    return convertToHarmonicFunctions(notes);
-}
+    const inversionsWithHarmonicFunctions = inversions.map(inversion =>
+        inversion.map(noteInt => harmonicFunctionMap[noteInt]).join(' ')
+    );
 
-export { analyzeChord, NOTE_ORDER };
+    return (
+        <div>
+            <p>Hello world. I'm a chord analyzer.</p>
+            <p>Current question: {currentQuestion.join(', ')}</p>
+            <p>Chord as integers: {chord.join(' ')}</p>
+            <div>
+                {inversionsWithHarmonicFunctions.map((inversion, index) => (
+                    <p key={index}>Inversion {index + 1}: {inversion}</p>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+export default ChordAnalyzer;

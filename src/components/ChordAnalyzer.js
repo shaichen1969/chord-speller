@@ -29,7 +29,7 @@ const harmonicFunctionMap = {
     9: '13',
     10: '♭7',
     11: '7',
-    '♭13': '♭13' // Adding ♭13 for context-specific interpretation
+    '♭13': '♭13'
 };
 
 const harmonicFunctionOrder = [
@@ -85,7 +85,7 @@ const handleSpecialCases = (functions, rootNoteInt) => {
     if (set.has('♭5') && set.has('♯5')) {
         functions = functions.map(f => (f === '♯5' ? '♭13' : f));
     }
-    if (set.has('6') && (rootNoteInt === 5 || rootNoteInt === 11)) {  // Adding ♭13 in special cases
+    if (set.has('6') && (rootNoteInt === 5 || rootNoteInt === 11)) {
         functions = functions.map(f => (f === '6' ? '♭13' : f));
     }
 
@@ -162,10 +162,9 @@ const adjustRootNote = (rootNote, isMinor) => {
 };
 
 const buildChordSymbol = (rootNote, harmonicFunctions) => {
-    const highestOvertone = harmonicFunctions[harmonicFunctions.length - 1];
-    let isMinor = harmonicFunctions.includes('♭3');
-    let isDiminished = harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♭5');
-    let isAugmented = harmonicFunctions.includes('3') && harmonicFunctions.includes('♯5');
+    const isMinor = harmonicFunctions.includes('♭3');
+    const isDiminished = harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♭5');
+    const isAugmented = harmonicFunctions.includes('3') && harmonicFunctions.includes('♯5');
     rootNote = adjustRootNote(rootNote, isMinor);
     let symbol = rootNote;
 
@@ -173,22 +172,72 @@ const buildChordSymbol = (rootNote, harmonicFunctions) => {
         symbol += '°';
     } else if (isAugmented) {
         symbol += '+';
-    } else {
-        if (isMinor) {
-            symbol += 'm';
+    } else if (isMinor) {
+        symbol += 'm';
+    }
+
+    // Always include altered fifths
+    if (harmonicFunctions.includes('♭5') && !isDiminished) {
+        symbol += '♭5';
+    } else if (harmonicFunctions.includes('♯5') && !isAugmented) {
+        symbol += '♯5';
+    }
+
+    const extensions = ['7', '9', '11', '13'].filter(ext =>
+        harmonicFunctions.includes(ext) ||
+        harmonicFunctions.includes(`♭${ext}`) ||
+        harmonicFunctions.includes(`♯${ext}`)
+    );
+
+    extensions.forEach(ext => {
+        const type = harmonicFunctions.find(func => func.includes(ext));
+        if (type === '7') {
+            symbol += 'Δ7'; // Use triangle 7 for major 7th
+        } else if (type === '♭7') {
+            symbol += '7'; // Use plain 7 for minor 7th
+        } else if (type !== '5') { // Exclude 5 as it's handled separately
+            symbol += type;
         }
-        if (highestOvertone === '7' || highestOvertone === '♭7') {
-            symbol += highestOvertone === '7' ? 'maj7' : '7';
-        } else {
-            symbol += highestOvertone;
+    });
+
+    // Check for missing overtones
+    const highestOvertone = harmonicFunctionOrder.findLast(func => harmonicFunctions.includes(func));
+    const missingOvertones = new Set();
+
+    const checkMissingOvertone = (base, flats, sharps) => {
+        const allMissing = [base, ...flats, ...sharps].every(func => !harmonicFunctions.includes(func));
+        if (allMissing) missingOvertones.add(base);
+    };
+
+    const overtonesToCheck = ['3', '5', '7', '9', '11', '13'];
+    for (const overtone of overtonesToCheck) {
+        if (harmonicFunctionOrder.indexOf(overtone) >= harmonicFunctionOrder.indexOf(highestOvertone)) {
+            break;
+        }
+        switch (overtone) {
+            case '3':
+                checkMissingOvertone('3', ['♭3'], []);
+                break;
+            case '5':
+                checkMissingOvertone('5', ['♭5'], ['♯5']);
+                break;
+            case '7':
+                checkMissingOvertone('7', ['♭7'], []);
+                break;
+            case '9':
+                checkMissingOvertone('9', ['♭9'], ['♯9']);
+                break;
+            case '11':
+                checkMissingOvertone('11', [], ['♯11']);
+                break;
+            case '13':
+                checkMissingOvertone('13', ['♭13'], []);
+                break;
         }
     }
 
-    const hasTypeOf = (types) => types.some(type => harmonicFunctions.includes(type));
-
-    const absentFunctions = ['3', '5', '7', '9', '11', '13'].filter(func => !hasTypeOf([func, `♭${func}`, `♯${func}`]) && harmonicFunctionOrder.indexOf(func) < harmonicFunctionOrder.indexOf(highestOvertone));
-    if (absentFunctions.length > 0) {
-        symbol += ' no ' + absentFunctions.join(' ');
+    if (missingOvertones.size > 0) {
+        symbol += ' no ' + Array.from(missingOvertones).join(' ');
     }
 
     return symbol;

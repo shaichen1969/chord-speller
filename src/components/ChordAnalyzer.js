@@ -9,9 +9,9 @@ const noteToInt = {
 };
 
 const intToNote = {
-    0: 'C', 1: 'C#', 2: 'D', 3: 'D#', 4: 'E',
-    5: 'F', 6: 'F#', 7: 'G', 8: 'G#', 9: 'A',
-    10: 'A#', 11: 'B',
+    0: 'C', 1: 'C#', 2: 'D', 3: 'Eb', 4: 'E',
+    5: 'F', 6: 'F#', 7: 'G', 8: 'Ab', 9: 'A',
+    10: 'Bb', 11: 'B',
 };
 
 const harmonicFunctionMap = {
@@ -89,7 +89,7 @@ const ChordAnalyzer = ({ currentQuestion }) => {
 
     const adjustRootNote = (rootNote, isMinor) => {
         const majorRootNoteMap = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'F#', 'G#': 'Ab', 'A#': 'Bb' };
-        const minorRootNoteMap = { 'C#': 'C#', 'D#': 'Eb', 'F#': 'F#', 'G#': 'G#', 'A#': 'Bb' };
+        const minorRootNoteMap = { 'C#': 'C#', 'D#': 'Eb', 'F#': 'F#', 'G#': 'Ab', 'A#': 'Bb' };
         return isMinor ? (minorRootNoteMap[rootNote] || rootNote) : (majorRootNoteMap[rootNote] || rootNote);
     };
 
@@ -104,6 +104,7 @@ const ChordAnalyzer = ({ currentQuestion }) => {
         else if (isAugmented) symbol += '+';
         else if (isMinor) symbol += 'm';
 
+        // Only mention the fifth if it's altered
         if (harmonicFunctions.includes('♭5') && !isDiminished) symbol += '♭5';
         else if (harmonicFunctions.includes('♯5') && !isAugmented) symbol += '♯5';
 

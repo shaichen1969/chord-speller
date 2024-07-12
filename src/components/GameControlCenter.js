@@ -49,16 +49,15 @@ const GameCenter = ({
     generateNewQuestion,
     playNote,
     score,
+    setScore,
     timeLeft,
     roundActive,
     startRound,
     onPlayReference,
-    endRound
+    endRound,
+    numNotes,
+    playChord
 }) => {
-    const playChord = (chord) => {
-        chord.forEach(note => playNote(note));
-    };
-
     const handlePlay = async () => {
         if (Tone.context.state !== 'running') {
             await Tone.start();
@@ -69,6 +68,13 @@ const GameCenter = ({
     const handleSkip = () => {
         const newQuestion = generateNewQuestion();
         playChord(newQuestion);
+        // Deduct points for skipping,
+        setScore(prevScore => Math.max(0, prevScore - 5));
+    };
+
+    const handlePlayReference = () => {
+       
+        onPlayReference();
     };
 
     const formatTime = (seconds) => {
@@ -105,10 +111,7 @@ const GameCenter = ({
                         <GameControls
                             onPlay={handlePlay}
                             onSkip={handleSkip}
-                            onPlayReference={() => {
-                                onPlayReference();
-                                ['C4', 'E4', 'G4', 'C5'].forEach(note => playNote(note));
-                            }}
+                            onPlayReference={handlePlayReference}
                             onStop={endRound}
                             gameState={gameState}
                             roundActive={roundActive}

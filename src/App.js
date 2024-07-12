@@ -4,7 +4,8 @@ import Navbar from './components/NavBar';
 import GameCenter from './components/GameControlCenter';
 import Piano from './components/Piano';
 import { PianoProvider, usePiano } from './PianoContext';
-import ChordAnalyzer  from './components/ChordAnalyzer';
+import ChordAnalyzer from './components/ChordAnalyzer';
+import * as Tone from 'tone';
 
 function AppContent() {
   const { playNote, notes } = usePiano();
@@ -72,7 +73,7 @@ function AppContent() {
 
       if (guessedNotes.length + 1 === numNotes) {
         setShowCheckmark(true);
-        setScore(prevScore => prevScore + 10);
+        setScore(prevScore => prevScore + 10 * numNotes);
         setFeedback({});
 
         setTimeout(() => {
@@ -86,7 +87,7 @@ function AppContent() {
       }
     } else if (!currentQuestion.includes(note)) {
       setFeedback(prev => ({ ...prev, [note]: 'incorrect' }));
-      setScore(prevScore => Math.max(0, prevScore - 1));
+      setScore(prevScore => Math.max(0, prevScore - 2)); // Always deduct 2 points for incorrect guess
     }
   };
 
@@ -100,7 +101,8 @@ function AppContent() {
   };
 
   const playChord = (chord) => {
-    chord.forEach(note => playNote(note));
+    const now = Tone.now();
+    chord.forEach(note => playNote(note, now));
   };
 
   const startRound = () => {
@@ -117,8 +119,8 @@ function AppContent() {
   };
 
   const handlePlayReference = () => {
-    setScore(prevScore => Math.max(0, prevScore - 1));
-    playChord(currentQuestion);
+    setScore(prevScore => Math.max(0, prevScore - 2));
+    playNote('C4', undefined, 0.5); // Play C4 at half velocity
   };
 
   return (
@@ -129,8 +131,10 @@ function AppContent() {
         pianoSound={pianoSound}
         setPianoSound={setPianoSound}
       />
-      <ChordAnalyzer currentQuestion={currentQuestion} />
       <div className="game-container">
+        <div className="chord-analyzer-container">
+          <ChordAnalyzer currentQuestion={currentQuestion} />
+        </div>
         <GameCenter
           feedback={feedback}
           setFeedback={setFeedback}
@@ -142,11 +146,13 @@ function AppContent() {
           playNote={playNote}
           numNotes={numNotes}
           score={score}
+          setScore={setScore}
           timeLeft={timeLeft}
           roundActive={roundActive}
           startRound={startRound}
           onPlayReference={handlePlayReference}
           endRound={endRound}
+          playChord={playChord}
         />
         <Piano
           feedback={feedback}

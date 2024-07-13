@@ -1,0 +1,68 @@
+.harmonic-tree {
+    background-color: #2c3e50;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 150px;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.harmonic-tree .title {
+    color: #ecf0f1;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.tree-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+}
+
+.tree-level {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.level-label {
+    color: #bdc3c7;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+.level-note {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: #3498db;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.note {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    .harmonic-tree {
+        width: 100%;
+        height: auto;
+        margin-top: 1rem;
+    }
+
+    .tree-container {
+        flex-direction: row;
+        justify-content: space-around;
+    }
+
+    .tree-level {
+        flex-direction: column;
+    }
+}

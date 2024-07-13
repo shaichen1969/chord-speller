@@ -88,23 +88,25 @@ const ChordAnalyzer = ({ currentQuestion }) => {
         };
 
         const adjustRootNote = (rootNote, isMinor) => {
-            const majorRootNoteMap = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'F#', 'G#': 'Ab', 'A#': 'Bb' };
-            const minorRootNoteMap = { 'C#': 'C#', 'D#': 'Eb', 'F#': 'F#', 'G#': 'Ab', 'A#': 'Bb' };
+            const majorRootNoteMap = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb' };
+            const minorRootNoteMap = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'F#', 'G#': 'Ab', 'A#': 'Bb' };
             return isMinor ? (minorRootNoteMap[rootNote] || rootNote) : (majorRootNoteMap[rootNote] || rootNote);
         };
 
         const buildChordSymbol = (rootNote, harmonicFunctions) => {
             const isMinor = harmonicFunctions.includes('♭3');
             const isDiminished = harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♭5');
+            const isHalfDiminished = isDiminished && harmonicFunctions.includes('♭7');
             const isAugmented = harmonicFunctions.includes('3') && harmonicFunctions.includes('♯5');
-            rootNote = adjustRootNote(rootNote, isMinor);
+            rootNote = adjustRootNote(rootNote, isMinor || rootNote === 'F');
             let symbol = rootNote;
 
-            if (isDiminished) symbol += '°';
+            if (isHalfDiminished) symbol += 'ø';
+            else if (isDiminished) symbol += '°';
             else if (isAugmented) symbol += '+';
             else if (isMinor) symbol += 'm';
 
-            if (harmonicFunctions.includes('♭5') && !isDiminished) symbol += '♭5';
+            if (harmonicFunctions.includes('♭5') && !isDiminished && !isHalfDiminished) symbol += '♭5';
             else if (harmonicFunctions.includes('♯5') && !isAugmented) symbol += '♯5';
 
             const extensions = ['7', '9', '11', '13'].filter(ext =>
@@ -115,9 +117,9 @@ const ChordAnalyzer = ({ currentQuestion }) => {
 
             extensions.forEach(ext => {
                 const type = harmonicFunctions.find(func => func.includes(ext));
-                if (type === '7') symbol += 'Δ7';
-                else if (type === '♭7') symbol += '7';
-                else if (type !== '5') symbol += type;
+                if (type === '7' && !isHalfDiminished) symbol += 'Δ7';
+                else if (type === '♭7' && !isHalfDiminished) symbol += '7';
+                else if (type !== '5' && type !== '7') symbol += type;
             });
 
             const highestOvertone = harmonicFunctionOrder.findLast(func => harmonicFunctions.includes(func));

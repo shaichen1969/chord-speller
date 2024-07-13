@@ -22,30 +22,25 @@ const HarmonicTree = ({ chordAnalysis }) => {
                 break;
             case '7': case '♭7': interval = func === '♭7' ? 10 : 11; break;
             case '9': case '♭9': case '♯9':
-                interval = func === '♭9' ? 13 : (func === '♯9' ? 15 : 14);
+                interval = func === '♭9' ? 1 : (func === '♯9' ? 3 : 2);
                 break;
-            case '11': case '♯11': interval = func === '♯11' ? 18 : 17; break;
-            case '13': case '♭13': interval = func === '♭13' ? 20 : 21; break;
+            case '11': case '♯11': interval = func === '♯11' ? 6 : 5; break;
+            case '13': case '♭13': interval = func === '♭13' ? 8 : 9; break;
             default: return '';
         }
 
         return noteOrderToUse[(rootIndex + interval) % 12];
     };
 
-    if (!chordAnalysis || !chordAnalysis.notes || chordAnalysis.notes.length === 0) {
-        return (
-            <div className="harmonic-tree">
-                <h3 className="title is-5">Harmonic Tree</h3>
-                <p>No chord data available</p>
-            </div>
-        );
+    if (!chordAnalysis || !chordAnalysis.symbol) {
+        return null;
     }
 
-    const rootNote = chordAnalysis.notes[0].slice(0, -1);  // Remove octave number
+    const rootNote = chordAnalysis.symbol.split(/[^A-G#b]/)[0];
 
     return (
         <div className="harmonic-tree">
-            <h3 className="title is-5">Harmonic Tree</h3>
+            <div className="chord-symbol">{chordAnalysis.symbol}</div>
             <div className="tree-container">
                 {harmonicLevels.map((level, index) => {
                     const functionIndex = chordAnalysis.functions.findIndex(func =>
@@ -56,12 +51,17 @@ const HarmonicTree = ({ chordAnalysis }) => {
                         ? getNoteFromFunction(rootNote, chordAnalysis.functions[functionIndex])
                         : '';
 
+                    const harmonicFunction = functionIndex !== -1 ? chordAnalysis.functions[functionIndex] : '';
+
                     return (
                         <div key={level} className="tree-level" style={{ bottom: `${index * 14}%` }}>
                             <div className="level-label">{level}</div>
-                            <div className={`level-note ${note ? 'filled' : ''}`}>
-                                {note && <span className="note">{note}</span>}
+                            <div className="note-circle">
+                                <div className={`level-note ${note ? 'filled' : ''}`}>
+                                    {note && <span className="note">{note}</span>}
+                                </div>
                             </div>
+                            <div className="harmonic-function">{harmonicFunction}</div>
                         </div>
                     );
                 })}

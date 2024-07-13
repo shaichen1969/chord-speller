@@ -135,11 +135,7 @@ function AppContent() {
         setPianoSound={setPianoSound}
       />
       <div className="game-container">
-        <div className="top-section">
-          <div className="chord-analyzer">
-            <h3 className="title is-3">Chord</h3>
-            <p className="subtitle is-2">{chordAnalysis.symbol}</p>
-          </div>
+        <div className="main-game-area">
           <GameCenter
             feedback={feedback}
             setFeedback={setFeedback}
@@ -159,8 +155,6 @@ function AppContent() {
             endRound={endRound}
             playChord={playChord}
           />
-        </div>
-        <div className="bottom-section">
           <Piano
             feedback={feedback}
             gameState={gameState}
@@ -170,8 +164,8 @@ function AppContent() {
             playNote={playNote}
             showCheckmark={showCheckmark}
           />
-          <HarmonicTree chordAnalysis={chordAnalysis} />
         </div>
+        <HarmonicTree chordAnalysis={chordAnalysis} />
       </div>
     </div>
   );

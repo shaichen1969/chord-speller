@@ -1,4 +1,4 @@
-// src/Utils/HarmonicUtils.js
+// src/utils/harmonicUtils.js
 const noteToInt = {
     'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4,
     'F': 5, 'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8, 'Ab': 8,
@@ -31,13 +31,20 @@ const shouldUseFlatsForMinor = (rootNote) => {
     return minorFlatRoots.includes(rootNote);
 };
 
-const adjustRootNote = (rootNote, isMinor) => {
+const shouldUseSharpsForMajor = (rootNote) => {
+    const majorSharpRoots = ['F#', 'B', 'E', 'A', 'D'];
+    return majorSharpRoots.includes(rootNote);
+};
+
+const adjustRootNote = (rootNote, isMinor, isMajor) => {
     if (isMinor && shouldUseFlatsForMinor(rootNote)) {
         const sharpToFlatMap = { 'C#': 'Db', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb', 'D#': 'Eb' };
         return sharpToFlatMap[rootNote] || rootNote;
+    } else if (isMajor && shouldUseSharpsForMajor(rootNote)) {
+        const flatToSharpMap = { 'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#' };
+        return flatToSharpMap[rootNote] || rootNote;
     }
-    const majorRootNoteMap = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb' };
-    return majorRootNoteMap[rootNote] || rootNote;
+    return rootNote;
 };
 
 const getNoteFromFunction = (rootNote, func, isMinor) => {
@@ -69,4 +76,88 @@ const getNoteFromFunction = (rootNote, func, isMinor) => {
 
 const buildChordSymbol = (rootNote, harmonicFunctions) => {
     const isMinor = harmonicFunctions.includes('♭3');
-    const isDiminished = harmonicFunctions.includes('♭3') && harmonicFunctions.inc
+    const isMajor = harmonicFunctions.includes('3');
+    const isDiminished = harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♭5');
+    const isHalfDiminished = isDiminished && harmonicFunctions.includes('♭7');
+    const isAugmented = harmonicFunctions.includes('3') && harmonicFunctions.includes('♯5');
+    rootNote = adjustRootNote(rootNote, isMinor, isMajor);
+    let symbol = rootNote;
+
+    if (isHalfDiminished) symbol += ' ø';
+    else if (isDiminished) symbol += ' °';
+    else if (isAugmented) symbol += ' +';
+    else if (isMinor) symbol += 'm';
+
+    if (harmonicFunctions.includes('♭5') && !isDiminished && !isHalfDiminished) symbol += ' ♭5';
+    else if (harmonicFunctions.includes('♯5') && !isAugmented) symbol += ' ♯5';
+
+    const extensions = ['7', '9', '11', '13'].filter(ext =>
+        harmonicFunctions.includes(ext) ||
+        harmonicFunctions.includes(`♭${ext}`) ||
+        harmonicFunctions.includes(`♯${ext}`)
+    );
+
+    extensions.forEach(ext => {
+        const type = harmonicFunctions.find(func => func.includes(ext));
+        if (type === '7' && !isHalfDiminished) symbol += 'Δ7';
+        else if (type === '♭7' && !isHalfDiminished) symbol += '7';
+        else if (type !== '5' && type !== '7') symbol += type;
+    });
+
+    const highestOvertone = harmonicFunctionOrder.findLast(func => harmonicFunctions.includes(func));
+    const missingOvertones = new Set();
+
+    const checkMissingOvertone = (base, flats, sharps) => {
+        const allMissing = [base, ...flats, ...sharps].every(func => !harmonicFunctions.includes(func));
+        if (allMissing) missingOvertones.add(base);
+    };
+
+    const overtonesToCheck = ['3', '5', '7', '9', '11', '13'];
+    for (const overtone of overtonesToCheck) {
+        if (harmonicFunctionOrder.indexOf(overtone) >= harmonicFunctionOrder.indexOf(highestOvertone)) {
+            break;
+        }
+        switch (overtone) {
+            case '3':
+                checkMissingOvertone('3', ['♭3'], []);
+                break;
+            case '5':
+                checkMissingOvertone('5', ['♭5'], ['♯5']);
+                break;
+            case '7':
+                checkMissingOvertone('7', ['♭7'], []);
+                break;
+            case '9':
+                checkMissingOvertone('9', ['♭9'], ['♯9']);
+                break;
+            case '11':
+                checkMissingOvertone('11', [], ['♯11']);
+                break;
+            case '13':
+                checkMissingOvertone('13', ['♭13'], []);
+                break;
+            default:
+                // Do nothing for unknown overtones
+                break;
+        }
+    }
+
+    if (missingOvertones.size > 0) {
+        symbol += ' no ' + Array.from(missingOvertones).join(' ');
+    }
+
+    return symbol;
+};
+
+export {
+    noteToInt,
+    intToNote,
+    harmonicFunctionMap,
+    harmonicFunctionOrder,
+    harmonicFunctionScores,
+    shouldUseFlatsForMinor,
+    shouldUseSharpsForMajor,
+    adjustRootNote,
+    getNoteFromFunction,
+    buildChordSymbol
+};

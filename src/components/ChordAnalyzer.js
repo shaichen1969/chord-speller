@@ -1,51 +1,15 @@
 import React, { useMemo } from 'react';
-import { usePiano } from '../PianoContext';
-
-const noteToInt = {
-    'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4,
-    'F': 5, 'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8, 'Ab': 8,
-    'A': 9, 'A#': 10, 'Bb': 10, 'B': 11,
-};
-
-const intToNote = {
-    0: 'C', 1: 'Db', 2: 'D', 3: 'Eb', 4: 'E',
-    5: 'F', 6: 'Gb', 7: 'G', 8: 'Ab', 9: 'A',
-    10: 'Bb', 11: 'B',
-};
-
-const harmonicFunctionMap = {
-    0: '1', 1: '♭9', 2: '9', 3: '♭3', 4: '3', 5: '11',
-    6: '♭5', 7: '5', 8: '♯5', 9: '13', 10: '♭7', 11: '7',
-};
-
-const harmonicFunctionOrder = [
-    '1', '♭3', '3', '♭5', '5', '♯5', '♭7', '7', '♭9', '9', '♯9', '11', '♯11', '♭13' ,'13'
-    
-];
-
-const harmonicFunctionScores = {
-    '1': 0, '♭3': 3, '3': 3, '5': 5, '♭7': 7, '7': 7,
-    '♭9': 9, '9': 9, '♯9': 9, '11': 11, '♯11': 11, '13': 13,
-    '♭5': 5, '♯5': 5, '♭13': 13
-};
-
-const calculateFlatsForMinor = (rootNote) => {
-    const minorFlatRoots = ['C', 'F', 'Bb', 'Eb', 'Ab', 'G', 'D', 'A', 'E'];
-    return minorFlatRoots.includes(rootNote);
-};
-
-const adjustRootNote = (rootNote, isMinor) => {
-    if (isMinor && calculateFlatsForMinor(rootNote)) {
-        const sharpToFlatMap = { 'C#': 'Db', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb', 'D#': 'Eb' };
-        return sharpToFlatMap[rootNote] || rootNote;
-    }
-    const majorRootNoteMap = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb' };
-    return majorRootNoteMap[rootNote] || rootNote;
-};
+import {
+    noteToInt,
+    intToNote,
+    harmonicFunctionMap,
+    harmonicFunctionOrder,
+    harmonicFunctionScores,
+    adjustRootNote,
+    buildChordSymbol
+} from '../utils/HarmonicUtils';
 
 const ChordAnalyzer = ({ currentQuestion }) => {
-    const { notes } = usePiano();
-
     const analyzeChord = useMemo(() => {
         const sortNotes = (notes) => {
             return notes.sort((a, b) => {
@@ -100,80 +64,6 @@ const ChordAnalyzer = ({ currentQuestion }) => {
             return inversionsWithHarmonicFunctions.reduce((best, current) => {
                 return current.score < best.score ? current : best;
             }, { score: Infinity });
-        };
-
-        const buildChordSymbol = (rootNote, harmonicFunctions) => {
-            const isMinor = harmonicFunctions.includes('♭3');
-            const isDiminished = harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♭5');
-            const isHalfDiminished = isDiminished && harmonicFunctions.includes('♭7');
-            const isAugmented = harmonicFunctions.includes('3') && harmonicFunctions.includes('♯5');
-            rootNote = adjustRootNote(rootNote, isMinor);
-            let symbol = rootNote;
-
-            if (isHalfDiminished) symbol += 'ø';
-            else if (isDiminished) symbol += '°';
-            else if (isAugmented) symbol += '+';
-            else if (isMinor) symbol += 'm';
-
-            if (harmonicFunctions.includes('♭5') && !isDiminished && !isHalfDiminished) symbol += ' ♭5';
-            else if (harmonicFunctions.includes('♯5') && !isAugmented) symbol += ' ♯5';
-
-            const extensions = ['7', '9', '11', '13'].filter(ext =>
-                harmonicFunctions.includes(ext) ||
-                harmonicFunctions.includes(`♭${ext}`) ||
-                harmonicFunctions.includes(`♯${ext}`)
-            );
-
-            extensions.forEach(ext => {
-                const type = harmonicFunctions.find(func => func.includes(ext));
-                if (type === '7' && !isHalfDiminished) symbol += 'Δ7';
-                else if (type === '♭7' && !isHalfDiminished) symbol += '7';
-                else if (type !== '5' && type !== '7') symbol += type;
-            });
-
-            const highestOvertone = harmonicFunctionOrder.findLast(func => harmonicFunctions.includes(func));
-            const missingOvertones = new Set();
-
-            const checkMissingOvertone = (base, flats, sharps) => {
-                const allMissing = [base, ...flats, ...sharps].every(func => !harmonicFunctions.includes(func));
-                if (allMissing) missingOvertones.add(base);
-            };
-
-            const overtonesToCheck = ['3', '5', '7', '9', '11', '13'];
-            for (const overtone of overtonesToCheck) {
-                if (harmonicFunctionOrder.indexOf(overtone) >= harmonicFunctionOrder.indexOf(highestOvertone)) {
-                    break;
-                }
-                switch (overtone) {
-                    case '3':
-                        checkMissingOvertone('3', ['♭3'], []);
-                        break;
-                    case '5':
-                        checkMissingOvertone('5', ['♭5'], ['♯5']);
-                        break;
-                    case '7':
-                        checkMissingOvertone('7', ['♭7'], []);
-                        break;
-                    case '9':
-                        checkMissingOvertone('9', ['♭9'], ['♯9']);
-                        break;
-                    case '11':
-                        checkMissingOvertone('11', [], ['♯11']);
-                        break;
-                    case '13':
-                        checkMissingOvertone('13', ['♭13'], []);
-                        break;
-                    default:
-                        // Do nothing for unknown overtones
-                        break;
-                }
-            }
-
-            if (missingOvertones.size > 0) {
-                symbol += ' no ' + Array.from(missingOvertones).join(' ');
-            }
-
-            return symbol;
         };
 
         if (currentQuestion.length === 0) {

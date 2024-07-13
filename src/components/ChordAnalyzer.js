@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { usePiano } from '../PianoContext';
-import '../styles/ChordAnalyzer.css';
 
 const noteToInt = {
     'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4,

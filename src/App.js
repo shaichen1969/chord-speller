@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './styles/App.css';
 import Navbar from './components/NavBar';
 import GameCenter from './components/GameControlCenter';
@@ -21,25 +21,7 @@ function AppContent() {
   const [roundActive, setRoundActive] = useState(false);
   const [showCheckmark, setShowCheckmark] = useState(false);
 
-  const chordAnalysis = ChordAnalyzer({ currentQuestion });
-
-  useEffect(() => {
-    generateNewQuestion();
-  }, [numNotes]);
-
-  useEffect(() => {
-    let timer;
-    if (roundActive && timeLeft > 0) {
-      timer = setInterval(() => {
-        setTimeLeft((prevTime) => prevTime - 1);
-      }, 1000);
-    } else if (timeLeft === 0) {
-      endRound();
-    }
-    return () => clearInterval(timer);
-  }, [roundActive, timeLeft]);
-
-  const generateUniqueNotes = (availableNotes, count) => {
+  const generateUniqueNotes = useCallback((availableNotes, count) => {
     const uniqueNotes = [];
     const noteSet = new Set();
 
@@ -55,9 +37,9 @@ function AppContent() {
     }
 
     return uniqueNotes;
-  };
+  }, []);
 
-  const generateNewQuestion = () => {
+  const generateNewQuestion = useCallback(() => {
     const availableNotes = notes.filter(note => !note.startsWith('C1') && !note.startsWith('D1') && !note.startsWith('E1') && !note.startsWith('F1') && !note.startsWith('G1') && !note.startsWith('A1') && !note.startsWith('B1'));
     const newQuestion = generateUniqueNotes(availableNotes, numNotes);
     setCurrentQuestion(newQuestion);
@@ -65,7 +47,23 @@ function AppContent() {
     setFeedback({});
     setGameState('playing');
     return newQuestion;
-  };
+  }, [notes, numNotes, generateUniqueNotes]);
+
+  useEffect(() => {
+    generateNewQuestion();
+  }, [generateNewQuestion]);
+
+  useEffect(() => {
+    let timer;
+    if (roundActive && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft((prevTime) => prevTime - 1);
+      }, 1000);
+    } else if (timeLeft === 0) {
+      endRound();
+    }
+    return () => clearInterval(timer);
+  }, [roundActive, timeLeft]);
 
   const handleGuess = (note) => {
     if (gameState !== 'playing' || !roundActive) return;
@@ -125,6 +123,8 @@ function AppContent() {
     setScore(prevScore => Math.max(0, prevScore - 2));
     playNote('C4', undefined, 0.5);
   };
+
+  const chordAnalysis = ChordAnalyzer({ currentQuestion });
 
   return (
     <div className="App has-background-dark has-text-light">

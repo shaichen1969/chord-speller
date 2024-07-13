@@ -8,8 +8,8 @@ const noteToInt = {
 };
 
 const intToNote = {
-    0: 'C', 1: 'C#', 2: 'D', 3: 'Eb', 4: 'E',
-    5: 'F', 6: 'F#', 7: 'G', 8: 'Ab', 9: 'A',
+    0: 'C', 1: 'Db', 2: 'D', 3: 'Eb', 4: 'E',
+    5: 'F', 6: 'Gb', 7: 'G', 8: 'Ab', 9: 'A',
     10: 'Bb', 11: 'B',
 };
 
@@ -26,6 +26,20 @@ const harmonicFunctionScores = {
     '1': 0, '♭3': 3, '3': 3, '5': 5, '♭7': 7, '7': 7,
     '♭9': 9, '9': 9, '♯9': 9, '11': 11, '♯11': 11, '13': 13,
     '♭5': 5, '♯5': 5, '♭13': 13
+};
+
+const calculateFlatsForMinor = (rootNote) => {
+    const minorFlatRoots = ['C', 'F', 'Bb', 'Eb', 'Ab', 'G', 'D', 'A', 'E'];
+    return minorFlatRoots.includes(rootNote);
+};
+
+const adjustRootNote = (rootNote, isMinor) => {
+    if (isMinor && calculateFlatsForMinor(rootNote)) {
+        const sharpToFlatMap = { 'C#': 'Db', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb', 'D#': 'Eb' };
+        return sharpToFlatMap[rootNote] || rootNote;
+    }
+    const majorRootNoteMap = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb' };
+    return majorRootNoteMap[rootNote] || rootNote;
 };
 
 const ChordAnalyzer = ({ currentQuestion }) => {
@@ -87,18 +101,12 @@ const ChordAnalyzer = ({ currentQuestion }) => {
             }, { score: Infinity });
         };
 
-        const adjustRootNote = (rootNote, isMinor) => {
-            const majorRootNoteMap = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb' };
-            const minorRootNoteMap = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'F#', 'G#': 'Ab', 'A#': 'Bb' };
-            return isMinor ? (minorRootNoteMap[rootNote] || rootNote) : (majorRootNoteMap[rootNote] || rootNote);
-        };
-
         const buildChordSymbol = (rootNote, harmonicFunctions) => {
             const isMinor = harmonicFunctions.includes('♭3');
             const isDiminished = harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♭5');
             const isHalfDiminished = isDiminished && harmonicFunctions.includes('♭7');
             const isAugmented = harmonicFunctions.includes('3') && harmonicFunctions.includes('♯5');
-            rootNote = adjustRootNote(rootNote, isMinor || rootNote === 'F');
+            rootNote = adjustRootNote(rootNote, isMinor);
             let symbol = rootNote;
 
             if (isHalfDiminished) symbol += 'ø';
@@ -153,6 +161,9 @@ const ChordAnalyzer = ({ currentQuestion }) => {
                         break;
                     case '13':
                         checkMissingOvertone('13', ['♭13'], []);
+                        break;
+                    default:
+                        // Do nothing for unknown overtones
                         break;
                 }
             }

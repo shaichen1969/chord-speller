@@ -12,6 +12,7 @@ const HarmonicTree = ({ chordAnalysis }) => {
     const { symbol, functions } = chordAnalysis;
     const rootNote = symbol.split(/[^A-G#b]/)[0];
     const isMinor = symbol.includes('m') && !symbol.includes('maj');
+    const isDiminished = symbol.includes('°') || symbol.includes('ø');
 
     return (
         <div className="harmonic-tree">
@@ -23,7 +24,7 @@ const HarmonicTree = ({ chordAnalysis }) => {
                     );
 
                     const note = functionIndex !== -1
-                        ? getNoteFromFunction(rootNote, functions[functionIndex], isMinor)
+                        ? getNoteFromFunction(rootNote, functions[functionIndex], isMinor, isDiminished)
                         : '';
 
                     const harmonicFunction = functionIndex !== -1 ? functions[functionIndex] : '';

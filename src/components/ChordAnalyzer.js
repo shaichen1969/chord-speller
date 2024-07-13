@@ -1,11 +1,10 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import {
     noteToInt,
     intToNote,
     harmonicFunctionMap,
     harmonicFunctionOrder,
     harmonicFunctionScores,
-    adjustRootNote,
     buildChordSymbol
 } from '../utils/HarmonicUtils';
 

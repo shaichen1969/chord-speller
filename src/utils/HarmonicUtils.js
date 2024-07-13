@@ -1,4 +1,4 @@
-// src/utils/harmonicUtils.js
+// src/utils/HarmonicUtils.js
 const noteToInt = {
     'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4,
     'F': 5, 'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8, 'Ab': 8,
@@ -26,29 +26,57 @@ const harmonicFunctionScores = {
     '♭5': 5, '♯5': 5, '♭13': 13
 };
 
-const shouldUseFlatsForMinor = (rootNote) => {
-    const minorFlatRoots = ['C', 'F', 'Bb', 'Eb', 'Ab', 'G', 'D', 'A', 'E'];
-    return minorFlatRoots.includes(rootNote);
+const majorSharpRoots = ['G', 'D', 'A', 'E', 'B', 'F#'];
+const majorFlatRoots = ['F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb'];
+const minorDiatonicFromMajor = {
+    'A': 'C', 'E': 'G', 'B': 'D', 'F#': 'A', 'C#': 'E', 'G#': 'B', 'D#': 'F#', 'A#': 'C#',
+    'D': 'F', 'G': 'Bb', 'C': 'Eb', 'F': 'Ab', 'Bb': 'Db', 'Eb': 'Gb', 'Ab': 'Cb'
+};
+const diminishedFromMajor = {
+    'B': 'C', 'E': 'F', 'A': 'Bb', 'D': 'Eb', 'G': 'Ab', 'C': 'Db', 'F': 'Gb', 'Bb': 'Cb',
+    'Db': 'E', 'Eb': 'F#', 'F#': 'G#', 'G#': 'A', 'Cb': 'Db', 'Gb': 'A'
 };
 
-const shouldUseSharpsForMajor = (rootNote) => {
-    const majorSharpRoots = ['F#', 'B', 'E', 'A', 'D'];
-    return majorSharpRoots.includes(rootNote);
-};
+const determineOptimalSpelling = (rootNote, isMinor, isDiminished) => {
+    if (rootNote === 'C') return rootNote;
 
-const adjustRootNote = (rootNote, isMinor, isMajor) => {
-    if (isMinor && shouldUseFlatsForMinor(rootNote)) {
-        const sharpToFlatMap = { 'C#': 'Db', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb', 'D#': 'Eb' };
-        return sharpToFlatMap[rootNote] || rootNote;
-    } else if (isMajor && shouldUseSharpsForMajor(rootNote)) {
+    if (isDiminished) {
+        const majorRoot = diminishedFromMajor[rootNote];
+        if (majorSharpRoots.includes(majorRoot)) return rootNote;
+        if (majorFlatRoots.includes(majorRoot)) return rootNote;
+
+        const sharpToFlatMap = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb' };
         const flatToSharpMap = { 'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#' };
-        return flatToSharpMap[rootNote] || rootNote;
+
+        return sharpToFlatMap[rootNote] || flatToSharpMap[rootNote] || rootNote;
     }
-    return rootNote;
+
+    if (isMinor) {
+        const majorRoot = minorDiatonicFromMajor[rootNote];
+        if (majorSharpRoots.includes(majorRoot)) return rootNote;
+        if (majorFlatRoots.includes(majorRoot)) return rootNote;
+
+        const sharpToFlatMap = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb' };
+        const flatToSharpMap = { 'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#' };
+
+        return sharpToFlatMap[rootNote] || flatToSharpMap[rootNote] || rootNote;
+    }
+
+    if (majorSharpRoots.includes(rootNote)) return rootNote;
+    if (majorFlatRoots.includes(rootNote)) return rootNote;
+
+    const sharpToFlatMap = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb' };
+    const flatToSharpMap = { 'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#' };
+
+    return sharpToFlatMap[rootNote] || flatToSharpMap[rootNote] || rootNote;
 };
 
-const getNoteFromFunction = (rootNote, func, isMinor) => {
-    const useFlats = shouldUseFlatsForMinor(rootNote) || isMinor;
+const adjustRootNote = (rootNote, isMinor, isMajor, isDiminished) => {
+    return determineOptimalSpelling(rootNote, isMinor, isDiminished);
+};
+
+const getNoteFromFunction = (rootNote, func, isMinor, isDiminished) => {
+    const useFlats = (isMinor && majorFlatRoots.includes(minorDiatonicFromMajor[rootNote])) || (isDiminished && majorFlatRoots.includes(diminishedFromMajor[rootNote]));
     const noteOrder = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
     const flatNoteOrder = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
     const noteOrderToUse = useFlats ? flatNoteOrder : noteOrder;
@@ -80,7 +108,7 @@ const buildChordSymbol = (rootNote, harmonicFunctions) => {
     const isDiminished = harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♭5');
     const isHalfDiminished = isDiminished && harmonicFunctions.includes('♭7');
     const isAugmented = harmonicFunctions.includes('3') && harmonicFunctions.includes('♯5');
-    rootNote = adjustRootNote(rootNote, isMinor, isMajor);
+    rootNote = adjustRootNote(rootNote, isMinor, isMajor, isDiminished);
     let symbol = rootNote;
 
     if (isHalfDiminished) symbol += ' ø';
@@ -155,8 +183,7 @@ export {
     harmonicFunctionMap,
     harmonicFunctionOrder,
     harmonicFunctionScores,
-    shouldUseFlatsForMinor,
-    shouldUseSharpsForMajor,
+    determineOptimalSpelling,
     adjustRootNote,
     getNoteFromFunction,
     buildChordSymbol

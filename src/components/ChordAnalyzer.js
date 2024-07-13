@@ -19,7 +19,8 @@ const harmonicFunctionMap = {
 };
 
 const harmonicFunctionOrder = [
-    '1', '♭3', '3', '♭5', '5', '♯5', '♭7', '7', '♭9', '9', '♯9', '11', '♯11', '13', '♭13'
+    '1', '♭3', '3', '♭5', '5', '♯5', '♭7', '7', '♭9', '9', '♯9', '11', '♯11', '♭13' ,'13'
+    
 ];
 
 const harmonicFunctionScores = {
@@ -114,8 +115,8 @@ const ChordAnalyzer = ({ currentQuestion }) => {
             else if (isAugmented) symbol += '+';
             else if (isMinor) symbol += 'm';
 
-            if (harmonicFunctions.includes('♭5') && !isDiminished && !isHalfDiminished) symbol += '♭5';
-            else if (harmonicFunctions.includes('♯5') && !isAugmented) symbol += '♯5';
+            if (harmonicFunctions.includes('♭5') && !isDiminished && !isHalfDiminished) symbol += ' ♭5';
+            else if (harmonicFunctions.includes('♯5') && !isAugmented) symbol += ' ♯5';
 
             const extensions = ['7', '9', '11', '13'].filter(ext =>
                 harmonicFunctions.includes(ext) ||

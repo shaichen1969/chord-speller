@@ -1,10 +1,13 @@
 .harmonic-tree {
-    background-color: #2c3e50;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(44, 62, 80, 0.8);
     border-radius: 8px;
     padding: 1rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     width: 150px;
-    height: 300px;
+    height: 400px;
     display: flex;
     flex-direction: column;
 }
@@ -16,13 +19,14 @@
 }
 
 .tree-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    position: relative;
     flex-grow: 1;
 }
 
 .tree-level {
+    position: absolute;
+    left: 0;
+    right: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -35,13 +39,18 @@
 }
 
 .level-note {
-    width: 25px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    background-color: #3498db;
+    background-color: rgba(52, 152, 219, 0.3);
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: all 0.3s ease;
+}
+
+.level-note.filled {
+    background-color: #3498db;
 }
 
 .note {
@@ -52,17 +61,20 @@
 
 @media (max-width: 768px) {
     .harmonic-tree {
+        position: static;
         width: 100%;
         height: auto;
         margin-top: 1rem;
     }
 
     .tree-container {
-        flex-direction: row;
+        display: flex;
         justify-content: space-around;
+        height: 100px;
     }
 
     .tree-level {
+        position: static;
         flex-direction: column;
     }
 }

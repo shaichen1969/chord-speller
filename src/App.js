@@ -5,6 +5,7 @@ import GameCenter from './components/GameControlCenter';
 import Piano from './components/Piano';
 import { PianoProvider, usePiano } from './PianoContext';
 import ChordAnalyzer from './components/ChordAnalyzer';
+import HarmonicTree from './components/HarmonicTree';
 import * as Tone from 'tone';
 
 function AppContent() {
@@ -19,6 +20,8 @@ function AppContent() {
   const [timeLeft, setTimeLeft] = useState(60);
   const [roundActive, setRoundActive] = useState(false);
   const [showCheckmark, setShowCheckmark] = useState(false);
+
+  const chordAnalysis = ChordAnalyzer({ currentQuestion });
 
   useEffect(() => {
     generateNewQuestion();
@@ -87,7 +90,7 @@ function AppContent() {
       }
     } else if (!currentQuestion.includes(note)) {
       setFeedback(prev => ({ ...prev, [note]: 'incorrect' }));
-      setScore(prevScore => Math.max(0, prevScore - 2)); // Always deduct 2 points for incorrect guess
+      setScore(prevScore => Math.max(0, prevScore - 2));
     }
   };
 
@@ -120,7 +123,7 @@ function AppContent() {
 
   const handlePlayReference = () => {
     setScore(prevScore => Math.max(0, prevScore - 2));
-    playNote('C4', undefined, 0.5); // Play C4 at half velocity
+    playNote('C4', undefined, 0.5);
   };
 
   return (
@@ -132,37 +135,43 @@ function AppContent() {
         setPianoSound={setPianoSound}
       />
       <div className="game-container">
-        <div className="chord-analyzer-container">
-          <ChordAnalyzer currentQuestion={currentQuestion} />
+        <div className="top-section">
+          <div className="chord-analyzer">
+            <h3 className="title is-3">Chord</h3>
+            <p className="subtitle is-2">{chordAnalysis.symbol}</p>
+          </div>
+          <GameCenter
+            feedback={feedback}
+            setFeedback={setFeedback}
+            gameState={gameState}
+            setGameState={setGameState}
+            currentQuestion={currentQuestion}
+            setCurrentQuestion={setCurrentQuestion}
+            generateNewQuestion={generateNewQuestion}
+            playNote={playNote}
+            numNotes={numNotes}
+            score={score}
+            setScore={setScore}
+            timeLeft={timeLeft}
+            roundActive={roundActive}
+            startRound={startRound}
+            onPlayReference={handlePlayReference}
+            endRound={endRound}
+            playChord={playChord}
+          />
         </div>
-        <GameCenter
-          feedback={feedback}
-          setFeedback={setFeedback}
-          gameState={gameState}
-          setGameState={setGameState}
-          currentQuestion={currentQuestion}
-          setCurrentQuestion={setCurrentQuestion}
-          generateNewQuestion={generateNewQuestion}
-          playNote={playNote}
-          numNotes={numNotes}
-          score={score}
-          setScore={setScore}
-          timeLeft={timeLeft}
-          roundActive={roundActive}
-          startRound={startRound}
-          onPlayReference={handlePlayReference}
-          endRound={endRound}
-          playChord={playChord}
-        />
-        <Piano
-          feedback={feedback}
-          gameState={gameState}
-          currentQuestion={currentQuestion}
-          onGuess={handleGuess}
-          pianoSound={pianoSound}
-          playNote={playNote}
-          showCheckmark={showCheckmark}
-        />
+        <div className="bottom-section">
+          <Piano
+            feedback={feedback}
+            gameState={gameState}
+            currentQuestion={currentQuestion}
+            onGuess={handleGuess}
+            pianoSound={pianoSound}
+            playNote={playNote}
+            showCheckmark={showCheckmark}
+          />
+          <HarmonicTree chordAnalysis={chordAnalysis} />
+        </div>
       </div>
     </div>
   );

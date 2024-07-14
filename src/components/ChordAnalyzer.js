@@ -24,16 +24,19 @@ const ChordAnalyzer = ({ currentQuestion }) => {
             return arr.map(note => (note - base + 12) % 12);
         };
 
-        const handleSpecialCases = (functions, rootNoteInt) => {
-            const set = new Set(functions);
-            if (set.has('♭3') && set.has('3')) functions = functions.map(f => (f === '♭3' ? '♯9' : f));
-            if (set.has('♭5') && set.has('5')) functions = functions.map(f => (f === '♭5' ? '♯11' : f));
-            if (set.has('♯5') && set.has('5')) functions = functions.map(f => (f === '♯5' ? '♭13' : f));
-            if (set.has('♭5') && set.has('♯5')) functions = functions.map(f => (f === '♯5' ? '♭13' : f));
-            if (set.has('6') && (rootNoteInt === 5 || rootNoteInt === 11)) {
-                functions = functions.map(f => (f === '6' ? '♭13' : f));
+        const handleSpecialCases = (functions, intervals) => {
+            let newFunctions = [...functions];
+            for (let i = 0; i < intervals.length; i++) {
+                if (intervals[i] === 6) {
+                    newFunctions[i] = '♭5';
+                }
             }
-            return functions;
+
+            const set = new Set(newFunctions);
+            if (set.has('♭3') && set.has('3')) newFunctions = newFunctions.map(f => (f === '♭3' ? '♯9' : f));
+            if (set.has('♭5') && set.has('5')) newFunctions = newFunctions.map(f => (f === '5' ? '♯11' : f));
+            if (set.has('♯5') && set.has('5')) newFunctions = newFunctions.map(f => (f === '♯5' ? '♭13' : f));
+            return newFunctions;
         };
 
         const isValidInversion = (functions) => {
@@ -43,8 +46,7 @@ const ChordAnalyzer = ({ currentQuestion }) => {
                 (set.has('9') && set.has('♯9')) ||
                 (set.has('♭7') && set.has('7')) ||
                 (set.has('11') && set.has('♯11')) ||
-                (set.has('♭13') && set.has('13')) ||
-                (set.has('1') && set.has('♭3') && set.has('♯5'))
+                (set.has('♭13') && set.has('13'))
             );
         };
 
@@ -76,7 +78,7 @@ const ChordAnalyzer = ({ currentQuestion }) => {
 
         const inversionsWithHarmonicFunctions = inversions.map((inversion, index) => {
             let functions = inversion.map(noteInt => harmonicFunctionMap[noteInt]);
-            functions = handleSpecialCases(functions, inversion[0]);
+            functions = handleSpecialCases(functions, inversion);
             if (!isValidInversion(functions)) return null;
             const sortedFunctions = sortHarmonicFunctions(functions);
             const score = calculateInversionScore(sortedFunctions);
@@ -91,12 +93,14 @@ const ChordAnalyzer = ({ currentQuestion }) => {
         const rootNote = intToNote[chord[mostStableIndex]];
         const symbol = buildChordSymbol(rootNote, mostStableInversion);
 
-        const isMinor = symbol.includes('m') && !symbol.includes('maj');
-        const isDiminished = symbol.includes('°') || symbol.includes('ø');
+        const isMinor = mostStableInversion.includes('♭3');
+        const isDiminished = mostStableInversion.includes('♭5');
 
         const spelledNotes = mostStableInversion.map(func =>
             getNoteFromFunction(rootNote, func, isMinor, isDiminished)
         );
+
+        console.log('Analyzed Chord Functions:', mostStableInversion);  // Log the found harmonic functions
 
         return {
             symbol,

@@ -8,20 +8,23 @@ export const intToNote = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 
 
 export const harmonicFunctionMap = {
     0: '1', 1: '♭9', 2: '9', 3: '♭3', 4: '3', 5: '11',
-    6: '♯11', 7: '5', 8: '♭13', 9: '13', 10: '♭7', 11: '7'
+    6: '♭5', 7: '5', 8: '♯5', 9: '13', 10: '♭7', 11: '7'
 };
 
-export const harmonicFunctionOrder = ['1', '♭3', '3', '5', '♭7', '7', '♭9', '9', '11', '♯11', '♭13', '13'];
+export const harmonicFunctionOrder = ['1', '♭3', '3', '♭5', '5', '♯5' ,'♭7', '7', '♭9', '9', '11', '♯11', '♭13', '13'];
 
 export const harmonicFunctionScores = {
-    '1': 0, '♭3': 2, '3': 2, '5': 1, '♭7': 3, '7': 3,
-    '♭9': 5, '9': 4, '11': 4, '♯11': 5, '♭13': 5, '13': 4
+    '1': 0, '♭3': 1, '3': 1, '♭5': 2, '5': 2, '♯5': 2, '♭7': 3, '7': 3,
+    '♭9': 4, '9': 4, '11': 5, '♯11': 5, '♭13': 6, '13': 6
 };
 
 export function buildChordSymbol(root, functions) {
     let symbol = root;
     if (functions.includes('♭3')) symbol += 'm';
-    if (functions.includes('♭5')) symbol += '°';
+    if (functions.includes('♭5')) {
+        if (functions.includes('♭3')) symbol += '°';
+        else symbol += '(♭5)';
+    }
     if (functions.includes('7')) {
         if (functions.includes('3')) symbol += 'maj7';
         else symbol += '7';

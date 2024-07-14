@@ -5,7 +5,8 @@ import {
     harmonicFunctionMap,
     harmonicFunctionOrder,
     harmonicFunctionScores,
-    buildChordSymbol
+    buildChordSymbol,
+    getNoteFromFunction
 } from '../utils/HarmonicUtils';
 
 const ChordAnalyzer = ({ currentQuestion }) => {
@@ -66,7 +67,7 @@ const ChordAnalyzer = ({ currentQuestion }) => {
         };
 
         if (currentQuestion.length === 0) {
-            return { symbol: '', functions: [], notes: [] };
+            return { symbol: '', functions: [], notes: [], spelledNotes: [] };
         }
 
         const sortedCurrentQuestion = sortNotes(currentQuestion);
@@ -83,17 +84,28 @@ const ChordAnalyzer = ({ currentQuestion }) => {
         }).filter(Boolean);
 
         if (inversionsWithHarmonicFunctions.length === 0) {
-            return { symbol: 'N/A', functions: [], notes: sortedCurrentQuestion };
+            return { symbol: 'N/A', functions: [], notes: sortedCurrentQuestion, spelledNotes: [] };
         }
 
         const { inversion: mostStableInversion, index: mostStableIndex } = findMostStableChord(inversionsWithHarmonicFunctions);
-        const mostStableRoot = intToNote[chord[mostStableIndex]];
-        const symbol = buildChordSymbol(mostStableRoot, mostStableInversion);
+        const rootNote = intToNote[chord[mostStableIndex]];
+        const symbol = buildChordSymbol(rootNote, mostStableInversion);
+
+        const isMinor = symbol.includes('m') && !symbol.includes('maj');
+        const isDiminished = symbol.includes('°') || symbol.includes('ø');
+
+        const spelledNotes = mostStableInversion.map(func =>
+            getNoteFromFunction(rootNote, func, isMinor, isDiminished)
+        );
 
         return {
             symbol,
             functions: mostStableInversion,
-            notes: sortedCurrentQuestion
+            notes: sortedCurrentQuestion,
+            spelledNotes,
+            root: rootNote,
+            isMinor,
+            isDiminished
         };
     }, [currentQuestion]);
 

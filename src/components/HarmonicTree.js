@@ -1,6 +1,5 @@
 import React from 'react';
 import '../styles/HarmonicTree.css';
-import { getNoteFromFunction } from '../utils/HarmonicUtils';
 
 const HarmonicTree = ({ chordAnalysis }) => {
     const harmonicLevels = ['1', '3', '5', '7', '9', '11', '13'];
@@ -9,10 +8,7 @@ const HarmonicTree = ({ chordAnalysis }) => {
         return null;
     }
 
-    const { symbol, functions } = chordAnalysis;
-    const rootNote = symbol.split(/[^A-G#b]/)[0];
-    const isMinor = symbol.includes('m') && !symbol.includes('maj');
-    const isDiminished = symbol.includes('°') || symbol.includes('ø');
+    const { symbol, functions, spelledNotes } = chordAnalysis;
 
     return (
         <div className="harmonic-tree">
@@ -23,10 +19,7 @@ const HarmonicTree = ({ chordAnalysis }) => {
                         func.replace(/[♭♯]/, '') === level
                     );
 
-                    const note = functionIndex !== -1
-                        ? getNoteFromFunction(rootNote, functions[functionIndex], isMinor, isDiminished)
-                        : '';
-
+                    const note = functionIndex !== -1 ? spelledNotes[functionIndex] : '';
                     const harmonicFunction = functionIndex !== -1 ? functions[functionIndex] : '';
 
                     return (

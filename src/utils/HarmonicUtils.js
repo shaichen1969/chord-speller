@@ -21,8 +21,8 @@ export const harmonicFunctionScores = {
     '♭5': 5, '♯5': 5, '♭13': 13
 };
 
-const majorSharpRoots = ['G', 'D', 'A', 'E', 'B', 'F#'];
-const majorFlatRoots = ['F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb'];
+const majorSharpRoots = ['G', 'D', 'A', 'E', 'B', 'F#', 'C#'];
+const majorFlatRoots = ['F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb', 'Cb'];
 const minorDiatonicFromMajor = {
     'A': 'C', 'E': 'G', 'B': 'D', 'F#': 'A', 'C#': 'E', 'G#': 'B', 'D#': 'F#', 'A#': 'C#',
     'D': 'F', 'G': 'Bb', 'C': 'Eb', 'F': 'Ab', 'Bb': 'Db', 'Eb': 'Gb', 'Ab': 'Cb'
@@ -57,30 +57,42 @@ export const determineOptimalSpelling = (rootNote, isMinor, isDiminished) => {
 };
 
 export const getNoteFromFunction = (rootNote, func, isMinor, isDiminished) => {
-    const useFlats = (isMinor && majorFlatRoots.includes(minorDiatonicFromMajor[rootNote])) || (isDiminished && majorFlatRoots.includes(diminishedFromMajor[rootNote]));
-    const noteOrder = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-    const flatNoteOrder = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
-    const noteOrderToUse = useFlats ? flatNoteOrder : noteOrder;
+    const useFlats = majorFlatRoots.includes(rootNote) ||
+        (isMinor && majorFlatRoots.includes(minorDiatonicFromMajor[rootNote])) ||
+        (isDiminished && majorFlatRoots.includes(diminishedFromMajor[rootNote]));
 
-    const rootIndex = noteOrderToUse.indexOf(rootNote);
+    const noteOrder = useFlats
+        ? ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B']
+        : ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+    const rootIndex = noteOrder.indexOf(rootNote);
+    if (rootIndex === -1) {
+        console.error(`Invalid root note: ${rootNote}`);
+        return '';
+    }
+
     let interval = 0;
 
     switch (func) {
         case '1': interval = 0; break;
-        case '3': case '♭3': interval = func === '♭3' ? 3 : 4; break;
-        case '5': case '♭5': case '♯5':
-            interval = func === '♭5' ? 6 : (func === '♯5' ? 8 : 7);
-            break;
-        case '7': case '♭7': interval = func === '♭7' ? 10 : 11; break;
-        case '9': case '♭9': case '♯9':
-            interval = func === '♭9' ? 1 : (func === '♯9' ? 3 : 2);
-            break;
-        case '11': case '♯11': interval = func === '♯11' ? 6 : 5; break;
-        case '13': case '♭13': interval = func === '♭13' ? 8 : 9; break;
+        case '♭3': interval = 3; break;
+        case '3': interval = 4; break;
+        case '♭5': interval = 6; break;
+        case '5': interval = 7; break;
+        case '♯5': interval = 8; break;
+        case '♭7': interval = 10; break;
+        case '7': interval = 11; break;
+        case '♭9': interval = 1; break;
+        case '9': interval = 2; break;
+        case '♯9': interval = 3; break;
+        case '11': interval = 5; break;
+        case '♯11': interval = 6; break;
+        case '♭13': interval = 8; break;
+        case '13': interval = 9; break;
         default: return '';
     }
 
-    return noteOrderToUse[(rootIndex + interval) % 12];
+    return noteOrder[(rootIndex + interval) % 12];
 };
 
 export const buildChordSymbol = (rootNote, harmonicFunctions) => {

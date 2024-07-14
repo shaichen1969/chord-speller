@@ -6,7 +6,8 @@ import {
     harmonicFunctionOrder,
     harmonicFunctionScores,
     buildChordSymbol,
-    getNoteFromFunction
+    getNoteFromFunction,
+    determineOptimalSpelling
 } from '../utils/HarmonicUtils';
 
 const ChordAnalyzer = ({ currentQuestion }) => {
@@ -91,23 +92,27 @@ const ChordAnalyzer = ({ currentQuestion }) => {
 
         const { inversion: mostStableInversion, index: mostStableIndex } = findMostStableChord(inversionsWithHarmonicFunctions);
         const rootNote = intToNote[chord[mostStableIndex]];
-        const symbol = buildChordSymbol(rootNote, mostStableInversion);
-
         const isMinor = mostStableInversion.includes('♭3');
         const isDiminished = mostStableInversion.includes('♭5');
 
+        // Use determineOptimalSpelling to get the correct root note spelling
+        const optimalRootNote = determineOptimalSpelling(rootNote, isMinor, isDiminished);
+
+        const symbol = buildChordSymbol(optimalRootNote, mostStableInversion);
+
         const spelledNotes = mostStableInversion.map(func =>
-            getNoteFromFunction(rootNote, func, isMinor, isDiminished)
+            getNoteFromFunction(optimalRootNote, func, isMinor, isDiminished)
         );
 
-        console.log('Analyzed Chord Functions:', mostStableInversion);  // Log the found harmonic functions
+        console.log('Analyzed Chord Functions:', mostStableInversion);
+        console.log('Spelled Notes:', spelledNotes);
 
         return {
             symbol,
             functions: mostStableInversion,
             notes: sortedCurrentQuestion,
             spelledNotes,
-            root: rootNote,
+            root: optimalRootNote,
             isMinor,
             isDiminished
         };

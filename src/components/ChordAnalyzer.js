@@ -12,11 +12,13 @@ import {
 
 const ChordAnalyzer = ({ currentQuestion }) => {
     const analyzeChord = useMemo(() => {
+        console.log('Analyzing chord. Current question:', currentQuestion);
+
         const sortNotes = (notes) => {
             return notes.sort((a, b) => {
                 const pitchA = a.slice(0, -1);
                 const pitchB = b.slice(0, -1);
-                return noteToInt[pitchA] - noteToInt[pitchB];
+                return (noteToInt[pitchA] || 0) - (noteToInt[pitchB] || 0);
             });
         };
 
@@ -40,14 +42,15 @@ const ChordAnalyzer = ({ currentQuestion }) => {
             return newFunctions;
         };
 
-        const isValidInversion = (functions) => {
+        const isValidInversion = (functions, rootNote) => {
             const set = new Set(functions);
             return !(
                 (set.has('♭9') && set.has('9')) ||
                 (set.has('9') && set.has('♯9')) ||
                 (set.has('♭7') && set.has('7')) ||
                 (set.has('11') && set.has('♯11')) ||
-                (set.has('♭13') && set.has('13'))
+                (set.has('♭13') && set.has('13')) ||
+                (set.has('1') && set.has('♭3') && set.has('♯5'))
             );
         };
 
@@ -69,39 +72,70 @@ const ChordAnalyzer = ({ currentQuestion }) => {
             }, { score: Infinity });
         };
 
-        if (currentQuestion.length === 0) {
+        if (!currentQuestion || currentQuestion.length === 0) {
+            console.log('Empty or invalid question. Returning default values.');
             return { symbol: '', functions: [], notes: [], spelledNotes: [] };
         }
 
         const sortedCurrentQuestion = sortNotes(currentQuestion);
-        const chord = sortedCurrentQuestion.map(note => noteToInt[note.slice(0, -1)]);
+        console.log('Sorted question:', sortedCurrentQuestion);
+
+        const chord = sortedCurrentQuestion.map(note => {
+            const pitch = note.slice(0, -1);
+            const intValue = noteToInt[pitch];
+            if (intValue === undefined) {
+                console.warn(`Invalid note: ${note}`);
+            }
+            return intValue;
+        }).filter(value => value !== undefined);
+
+        console.log('Chord as integers:', chord);
+
+        if (chord.length === 0) {
+            console.log('No valid notes in the chord. Returning default values.');
+            return { symbol: '', functions: [], notes: [], spelledNotes: [] };
+        }
+
         const inversions = getInversions(chord);
+        console.log('Inversions:', inversions);
 
         const inversionsWithHarmonicFunctions = inversions.map((inversion, index) => {
             let functions = inversion.map(noteInt => harmonicFunctionMap[noteInt]);
             functions = handleSpecialCases(functions, inversion);
-            if (!isValidInversion(functions)) return null;
+            const rootNote = intToNote[chord[index]];
+            if (!rootNote || !isValidInversion(functions, rootNote)) return null;
             const sortedFunctions = sortHarmonicFunctions(functions);
             const score = calculateInversionScore(sortedFunctions);
             return { inversion: sortedFunctions, score, index, functions };
         }).filter(Boolean);
 
+        console.log('Inversions with harmonic functions:', inversionsWithHarmonicFunctions);
+
         if (inversionsWithHarmonicFunctions.length === 0) {
+            console.log('No valid inversions found. Returning N/A.');
             return { symbol: 'N/A', functions: [], notes: sortedCurrentQuestion, spelledNotes: [] };
         }
 
         const { inversion: mostStableInversion, index: mostStableIndex } = findMostStableChord(inversionsWithHarmonicFunctions);
-        const rootNote = intToNote[chord[mostStableIndex]];
-        const isMinor = mostStableInversion.includes('♭3');
-        const isDiminished = mostStableInversion.includes('♭5');
+        console.log('Most stable inversion:', mostStableInversion);
+        console.log('Most stable index:', mostStableIndex);
 
-        // Use determineOptimalSpelling to get the correct root note spelling
-        const optimalRootNote = determineOptimalSpelling(rootNote, isMinor, isDiminished);
+        const rootNote = intToNote[chord[mostStableIndex]];
+        console.log('Root note:', rootNote);
+
+        if (!rootNote) {
+            console.log('Invalid root note. Returning N/A.');
+            return { symbol: 'N/A', functions: [], notes: sortedCurrentQuestion, spelledNotes: [] };
+        }
+
+        const optimalRootNote = determineOptimalSpelling(rootNote, mostStableInversion);
+        console.log('Optimal root note:', optimalRootNote);
 
         const symbol = buildChordSymbol(optimalRootNote, mostStableInversion);
+        console.log('Built chord symbol:', symbol);
 
         const spelledNotes = mostStableInversion.map(func =>
-            getNoteFromFunction(optimalRootNote, func, isMinor, isDiminished)
+            getNoteFromFunction(optimalRootNote, func, mostStableInversion)
         );
 
         console.log('Analyzed Chord Functions:', mostStableInversion);
@@ -113,8 +147,8 @@ const ChordAnalyzer = ({ currentQuestion }) => {
             notes: sortedCurrentQuestion,
             spelledNotes,
             root: optimalRootNote,
-            isMinor,
-            isDiminished
+            isMinor: mostStableInversion.includes('♭3'),
+            isDiminished: mostStableInversion.includes('♭5')
         };
     }, [currentQuestion]);
 

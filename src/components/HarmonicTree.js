@@ -13,7 +13,7 @@ const HarmonicTree = ({ chordAnalysis }) => {
     const rootNote = symbol.split(/[^A-G#b]/)[0];
 
     // Use determineOptimalSpelling to get the correct root note spelling
-    const optimalRootNote = determineOptimalSpelling(rootNote, isMinor, isDiminished);
+    const optimalRootNote = determineOptimalSpelling(rootNote, functions);
 
     return (
         <div className="harmonic-tree">
@@ -25,7 +25,7 @@ const HarmonicTree = ({ chordAnalysis }) => {
                     );
 
                     const note = functionIndex !== -1
-                        ? getNoteFromFunction(optimalRootNote, functions[functionIndex], isMinor, isDiminished)
+                        ? getNoteFromFunction(optimalRootNote, functions[functionIndex], functions)
                         : '';
 
                     const harmonicFunction = functionIndex !== -1 ? functions[functionIndex] : '';

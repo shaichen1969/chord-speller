@@ -11,6 +11,7 @@ import {
 } from '../utils/HarmonicUtils';
 
 const ChordAnalyzer = ({ currentQuestion }) => {
+    console.log(currentQuestion);
     const analyzeChord = useMemo(() => {
         console.log('Analyzing chord. Current question:', currentQuestion);
 

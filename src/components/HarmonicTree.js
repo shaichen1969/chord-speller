@@ -1,6 +1,6 @@
 import React from 'react';
 import '../styles/HarmonicTree.css';
-import { getNoteFromFunction, determineOptimalSpelling } from '../utils/HarmonicUtils';
+import { getNoteFromFunction } from '../utils/HarmonicUtils';
 
 const HarmonicTree = ({ chordAnalysis }) => {
     const harmonicLevels = ['1', '3', '5', '7', '9', '11', '13'];
@@ -9,11 +9,8 @@ const HarmonicTree = ({ chordAnalysis }) => {
         return null;
     }
 
-    const { symbol, functions, isMinor, isDiminished } = chordAnalysis;
+    const { symbol, functions, spelledNotes } = chordAnalysis;
     const rootNote = symbol.split(/[^A-G#b]/)[0];
-
-    // Use determineOptimalSpelling to get the correct root note spelling
-    const optimalRootNote = determineOptimalSpelling(rootNote, functions);
 
     return (
         <div className="harmonic-tree">
@@ -25,7 +22,7 @@ const HarmonicTree = ({ chordAnalysis }) => {
                     );
 
                     const note = functionIndex !== -1
-                        ? getNoteFromFunction(optimalRootNote, functions[functionIndex], functions)
+                        ? getNoteFromFunction(rootNote, functions[functionIndex], functions)
                         : '';
 
                     const harmonicFunction = functionIndex !== -1 ? functions[functionIndex] : '';

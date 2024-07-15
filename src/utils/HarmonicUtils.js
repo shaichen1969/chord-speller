@@ -4,7 +4,7 @@ export const noteToInt = {
     'A': 9, 'A#': 10, 'Bb': 10, 'B': 11,
 };
 
-export const intToNote = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+export const intToNote = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
 export const harmonicFunctionMap = {
     0: '1', 1: '♭9', 2: '9', 3: '♭3', 4: '3', 5: '11',

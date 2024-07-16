@@ -1,83 +1,83 @@
 import React, { useEffect, useState } from 'react';
 
 const noteMap = {
-    0: 'C', 1: 'C#', 2: 'D', 3: 'D#', 4: 'E', 5: 'F',
-    6: 'F#', 7: 'G', 8: 'G#', 9: 'A', 10: 'A#', 11: 'B'
+    0: 'C', 1: 'C♯', 2: 'D', 3: 'D♯', 4: 'E', 5: 'F',
+    6: 'F♯', 7: 'G', 8: 'G♯', 9: 'A', 10: 'A♯', 11: 'B'
 };
 
 const majorScales = {
     'C': ['C', 'D', 'E', 'F', 'G', 'A', 'B'],
-    'C#': ['C#', 'D#', 'E#', 'F#', 'G#', 'A#', 'B#'],
-    'Db': ['Db', 'Eb', 'F', 'Gb', 'Ab', 'Bb', 'C'],
-    'D': ['D', 'E', 'F#', 'G', 'A', 'B', 'C#'],
-    'D#': ['D#', 'E#', 'F##', 'G#', 'A#', 'B#', 'C##'],
-    'Eb': ['Eb', 'F', 'G', 'Ab', 'Bb', 'C', 'D'],
-    'E': ['E', 'F#', 'G#', 'A', 'B', 'C#', 'D#'],
-    'F': ['F', 'G', 'A', 'Bb', 'C', 'D', 'E'],
-    'F#': ['F#', 'G#', 'A#', 'B', 'C#', 'D#', 'E#'],
-    'Gb': ['Gb', 'Ab', 'Bb', 'Cb', 'Db', 'Eb', 'F'],
-    'G': ['G', 'A', 'B', 'C', 'D', 'E', 'F#'],
-    'G#': ['G#', 'A#', 'B#', 'C#', 'D#', 'E#', 'F##'],
-    'Ab': ['Ab', 'Bb', 'C', 'Db', 'Eb', 'F', 'G'],
-    'A': ['A', 'B', 'C#', 'D', 'E', 'F#', 'G#'],
-    'Bb': ['Bb', 'C', 'D', 'Eb', 'F', 'G', 'A'],
-    'B': ['B', 'C#', 'D#', 'E', 'F#', 'G#', 'A#']
+    'C♯': ['C♯', 'D♯', 'E♯', 'F♯', 'G♯', 'A♯', 'B♯'],
+    'D♭': ['D♭', 'E♭', 'F', 'G♭', 'A♭', 'B♭', 'C'],
+    'D': ['D', 'E', 'F♯', 'G', 'A', 'B', 'C♯'],
+    'D♯': ['D♯', 'E♯', 'F♯♯', 'G♯', 'A♯', 'B♯', 'C♯♯'],
+    'E♭': ['E♭', 'F', 'G', 'A♭', 'B♭', 'C', 'D'],
+    'E': ['E', 'F♯', 'G♯', 'A', 'B', 'C♯', 'D♯'],
+    'F': ['F', 'G', 'A', 'B♭', 'C', 'D', 'E'],
+    'F♯': ['F♯', 'G♯', 'A♯', 'B', 'C♯', 'D♯', 'E♯'],
+    'G♭': ['G♭', 'A♭', 'B♭', 'C♭', 'D♭', 'E♭', 'F'],
+    'G': ['G', 'A', 'B', 'C', 'D', 'E', 'F♯'],
+    'G♯': ['G♯', 'A♯', 'B♯', 'C♯', 'D♯', 'E♯', 'F♯♯'],
+    'A♭': ['A♭', 'B♭', 'C', 'D♭', 'E♭', 'F', 'G'],
+    'A': ['A', 'B', 'C♯', 'D', 'E', 'F♯', 'G♯'],
+    'B♭': ['B♭', 'C', 'D', 'E♭', 'F', 'G', 'A'],
+    'B': ['B', 'C♯', 'D♯', 'E', 'F♯', 'G♯', 'A♯']
 };
 
 const harmonicFunctionMap = {
-    0: '1', 1: 'b9', 2: '9', 3: 'b3', 4: '3', 5: '11',
-    6: 'b5', 7: '5', 8: '#5', 9: '13', 10: 'b7', 11: '7'
+    0: '1', 1: '♭9', 2: '9', 3: '♭3', 4: '3', 5: '11',
+    6: '♭5', 7: '5', 8: '♯5', 9: '13', 10: '♭7', 11: '7'
 };
 
-const displayOrder = ['1', 'b3', '3', 'b5', '5', '#5', 'b7', '7', 'b9', '9', '#9', '11', '#11', 'b13', '13'];
+const displayOrder = ['1', '♭3', '3', '♭5', '5', '♯5', '♭7', '7', '♭9', '9', '♯9', '11', '♯11', '♭13', '13'];
 
 const scoreMap = {
-    '1': 0, 'b3': 3, '3': 3, 'b5': 5, '5': 5, '#5': 5,
-    'b7': 7, '7': 7, 'b9': 9, '9': 9, '#9': 9,
-    '11': 11, '#11': 11, 'b13': 13, '13': 13
+    '1': 0, '♭3': 3, '3': 3, '♭5': 5, '5': 5, '♯5': 5,
+    '♭7': 7, '7': 7, '♭9': 9, '9': 9, '♯9': 9,
+    '11': 11, '♯11': 11, '♭13': 13, '13': 13
 };
 
 const harmonicFunctionToNote = (root, harmonicFunctions) => {
-    const scale = majorScales[root];
-    const notes = harmonicFunctions.map(func => {
+    const scale = majorScales[root] || majorScales[root.replace('♯', '♭')] || majorScales[root.replace('♭', '♯')];
+    if (!scale) return [];
+
+    return harmonicFunctions.map(func => {
         switch (func) {
-            case '1': return scale[0];
-            case 'b9': return 'b' + scale[1];
-            case '9': return scale[1];
-            case '#9': return '#' + scale[1];
-            case 'b3': return 'b' + scale[2];
-            case '3': return scale[2];
-            case '11': return scale[3];
-            case '#11': return '#' + scale[3];
-            case 'b5': return 'b' + scale[4];
-            case '5': return scale[4];
-            case '#5': return '#' + scale[4];
-            case 'b13': return 'b' + scale[5];
-            case '13': return scale[5];
-            case 'b7': return 'b' + scale[6];
-            case '7': return scale[6];
+            case '1': return simplifyNote(scale[0]);
+            case '♭9': return simplifyNote(scale[1] + '♭');
+            case '9': return simplifyNote(scale[1]);
+            case '♯9': return simplifyNote(scale[1] + '♯');
+            case '♭3': return simplifyNote(scale[2] + '♭');
+            case '3': return simplifyNote(scale[2]);
+            case '11': return simplifyNote(scale[3]);
+            case '♯11': return simplifyNote(scale[3] + '♯');
+            case '♭5': return simplifyNote(scale[4] + '♭');
+            case '5': return simplifyNote(scale[4]);
+            case '♯5': return simplifyNote(scale[4] + '♯');
+            case '♭13': return simplifyNote(scale[5] + '♭');
+            case '13': return simplifyNote(scale[5]);
+            case '♭7': return simplifyNote(scale[6] + '♭');
+            case '7': return simplifyNote(scale[6]);
             default: return '';
         }
-    });
-    return notes;
+    }).filter(note => note !== '');
 };
-
 const convertToTensions = (harmonicFunctions) => {
-    const containsFlat3 = harmonicFunctions.includes('b3');
+    const containsFlat3 = harmonicFunctions.includes('♭3');
     const contains3 = harmonicFunctions.includes('3');
-    const containsFlat5 = harmonicFunctions.includes('b5');
+    const containsFlat5 = harmonicFunctions.includes('♭5');
     const contains5 = harmonicFunctions.includes('5');
-    const containsSharp5 = harmonicFunctions.includes('#5');
+    const containsSharp5 = harmonicFunctions.includes('♯5');
 
     harmonicFunctions.forEach((func, index) => {
-        if (func === 'b3' && contains3) {
-            harmonicFunctions[index] = '#9';
+        if (func === '♭3' && contains3) {
+            harmonicFunctions[index] = '♯9';
         }
-        if (func === 'b5' && contains5) {
-            harmonicFunctions[index] = '#11';
+        if (func === '♭5' && contains5) {
+            harmonicFunctions[index] = '♯11';
         }
-        if (func === '#5' && (contains5 || containsFlat5)) {
-            harmonicFunctions[index] = 'b13';
+        if (func === '♯5' && (contains5 || containsFlat5)) {
+            harmonicFunctions[index] = '♭13';
         }
     });
 
@@ -87,12 +87,22 @@ const convertToTensions = (harmonicFunctions) => {
 
 const invalidateQuestion = (question) => {
     const sortedQuestion = [...question].sort((a, b) => a - b);
+
+    // Check for three consecutive semitones within the array
     for (let i = 0; i < sortedQuestion.length - 2; i++) {
-        if (sortedQuestion[i + 1] - sortedQuestion[i] === 1 && sortedQuestion[i + 2] - sortedQuestion[i + 1] === 1) {
+        if ((sortedQuestion[i + 1] - sortedQuestion[i] === 1) &&
+            (sortedQuestion[i + 2] - sortedQuestion[i + 1] === 1)) {
             return true;
         }
-        
     }
+
+    // Check for wrapping around from highest to lowest note
+    if ((sortedQuestion[sortedQuestion.length - 1] === 11 && sortedQuestion[0] === 0 && sortedQuestion[1] === 1) ||
+        (sortedQuestion[sortedQuestion.length - 2] === 11 && sortedQuestion[sortedQuestion.length - 1] === 0 && sortedQuestion[0] === 1) ||
+        (sortedQuestion[sortedQuestion.length - 1] === 11 && sortedQuestion[0] === 0 && sortedQuestion[1] === 2)) {
+        return true;
+    }
+
     return false;
 };
 
@@ -104,8 +114,11 @@ const createHarmonicInterpretations = (question) => {
             harmonicFunctionMap[(number - root + 12) % 12]
         );
 
-        // Invalidate chord if it contains both b3 and #5
-        if (harmonicFunctions.includes('b3') && harmonicFunctions.includes('#5')) {
+        // Invalidate chord if it contains both ♭3 and ♯5
+        if (harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♯5')) {
+            return interpretations;
+        }
+        if (harmonicFunctions.includes('7') && harmonicFunctions.includes('♭9')) {
             return interpretations;
         }
 
@@ -120,6 +133,28 @@ const createHarmonicInterpretations = (question) => {
     });
 
     return interpretations;
+};
+const simplifyNote = (note) => {
+    const noteWithoutAccidentals = note.replace(/[♯♭]/g, '');
+    const accidentals = note.replace(/[A-G]/g, '');
+
+    let semitones = 0;
+    for (let acc of accidentals) {
+        semitones += acc === '♯' ? 1 : -1;
+    }
+
+    const noteOrder = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+    let index = noteOrder.indexOf(noteWithoutAccidentals);
+
+    index = (index + semitones + 7) % 7;  // Ensure positive
+    let newNote = noteOrder[index];
+
+    semitones = (semitones + 12) % 12;  // Normalize to 0-11
+    if (semitones > 6) semitones -= 12;  // Convert to -5 to 6 range
+
+    if (semitones > 0) return newNote + '♯'.repeat(semitones);
+    if (semitones < 0) return newNote + '♭'.repeat(-semitones);
+    return newNote;
 };
 
 const reorderHarmonicFunctions = (harmonicFunctions) => {
@@ -191,6 +226,31 @@ const ChromaticAnalyzer = () => {
 
                 const bestChord = findMostStableChord(interpretations);
                 setMostStableChord(bestChord);
+
+                if (bestChord) {
+                    const spelledChord = harmonicFunctionToNote(bestChord.root, reorderHarmonicFunctions(bestChord.harmonicFunctions));
+
+                    const enharmonicRoot = bestChord.root.includes('♯')
+                        ? bestChord.root.replace('♯', '♭')
+                        : bestChord.root.includes('♭')
+                            ? bestChord.root.replace('♭', '♯')
+                            : null;
+
+                    const enharmonicSpelledChord = enharmonicRoot
+                        ? harmonicFunctionToNote(enharmonicRoot, reorderHarmonicFunctions(bestChord.harmonicFunctions))
+                        : null;
+
+                    const analyzedChord = {
+                        root: enharmonicRoot
+                            ? `${bestChord.root} / ${enharmonicRoot}`
+                            : bestChord.root,
+                        notes: question.map(note => noteMap[note]),
+                        harmonicFunctionsFound: reorderHarmonicFunctions(bestChord.harmonicFunctions),
+                        spelledChord: spelledChord.join(', '),
+                        enharmonicSpelledChord: enharmonicSpelledChord ? enharmonicSpelledChord.join(', ') : null
+                    };
+                    console.log('Analyzed Chord:', analyzedChord);
+                }
             }
         }
     }, [question]);
@@ -226,10 +286,19 @@ const ChromaticAnalyzer = () => {
                     <h3>Most Stable Chord:</h3>
                     {mostStableChord ? (
                         <div>
-                            <h4>Root Note: {mostStableChord.root}</h4>
+                            <h4>Root Note: {mostStableChord.root.includes('♯') || mostStableChord.root.includes('♭')
+                                ? `${mostStableChord.root} / ${mostStableChord.root.replace('♯', '♭').replace('♭', '♯')}`
+                                : mostStableChord.root}
+                            </h4>
                             <div>Score: {mostStableChord.score}</div>
                             <div>Harmonic Functions: {reorderHarmonicFunctions(mostStableChord.harmonicFunctions).join(' ')}</div>
-                            <div>Chord Notes: {harmonicFunctionToNote(mostStableChord.root, mostStableChord.harmonicFunctions).join(', ')}</div>
+                            <div>Chord Notes: {harmonicFunctionToNote(mostStableChord.root, reorderHarmonicFunctions(mostStableChord.harmonicFunctions)).join(', ')}</div>
+                            {(mostStableChord.root.includes('♯') || mostStableChord.root.includes('♭')) && (
+                                <div>Enharmonic Chord Notes: {harmonicFunctionToNote(
+                                    mostStableChord.root.replace('♯', '♭').replace('♭', '♯'),
+                                    reorderHarmonicFunctions(mostStableChord.harmonicFunctions)
+                                ).join(', ')}</div>
+                            )}
                         </div>
                     ) : (
                         <div>No valid chords found</div>

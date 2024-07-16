@@ -20,6 +20,7 @@ const majorScales = {
     'G♯': ['G♯', 'A♯', 'B♯', 'C♯', 'D♯', 'E♯', 'F♯♯'],
     'A♭': ['A♭', 'B♭', 'C', 'D♭', 'E♭', 'F', 'G'],
     'A': ['A', 'B', 'C♯', 'D', 'E', 'F♯', 'G♯'],
+    'A♯': ['A♯', 'B♯', 'C♯♯', 'D♯', 'E♯', 'F♯♯', 'G♯♯'],
     'B♭': ['B♭', 'C', 'D', 'E♭', 'F', 'G', 'A'],
     'B': ['B', 'C♯', 'D♯', 'E', 'F♯', 'G♯', 'A♯']
 };
@@ -38,26 +39,23 @@ const scoreMap = {
 };
 
 const harmonicFunctionToNote = (root, harmonicFunctions) => {
-    const scale = majorScales[root] || majorScales[root.replace('♯', '♭')] || majorScales[root.replace('♭', '♯')];
+    const scale = majorScales[root];
     if (!scale) return [];
 
     return harmonicFunctions.map(func => {
         switch (func) {
-            case '1': return simplifyNote(scale[0]);
-            case '♭9': return simplifyNote(scale[1] + '♭');
-            case '9': return simplifyNote(scale[1]);
-            case '♯9': return simplifyNote(scale[1] + '♯');
+            case '1': return scale[0];
             case '♭3': return simplifyNote(scale[2] + '♭');
-            case '3': return simplifyNote(scale[2]);
-            case '11': return simplifyNote(scale[3]);
-            case '♯11': return simplifyNote(scale[3] + '♯');
-            case '♭5': return simplifyNote(scale[4] + '♭');
-            case '5': return simplifyNote(scale[4]);
-            case '♯5': return simplifyNote(scale[4] + '♯');
-            case '♭13': return simplifyNote(scale[5] + '♭');
-            case '13': return simplifyNote(scale[5]);
+            case '3': return scale[2];
+            case '5': return scale[4];
             case '♭7': return simplifyNote(scale[6] + '♭');
-            case '7': return simplifyNote(scale[6]);
+            case '7': return scale[6];
+            case '9': return scale[1];
+            case '♯9': return simplifyNote(scale[1] + '♯');
+            case '11': return scale[3];
+            case '♯11': return simplifyNote(scale[3] + '♯');
+            case '♭13': return simplifyNote(scale[5] + '♭');
+            case '13': return scale[5];
             default: return '';
         }
     }).filter(note => note !== '');

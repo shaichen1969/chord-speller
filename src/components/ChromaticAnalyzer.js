@@ -37,6 +37,22 @@ const convertToTensions = (harmonicFunctions) => {
     return [...new Set(harmonicFunctions)];
 };
 
+const invalidateHarmonicInterpretations = (harmonicFunctions) => {
+    const containsb7 = harmonicFunctions.includes('b7');
+    const contains7 = harmonicFunctions.includes('7');
+    const containsb9 = harmonicFunctions.includes('b9');
+    const contains9 = harmonicFunctions.includes('9');
+    const containsSharp9 = harmonicFunctions.includes('#9');
+    const contains3 = harmonicFunctions.includes('3');
+
+    if ((containsb7 && contains7) ||
+        (contains7 && containsb9) ||
+        (contains9 && containsSharp9 && contains3)) {
+        return true;
+    }
+    return false;
+};
+
 const createHarmonicInterpretations = (question) => {
     let interpretations = {};
 
@@ -52,19 +68,24 @@ const createHarmonicInterpretations = (question) => {
 
         console.log(`Harmonic Functions After Conversion: ${tensionFunctions.join(', ')}`);
 
-        interpretations[noteMap[root]] = {
-            root: noteMap[root],
-            notes: question.map(note => noteMap[note]),
-            harmonicFunctions: tensionFunctions,
-            harmonicFunctionsBefore: harmonicFunctions, // Store the original functions for display
-            booleans: {
-                containsFlat3: harmonicFunctions.includes('b3'),
-                contains3: harmonicFunctions.includes('3'),
-                containsFlat5: harmonicFunctions.includes('b5'),
-                contains5: harmonicFunctions.includes('5'),
-                containsSharp5: harmonicFunctions.includes('#5')
-            }
-        };
+        const isValid = !invalidateHarmonicInterpretations(tensionFunctions);
+        console.log(`Is Valid: ${isValid}`);
+
+        if (isValid) {
+            interpretations[noteMap[root]] = {
+                root: noteMap[root],
+                notes: question.map(note => noteMap[note]),
+                harmonicFunctions: tensionFunctions,
+                harmonicFunctionsBefore: harmonicFunctions, // Store the original functions for display
+                booleans: {
+                    containsFlat3: harmonicFunctions.includes('b3'),
+                    contains3: harmonicFunctions.includes('3'),
+                    containsFlat5: harmonicFunctions.includes('b5'),
+                    contains5: harmonicFunctions.includes('5'),
+                    containsSharp5: harmonicFunctions.includes('#5')
+                }
+            };
+        }
     });
 
     return interpretations;
@@ -131,8 +152,13 @@ const ChromaticAnalyzer = () => {
                     <div>Harmonic Functions After Conversion: {
                         reorderHarmonicFunctions(harmonicInterpretations[root].harmonicFunctions).join(' ')
                     }</div>
-                    
-                   
+                    <div>Booleans: {
+                        `containsFlat3: ${harmonicInterpretations[root].booleans.containsFlat3}, ` +
+                        `contains3: ${harmonicInterpretations[root].booleans.contains3}, ` +
+                        `containsFlat5: ${harmonicInterpretations[root].booleans.containsFlat5}, ` +
+                        `contains5: ${harmonicInterpretations[root].booleans.contains5}, ` +
+                        `containsSharp5: ${harmonicInterpretations[root].booleans.containsSharp5}`
+                    }</div>
                     <br />
                 </div>
             ))}

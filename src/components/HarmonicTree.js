@@ -1,3 +1,5 @@
+// HarmonicTree.js
+
 import React from 'react';
 import '../styles/HarmonicTree.css';
 import { getNoteFromFunction } from '../utils/HarmonicUtils';
@@ -24,7 +26,6 @@ const HarmonicTree = ({ chordAnalysis }) => {
                     const note = functionIndex !== -1
                         ? getNoteFromFunction(rootNote, functions[functionIndex], functions)
                         : '';
-
                     const harmonicFunction = functionIndex !== -1 ? functions[functionIndex] : '';
 
                     return (

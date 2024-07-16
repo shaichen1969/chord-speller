@@ -1,7 +1,8 @@
+// HarmonicUtils.js
+
 export const noteToInt = {
-    'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4,
-    'F': 5, 'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8, 'Ab': 8,
-    'A': 9, 'A#': 10, 'Bb': 10, 'B': 11,
+    'C': 0, 'C#': 1, 'D': 2, 'D#': 3, 'E': 4,
+    'F': 5, 'F#': 6, 'G': 7, 'G#': 8, 'A': 9, 'A#': 10, 'B': 11,
 };
 
 export const intToNote = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
@@ -20,41 +21,12 @@ export const harmonicFunctionScores = {
     '♭9': 4, '9': 4, '11': 5, '♯11': 5, '♭13': 6, '13': 6
 };
 
-const flatPreferenceKeys = ['Bb', 'Eb', 'Ab', 'Db'];
-const sharpPreferenceKeys = ['F#'];
-const minorSharpPreferenceKeys = ['C#', 'F#'];
-
-export const determineOptimalSpelling = (rootNote, harmonicFunctions) => {
-    const isMinor = harmonicFunctions.includes('♭3');
-    const hasThird = harmonicFunctions.includes('3') || harmonicFunctions.includes('♭3');
-    const hasMajorThird = harmonicFunctions.includes('3');
-
-    if (isMinor && minorSharpPreferenceKeys.includes(rootNote)) {
-        return rootNote;
-    }
-
-    if (hasMajorThird || !hasThird) {
-        if (flatPreferenceKeys.includes(rootNote)) {
-            return rootNote;
-        }
-        if (sharpPreferenceKeys.includes(rootNote)) {
-            return rootNote;
-        }
-    }
-
-    const noteIndex = Object.values(noteToInt).indexOf(noteToInt[rootNote]);
-    return intToNote[noteIndex];
-};
-
 export const getNoteFromFunction = (rootNote, func, harmonicFunctions) => {
-    const useFlats = flatPreferenceKeys.includes(rootNote);
-    const noteOrder = useFlats
-        ? ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B']
-        : ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const noteOrder = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
     const rootIndex = noteOrder.indexOf(rootNote);
     if (rootIndex === -1) {
-        console.error(`Invalid root note: ${rootNote}`);
+         
         return '';
     }
 
@@ -103,8 +75,7 @@ export const getNoteFromFunction = (rootNote, func, harmonicFunctions) => {
 };
 
 export function buildChordSymbol(rootNote, harmonicFunctions) {
-    const optimalRootNote = determineOptimalSpelling(rootNote, harmonicFunctions);
-    let symbol = optimalRootNote;
+    let symbol = rootNote;
     const isMinor = harmonicFunctions.includes('♭3');
     const isMajor = harmonicFunctions.includes('3');
     const isDiminished = harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♭5');

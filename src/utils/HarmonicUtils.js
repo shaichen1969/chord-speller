@@ -1,8 +1,7 @@
-// HarmonicUtils.js
-
 export const noteToInt = {
-    'C': 0, 'C#': 1, 'D': 2, 'D#': 3, 'E': 4,
-    'F': 5, 'F#': 6, 'G': 7, 'G#': 8, 'A': 9, 'A#': 10, 'B': 11,
+    'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4,
+    'F': 5, 'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8, 'Ab': 8,
+    'A': 9, 'A#': 10, 'Bb': 10, 'B': 11,
 };
 
 export const intToNote = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
@@ -21,61 +20,67 @@ export const harmonicFunctionScores = {
     '♭9': 4, '9': 4, '11': 5, '♯11': 5, '♭13': 6, '13': 6
 };
 
+const flatPreferenceKeys = ['Bb', 'Eb', 'Ab', 'Db'];
+const sharpPreferenceKeys = ['F#'];
+const minorSharpPreferenceKeys = ['C#', 'F#'];
+
+export const determineOptimalSpelling = (rootNote, harmonicFunctions) => {
+    const isMinor = harmonicFunctions.includes('♭3');
+    const hasThird = harmonicFunctions.includes('3') || harmonicFunctions.includes('♭3');
+    const hasMajorThird = harmonicFunctions.includes('3');
+
+    if (isMinor && minorSharpPreferenceKeys.includes(rootNote)) {
+        return rootNote;
+    }
+
+    if (hasMajorThird || !hasThird) {
+        if (flatPreferenceKeys.includes(rootNote)) {
+            return rootNote;
+        }
+        if (sharpPreferenceKeys.includes(rootNote)) {
+            return rootNote;
+        }
+    }
+
+    const noteIndex = Object.values(noteToInt).indexOf(noteToInt[rootNote]);
+    return intToNote[noteIndex];
+};
+
 export const getNoteFromFunction = (rootNote, func, harmonicFunctions) => {
     const noteOrder = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
     const rootIndex = noteOrder.indexOf(rootNote);
     if (rootIndex === -1) {
-         
+        console.error(`Invalid root note: ${rootNote}`);
         return '';
     }
 
     let interval = 0;
-    let letterOffset = 0;
-
     switch (func) {
-        case '1': interval = 0; letterOffset = 0; break;
-        case '♭3': interval = 3; letterOffset = 2; break;
-        case '3': interval = 4; letterOffset = 2; break;
-        case '♭5': interval = 6; letterOffset = 4; break;
-        case '5': interval = 7; letterOffset = 4; break;
-        case '♯5': interval = 8; letterOffset = 4; break;
-        case '♭7': interval = 10; letterOffset = 6; break;
-        case '7': interval = 11; letterOffset = 6; break;
-        case '♭9': interval = 1; letterOffset = 1; break;
-        case '9': interval = 2; letterOffset = 1; break;
-        case '♯9': interval = 3; letterOffset = 1; break;
-        case '11': interval = 5; letterOffset = 3; break;
-        case '♯11': interval = 6; letterOffset = 3; break;
-        case '♭13': interval = 8; letterOffset = 5; break;
-        case '13': interval = 9; letterOffset = 5; break;
+        case '1': interval = 0; break;
+        case '♭3': interval = 3; break;
+        case '3': interval = 4; break;
+        case '♭5': interval = 6; break;
+        case '5': interval = 7; break;
+        case '♯5': interval = 8; break;
+        case '♭7': interval = 10; break;
+        case '7': interval = 11; break;
+        case '♭9': interval = 1; break;
+        case '9': interval = 2; break;
+        case '♯9': interval = 3; break;
+        case '11': interval = 5; break;
+        case '♯11': interval = 6; break;
+        case '♭13': interval = 8; break;
+        case '13': interval = 9; break;
         default: return '';
     }
 
-    const targetLetter = String.fromCharCode(((rootNote.charCodeAt(0) - 65 + letterOffset) % 7) + 65);
-    let resultNote = noteOrder[(rootIndex + interval) % 12];
-
-    // Adjust the note name if it doesn't match the target letter
-    if (resultNote[0] !== targetLetter) {
-        const enharmonic = Object.entries(noteToInt).find(([note, int]) =>
-            int === noteToInt[resultNote] && note[0] === targetLetter
-        );
-        if (enharmonic) {
-            resultNote = enharmonic[0];
-        }
-    }
-
-    // If the chord has a b5, lower the 5 by a half step
-    if (harmonicFunctions.includes('♭5') && func === '5') {
-        const lowerIndex = (noteOrder.indexOf(resultNote) - 1 + 12) % 12;
-        resultNote = noteOrder[lowerIndex];
-    }
-
-    return resultNote;
+    return noteOrder[(rootIndex + interval) % 12];
 };
 
 export function buildChordSymbol(rootNote, harmonicFunctions) {
-    let symbol = rootNote;
+    const optimalRootNote = determineOptimalSpelling(rootNote, harmonicFunctions);
+    let symbol = optimalRootNote;
     const isMinor = harmonicFunctions.includes('♭3');
     const isMajor = harmonicFunctions.includes('3');
     const isDiminished = harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♭5');

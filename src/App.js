@@ -7,7 +7,7 @@ import { PianoProvider, usePiano } from './PianoContext';
 import ChordAnalyzer from './components/ChordAnalyzer';
 import HarmonicTree from './components/HarmonicTree';
 import * as Tone from 'tone';
-
+//test
 function AppContent() {
   const { playNote, notes } = usePiano();
   const [feedback, setFeedback] = useState({});

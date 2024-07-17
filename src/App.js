@@ -1,3 +1,5 @@
+// App.js
+
 import React, { useState, useEffect, useCallback } from 'react';
 import './styles/App.css';
 import Navbar from './components/NavBar';
@@ -6,6 +8,7 @@ import Piano from './components/Piano';
 import { PianoProvider, usePiano } from './PianoContext';
 import ChordAnalyzer from './components/ChordAnalyzer';
 import HarmonicTree from './components/HarmonicTree';
+import ChromaticAnalyzer from './components/ChromaticAnalyzer';
 import * as Tone from 'tone';
 //test
 function AppContent() {
@@ -127,47 +130,12 @@ function AppContent() {
   const chordAnalysis = ChordAnalyzer({ currentQuestion });
 
   return (
-    <div className="App has-background-dark has-text-light">
-      <Navbar
-        numNotes={numNotes}
-        setNumNotes={setNumNotes}
-        pianoSound={pianoSound}
-        setPianoSound={setPianoSound}
-      />
-      <div className="game-container">
-        <div className="main-game-area">
-          <GameCenter
-            feedback={feedback}
-            setFeedback={setFeedback}
-            gameState={gameState}
-            setGameState={setGameState}
-            currentQuestion={currentQuestion}
-            setCurrentQuestion={setCurrentQuestion}
-            generateNewQuestion={generateNewQuestion}
-            playNote={playNote}
-            numNotes={numNotes}
-            score={score}
-            setScore={setScore}
-            timeLeft={timeLeft}
-            roundActive={roundActive}
-            startRound={startRound}
-            onPlayReference={handlePlayReference}
-            endRound={endRound}
-            playChord={playChord}
-          />
-          <Piano
-            feedback={feedback}
-            gameState={gameState}
-            currentQuestion={currentQuestion}
-            onGuess={handleGuess}
-            pianoSound={pianoSound}
-            playNote={playNote}
-            showCheckmark={showCheckmark}
-          />
-        </div>
-        <HarmonicTree chordAnalysis={chordAnalysis} />
-      </div>
-    </div>
+     
+      
+      <ChromaticAnalyzer />
+      
+       
+    
   );
 }
 

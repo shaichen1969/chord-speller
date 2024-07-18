@@ -1,17 +1,21 @@
 import React from 'react';
 import '../styles/HarmonicTree.css';
-import { analyzeChord } from '../utils/ChordAnalyzerUtils';
 
-const HarmonicTree = ({ currentQuestion }) => {
+const HarmonicTree = ({ chordAnalysis }) => {
     const harmonicLevels = ['1', '3', '5', '7', '9', '11', '13'];
 
-    const analyzedChord = analyzeChord(currentQuestion);
+    console.log("Received chord analysis in HarmonicTree:", chordAnalysis);
 
-    if (!analyzedChord || !analyzedChord.chordSymbol) {
-        return null;
+    if (!chordAnalysis || !chordAnalysis.chordSymbol) {
+        console.log("No valid chord analysis in HarmonicTree");
+        return (
+            <div className="harmonic-tree">
+                <p>No valid chord analysis available</p>
+            </div>
+        );
     }
 
-    const { chordSymbol, harmonicFunctionsFound, spelledChord, enharmonicSpelledChord, root, altRoot, notes } = analyzedChord;
+    const { chordSymbol, harmonicFunctionsFound, notes } = chordAnalysis;
 
     return (
         <div className="harmonic-tree">
@@ -27,6 +31,8 @@ const HarmonicTree = ({ currentQuestion }) => {
                         : '';
 
                     const harmonicFunction = functionIndex !== -1 ? harmonicFunctionsFound[functionIndex] : '';
+
+                    console.log(`Level ${level}: Note ${note}, Function ${harmonicFunction}`);
 
                     return (
                         <div key={level} className="tree-level" style={{ bottom: `${index * 14}%` }}>

@@ -10,6 +10,7 @@ import './styles/App.css';
 function AppContent() {
   const [gameState, setGameState] = useState('idle');
   const [currentQuestion, setCurrentQuestion] = useState([]);
+  const [analyzedChord, setAnalyzedChord] = useState(null);
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState({});
   const [timeLeft, setTimeLeft] = useState(60);
@@ -18,19 +19,30 @@ function AppContent() {
   const [pianoSound, setPianoSound] = useState(true);
   const [showCheckmark, setShowCheckmark] = useState(false);
   const { playNote, playChord, notes } = usePiano();
-
-  const chordAnalysis = analyzeChord({ currentQuestion });
+  const availableNotes = ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'];
 
   const generateNewQuestion = useCallback(() => {
     const newQuestion = [];
+    const notesCopy = [...availableNotes];
+
     for (let i = 0; i < numNotes; i++) {
-      const randomIndex = Math.floor(Math.random() * notes.length);
-      newQuestion.push(notes[randomIndex]);
+      const randomIndex = Math.floor(Math.random() * notesCopy.length);
+      newQuestion.push(notesCopy[randomIndex]);
+      notesCopy.splice(randomIndex, 1);
     }
+
     setCurrentQuestion(newQuestion);
     setFeedback({});
+
+    // Convert question to indices and analyze
+    const questionIndices = newQuestion.map(note => availableNotes.indexOf(note));
+    const analysis = analyzeChord(questionIndices);
+    console.log("Generated question:", newQuestion);
+    console.log("Analyzed chord:", analysis);
+    setAnalyzedChord(analysis);
+
     return newQuestion;
-  }, [numNotes, notes]);
+  }, [numNotes, availableNotes]);
 
   useEffect(() => {
     let timer;
@@ -50,6 +62,7 @@ function AppContent() {
     setScore(0);
     setTimeLeft(60);
     const newQuestion = generateNewQuestion();
+    console.log("Playing chord:", newQuestion);
     playChord(newQuestion);
   }, [generateNewQuestion, playChord]);
 
@@ -57,6 +70,7 @@ function AppContent() {
     setGameState('idle');
     setRoundActive(false);
     setCurrentQuestion([]);
+    setAnalyzedChord(null);
   }, []);
 
   const handleGuess = useCallback((note) => {
@@ -79,7 +93,8 @@ function AppContent() {
   }, [currentQuestion, feedback, generateNewQuestion, playChord]);
 
   const onPlayReference = useCallback(() => {
-    playChord(currentQuestion);
+    
+    playChord('C4');
   }, [currentQuestion, playChord]);
 
   return (
@@ -115,8 +130,8 @@ function AppContent() {
           playNote={playNote}
           showCheckmark={showCheckmark}
         />
-        {chordAnalysis && chordAnalysis.symbol && (
-          <HarmonicTree chordAnalysis={chordAnalysis} />
+        {analyzedChord && analyzedChord.chordSymbol && (
+          <HarmonicTree chordAnalysis={analyzedChord} />
         )}
       </main>
     </div>

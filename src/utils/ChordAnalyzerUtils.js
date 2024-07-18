@@ -1,5 +1,3 @@
-// src/utils/ChordAnalyzerUtils.js
-
 import {
     noteMap,
     harmonicFunctionToNote,
@@ -28,14 +26,26 @@ const selectPreferredSpelling = (sharpSpelling, flatSpelling) => {
 };
 
 export const analyzeChord = (question) => {
-    if (question.length === 0) return null;
+    if (!question || question.length === 0) {
+        
+        return null;
+    }
 
     const invalid = invalidateQuestion(question);
-    if (invalid) return null;
+    if (invalid) {
+      
+        return null;
+    }
 
     const interpretations = createHarmonicInterpretations(question);
+    
+
     const bestChord = findMostStableChord(interpretations);
-    if (!bestChord) return null;
+    if (!bestChord) {
+         
+        return null;
+    }
+     
 
     const harmonicFunctions = reorderHarmonicFunctions(bestChord.harmonicFunctions);
 
@@ -52,7 +62,7 @@ export const analyzeChord = (question) => {
 
     const chordSymbol = buildChordSymbol(preferredRoot, harmonicFunctions);
 
-    return {
+    const result = {
         root: preferredRoot,
         altRoot: preferredSpelling === 'flat' ? sharpRoot : flatRoot,
         notes: question.map(note => noteMap[note]),
@@ -63,4 +73,6 @@ export const analyzeChord = (question) => {
         preferredSpellingNotes: preferredSpelledChord.join(', '),
         chordSymbol: chordSymbol
     };
+
+    return result;
 };

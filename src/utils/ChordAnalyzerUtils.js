@@ -74,5 +74,6 @@ export const analyzeChord = (question) => {
         chordSymbol: chordSymbol
     };
 
+      
     return result;
 };

@@ -4,7 +4,6 @@ import Navbar from './components/NavBar';
 import GameCenter from './components/GameControlCenter';
 import Piano from './components/Piano';
 import { PianoProvider, usePiano } from './PianoContext';
-import ChordAnalyzer from './components/ChordAnalyzer';
 import HarmonicTree from './components/HarmonicTree';
 import * as Tone from 'tone';
 
@@ -26,157 +25,79 @@ function AppContent() {
     const noteSet = new Set();
 
     while (uniqueNotes.length < count) {
-      const randomIndex = Math.floor(Math.random() * availableNotes.length);
-      const note = availableNotes[randomIndex];
-
-      const pitch = note.slice(0, -1);
-      if (!noteSet.has(pitch)) {
-        uniqueNotes.push(note);
-        noteSet.add(pitch);
+      const randomNote = availableNotes[Math.floor(Math.random() * availableNotes.length)];
+      if (!noteSet.has(randomNote)) {
+        noteSet.add(randomNote);
+        uniqueNotes.push(randomNote);
       }
     }
-
     return uniqueNotes;
   }, []);
 
-  const generateNewQuestion = useCallback(() => {
-    const availableNotes = notes.filter(note => !note.startsWith('C1') && !note.startsWith('D1') && !note.startsWith('E1') && !note.startsWith('F1') && !note.startsWith('G1') && !note.startsWith('A1') && !note.startsWith('B1'));
-    const newQuestion = generateUniqueNotes(availableNotes, numNotes);
-    setCurrentQuestion(newQuestion);
-    setGuessedNotes([]);
-    setFeedback({});
-    setGameState('playing');
-    return newQuestion;
-  }, [notes, numNotes, generateUniqueNotes]);
-
-  useEffect(() => {
-    generateNewQuestion();
-  }, [generateNewQuestion]);
-
-  useEffect(() => {
-    let timer;
-    if (roundActive && timeLeft > 0) {
-      timer = setInterval(() => {
-        setTimeLeft((prevTime) => prevTime - 1);
-      }, 1000);
-    } else if (timeLeft === 0) {
-      endRound();
-    }
-    return () => clearInterval(timer);
-  }, [roundActive, timeLeft]);
-
-  const handleGuess = (note) => {
-    if (gameState !== 'playing' || !roundActive) return;
-
-    if (currentQuestion.includes(note) && !guessedNotes.includes(note)) {
-      setFeedback(prev => ({ ...prev, [note]: 'correct' }));
-      setGuessedNotes(prev => [...prev, note]);
-
-      if (guessedNotes.length + 1 === numNotes) {
-        setShowCheckmark(true);
-        setScore(prevScore => prevScore + 10 * numNotes);
-        setFeedback({});
-
-        setTimeout(() => {
-          playDingSound();
-          setTimeout(() => {
-            setShowCheckmark(false);
-            const newQuestion = generateNewQuestion();
-            playChord(newQuestion);
-          }, 1000);
-        }, 1000);
-      }
-    } else if (!currentQuestion.includes(note)) {
-      setFeedback(prev => ({ ...prev, [note]: 'incorrect' }));
-      setScore(prevScore => Math.max(0, prevScore - 2));
-    }
-  };
-
-  const playDingSound = () => {
-    try {
-      const audio = new Audio(require('./assets/media/piano/correct.mp3'));
-      audio.play()
-    } catch (err) {
-      console.error('Error in playDingSound function', err);
-    }
-  };
-
   const playChord = (chord) => {
-    const now = Tone.now();
-    chord.forEach(note => playNote(note, now));
+    if (pianoSound) {
+      const now = Tone.now();
+      chord.forEach((note, index) => {
+        const synth = new Tone.Synth().toDestination();
+        synth.triggerAttackRelease(note, "8n", now + index * 0.1);
+      });
+    }
   };
 
-  const startRound = () => {
+  const startRound = useCallback(() => {
     setRoundActive(true);
-    setTimeLeft(60);
-    setScore(0);
-    const newQuestion = generateNewQuestion();
+    setGameState('playing');
+    const newQuestion = generateUniqueNotes(notes, numNotes);
+    setCurrentQuestion(newQuestion);
     playChord(newQuestion);
-  };
+  }, [generateUniqueNotes, notes, numNotes, playChord]);
 
-  const endRound = () => {
+  const endRound = useCallback(() => {
     setRoundActive(false);
-    setGameState('finished');
-  };
-
-  const handlePlayReference = () => {
-    setScore(prevScore => Math.max(0, prevScore - 2));
-    playNote('C4', undefined, 0.5);
-  };
-
-  const chordAnalysis = ChordAnalyzer({ currentQuestion });
+    setGameState('ready');
+  }, []);
 
   return (
-    <div className="App has-background-dark has-text-light">
-      <Navbar
-        numNotes={numNotes}
-        setNumNotes={setNumNotes}
-        pianoSound={pianoSound}
-        setPianoSound={setPianoSound}
-      />
+    <div className="App">
+      <Navbar numNotes={numNotes} setNumNotes={setNumNotes} pianoSound={pianoSound} setPianoSound={setPianoSound} />
       <div className="game-container">
         <div className="main-game-area">
           <GameCenter
-            feedback={feedback}
-            setFeedback={setFeedback}
             gameState={gameState}
             setGameState={setGameState}
             currentQuestion={currentQuestion}
-            setCurrentQuestion={setCurrentQuestion}
-            generateNewQuestion={generateNewQuestion}
+            generateNewQuestion={generateUniqueNotes}
             playNote={playNote}
-            numNotes={numNotes}
             score={score}
             setScore={setScore}
             timeLeft={timeLeft}
             roundActive={roundActive}
             startRound={startRound}
-            onPlayReference={handlePlayReference}
             endRound={endRound}
-            playChord={playChord}
           />
           <Piano
             feedback={feedback}
             gameState={gameState}
             currentQuestion={currentQuestion}
-            onGuess={handleGuess}
+            guessedNotes={guessedNotes}
+            onGuess={setGuessedNotes}
             pianoSound={pianoSound}
             playNote={playNote}
             showCheckmark={showCheckmark}
           />
         </div>
-        <HarmonicTree chordAnalysis={chordAnalysis} />
+        <div className="harmonic-tree-container">
+          <HarmonicTree currentQuestion={currentQuestion} />
+        </div>
       </div>
     </div>
   );
 }
 
-function App() {
-  return (
-    <PianoProvider>
-      <AppContent />
-    </PianoProvider>
-  );
-}
+const App = () => (
+  <PianoProvider>
+    <AppContent />
+  </PianoProvider>
+);
 
 export default App;

@@ -1,31 +1,32 @@
 import React from 'react';
 import '../styles/HarmonicTree.css';
-import { getNoteFromFunction } from '../utils/HarmonicUtils';
+import { analyzeChord } from '../utils/ChordAnalyzerUtils';
 
-const HarmonicTree = ({ chordAnalysis }) => {
+const HarmonicTree = ({ currentQuestion }) => {
     const harmonicLevels = ['1', '3', '5', '7', '9', '11', '13'];
 
-    if (!chordAnalysis || !chordAnalysis.symbol) {
+    const analyzedChord = analyzeChord(currentQuestion);
+
+    if (!analyzedChord || !analyzedChord.chordSymbol) {
         return null;
     }
 
-    const { symbol, functions, spelledNotes } = chordAnalysis;
-    const rootNote = symbol.split(/[^A-G#b]/)[0];
+    const { chordSymbol, harmonicFunctionsFound, spelledChord, enharmonicSpelledChord, root, altRoot, notes } = analyzedChord;
 
     return (
         <div className="harmonic-tree">
-            <div className="chord-symbol">{symbol}</div>
+            <div className="chord-symbol">{chordSymbol}</div>
             <div className="tree-container">
                 {harmonicLevels.map((level, index) => {
-                    const functionIndex = functions.findIndex(func =>
+                    const functionIndex = harmonicFunctionsFound.findIndex(func =>
                         func.replace(/[♭♯]/, '') === level
                     );
 
                     const note = functionIndex !== -1
-                        ? getNoteFromFunction(rootNote, functions[functionIndex], functions)
+                        ? notes[functionIndex]
                         : '';
 
-                    const harmonicFunction = functionIndex !== -1 ? functions[functionIndex] : '';
+                    const harmonicFunction = functionIndex !== -1 ? harmonicFunctionsFound[functionIndex] : '';
 
                     return (
                         <div key={level} className="tree-level" style={{ bottom: `${index * 14}%` }}>

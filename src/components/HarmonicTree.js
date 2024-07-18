@@ -15,7 +15,8 @@ const HarmonicTree = ({ chordAnalysis }) => {
         );
     }
 
-    const { chordSymbol, harmonicFunctionsFound, notes } = chordAnalysis;
+    const { chordSymbol, harmonicFunctionsFound, preferredSpellingNotes } = chordAnalysis;
+    const preferredSpellingNotesArray = preferredSpellingNotes.split(', ');
 
     return (
         <div className="harmonic-tree">
@@ -27,7 +28,7 @@ const HarmonicTree = ({ chordAnalysis }) => {
                     );
 
                     const note = functionIndex !== -1
-                        ? notes[functionIndex]
+                        ? preferredSpellingNotesArray[functionIndex]
                         : '';
 
                     const harmonicFunction = functionIndex !== -1 ? harmonicFunctionsFound[functionIndex] : '';

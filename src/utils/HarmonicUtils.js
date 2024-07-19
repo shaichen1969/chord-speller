@@ -89,19 +89,17 @@ const convertToTensions = (harmonicFunctions) => {
 const invalidateQuestion = (question) => {
     const sortedQuestion = [...question].sort((a, b) => a - b);
 
-    // Check for three consecutive semitones within the array
+    // Check for three half steps anywhere in the chord, regardless of octave
     for (let i = 0; i < sortedQuestion.length - 2; i++) {
-        if ((sortedQuestion[i + 1] - sortedQuestion[i] === 1) &&
-            (sortedQuestion[i + 2] - sortedQuestion[i + 1] === 1)) {
-            return true;
+        for (let j = i + 1; j < sortedQuestion.length - 1; j++) {
+            for (let k = j + 1; k < sortedQuestion.length; k++) {
+                const interval1 = (sortedQuestion[j] - sortedQuestion[i] + 12) % 12;
+                const interval2 = (sortedQuestion[k] - sortedQuestion[j] + 12) % 12;
+                if (interval1 === 1 && interval2 === 1) {
+                    return true;
+                }
+            }
         }
-    }
-
-    // Check for wrapping around from highest to lowest note
-    if ((sortedQuestion[sortedQuestion.length - 1] === 11 && sortedQuestion[0] === 0 && sortedQuestion[1] === 1) ||
-        (sortedQuestion[sortedQuestion.length - 2] === 11 && sortedQuestion[sortedQuestion.length - 1] === 0 && sortedQuestion[0] === 1) ||
-        (sortedQuestion[sortedQuestion.length - 1] === 11 && sortedQuestion[0] === 0 && sortedQuestion[1] === 2)) {
-        return true;
     }
 
     return false;

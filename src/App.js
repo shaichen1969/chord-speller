@@ -34,12 +34,16 @@ function AppContent() {
     setCurrentQuestion(newQuestion);
     setFeedback({});
 
-    // Convert question to indices and analyze
     const questionIndices = newQuestion.map(note => availableNotes.indexOf(note));
     const analysis = analyzeChord(questionIndices);
     console.log("Generated question:", newQuestion);
     console.log("Analyzed chord:", analysis);
-    setAnalyzedChord(analysis);
+
+    if (analysis === null || !analysis.chordSymbol) {
+      setAnalyzedChord({ chordSymbol: "No stable chords found" });
+    } else {
+      setAnalyzedChord(analysis);
+    }
 
     return newQuestion;
   }, [numNotes, availableNotes]);
@@ -93,9 +97,8 @@ function AppContent() {
   }, [currentQuestion, feedback, generateNewQuestion, playChord]);
 
   const onPlayReference = useCallback(() => {
-    
     playChord('C4');
-  }, [currentQuestion, playChord]);
+  }, [playChord]);
 
   return (
     <div className="App">
@@ -130,7 +133,7 @@ function AppContent() {
           playNote={playNote}
           showCheckmark={showCheckmark}
         />
-        {analyzedChord && analyzedChord.chordSymbol && (
+        {analyzedChord && (
           <HarmonicTree chordAnalysis={analyzedChord} />
         )}
       </main>

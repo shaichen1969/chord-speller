@@ -98,24 +98,22 @@ const convertToTensions = (harmonicFunctions) => {
 const invalidateQuestion = (question) => {
     const sortedQuestion = [...question].sort((a, b) => a - b);
 
-    // Check for any combination of three half steps
+    // Check for any combination of three notes with half steps between them
     for (let i = 0; i < sortedQuestion.length - 2; i++) {
-        const interval1 = (sortedQuestion[i + 1] - sortedQuestion[i] + 12) % 12;
-        const interval2 = (sortedQuestion[i + 2] - sortedQuestion[i + 1] + 12) % 12;
-        if (interval1 + interval2 <= 3) {
-            return true; // Invalid if three notes are within a minor third
+        for (let j = i + 1; j < sortedQuestion.length - 1; j++) {
+            for (let k = j + 1; k < sortedQuestion.length; k++) {
+                const interval1 = (sortedQuestion[j] - sortedQuestion[i] + 12) % 12;
+                const interval2 = (sortedQuestion[k] - sortedQuestion[j] + 12) % 12;
+                if (interval1 === 1 && interval2 === 1) {
+                    return true; // Invalid if there are three consecutive half steps
+                }
+            }
         }
-    }
-
-    // Check for wrapping around from highest to lowest note
-    const intervalWrap1 = (sortedQuestion[0] - sortedQuestion[sortedQuestion.length - 1] + 12) % 12;
-    const intervalWrap2 = (sortedQuestion[1] - sortedQuestion[0] + 12) % 12;
-    if (intervalWrap1 + intervalWrap2 <= 3) {
-        return true; // Invalid if wrapped interval is within a minor third
     }
 
     return false;
 };
+
 
 const createHarmonicInterpretations = (question) => {
     let interpretations = {};

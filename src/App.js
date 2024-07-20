@@ -13,6 +13,7 @@ function AppContent() {
   const [analyzedChord, setAnalyzedChord] = useState(null);
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState({});
+  const [correctGuesses, setCorrectGuesses] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
   const [roundActive, setRoundActive] = useState(false);
   const [numNotes, setNumNotes] = useState(3);
@@ -33,6 +34,7 @@ function AppContent() {
 
     setCurrentQuestion(newQuestion);
     setFeedback({});
+    setCorrectGuesses(0);
 
     const questionIndices = newQuestion.map(note => availableNotes.indexOf(note));
     const analysis = analyzeChord(questionIndices);
@@ -75,14 +77,16 @@ function AppContent() {
     setRoundActive(false);
     setCurrentQuestion([]);
     setAnalyzedChord(null);
+    setCorrectGuesses(0);
   }, []);
 
   const handleGuess = useCallback((note) => {
-    if (currentQuestion.includes(note)) {
+    if (currentQuestion.includes(note) && !feedback[note]) {
       setFeedback(prevFeedback => ({ ...prevFeedback, [note]: 'correct' }));
       setScore(prevScore => prevScore + 10);
+      setCorrectGuesses(prevCorrectGuesses => prevCorrectGuesses + 1);
 
-      if (Object.keys(feedback).length + 1 === currentQuestion.length) {
+      if (correctGuesses + 1 === currentQuestion.length) {
         setShowCheckmark(true);
         setTimeout(() => {
           setShowCheckmark(false);
@@ -90,11 +94,11 @@ function AppContent() {
           playChord(newQuestion);
         }, 1000);
       }
-    } else {
+    } else if (!feedback[note]) {
       setFeedback(prevFeedback => ({ ...prevFeedback, [note]: 'incorrect' }));
       setScore(prevScore => Math.max(0, prevScore - 5));
     }
-  }, [currentQuestion, feedback, generateNewQuestion, playChord]);
+  }, [currentQuestion, feedback, correctGuesses, generateNewQuestion, playChord]);
 
   const onPlayReference = useCallback(() => {
     playChord('C4');

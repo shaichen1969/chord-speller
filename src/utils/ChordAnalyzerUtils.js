@@ -27,25 +27,19 @@ const selectPreferredSpelling = (sharpSpelling, flatSpelling) => {
 
 export const analyzeChord = (question) => {
     if (!question || question.length === 0) {
-        
         return null;
     }
 
     const invalid = invalidateQuestion(question);
     if (invalid) {
-      
         return null;
     }
 
     const interpretations = createHarmonicInterpretations(question);
-    
-
     const bestChord = findMostStableChord(interpretations);
     if (!bestChord) {
-         
         return null;
     }
-     
 
     const harmonicFunctions = reorderHarmonicFunctions(bestChord.harmonicFunctions);
 
@@ -68,12 +62,11 @@ export const analyzeChord = (question) => {
         notes: question.map(note => noteMap[note]),
         harmonicFunctionsFound: harmonicFunctions,
         spelledChord: preferredSpelledChord.join(', '),
-        enharmonicSpelledChord: preferredSpelling === 'flat' ? sharpSpelledChord.join(', ') : flatSpelledChord.join(', '),
+        enharmonicSpelledChord: (preferredSpelling === 'flat' ? sharpSpelledChord : flatSpelledChord).join(', '),
         preferredSpelling: preferredSpelling,
         preferredSpellingNotes: preferredSpelledChord.join(', '),
         chordSymbol: chordSymbol
     };
 
-      
     return result;
 };

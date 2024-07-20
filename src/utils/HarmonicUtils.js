@@ -29,6 +29,7 @@ const harmonicFunctionMap = {
     6: '♭5', 7: '5', 8: '♯5', 9: '13', 10: '♭7', 11: '7'
 };
 
+
 const displayOrder = ['1', '♭3', '3', '♭5', '5', '♯5', '♭7', '7', '♭9', '9', '♯9', '11', '♯11', '♭13', '13'];
 
 const scoreMap = {
@@ -40,26 +41,34 @@ const scoreMap = {
 const harmonicFunctionToNote = (root, harmonicFunctions) => {
     const scale = majorScales[root];
     if (!scale) return [];
-    //run simplify on all notes
 
     return harmonicFunctions.map(func => {
+        let noteIndex;
+        let accidental = '';
         switch (func) {
-            case '1': return simplifyNote(scale[0]);
-            case '♭3': return simplifyNote(scale[2] + '♭');
-            case '3': return simplifyNote(scale[2]);
-            case '♭5': return simplifyNote(scale[4] + '♭');
-            case '5': return simplifyNote(scale[4]);
-            case '♭7': return simplifyNote(scale[6] + '♭');
-            case '7': return simplifyNote(scale[6]);
-            case '9': return simplifyNote(scale[1]);
-            case '♭9': return simplifyNote(scale[1] + '♭');
-            case '♯9': return simplifyNote(scale[1] + '♯');
-            case '11': return simplifyNote(scale[3]);
-            case '♯11': return simplifyNote(scale[3] + '♯');
-            case '♭13': return simplifyNote(scale[5] + '♭');
-            case '13': return simplifyNote(scale[5]);
+            case '1': noteIndex = 0; break;
+            case '♭3': noteIndex = 2; accidental = '♭'; break;
+            case '3': noteIndex = 2; break;
+            case '♭5': noteIndex = 4; accidental = '♭'; break;
+            case '5': noteIndex = 4; break;
+            case '♯5': noteIndex = 4; accidental = '♯'; break;
+            case '♭7': noteIndex = 6; accidental = '♭'; break;
+            case '7': noteIndex = 6; break;
+            case '9': noteIndex = 1; break;
+            case '♭9': noteIndex = 1; accidental = '♭'; break;
+            case '♯9': noteIndex = 1; accidental = '♯'; break;
+            case '11': noteIndex = 3; break;
+            case '♯11': noteIndex = 3; accidental = '♯'; break;
+            case '♭13': noteIndex = 5; accidental = '♭'; break;
+            case '13': noteIndex = 5; break;
             default: return '';
         }
+
+        let note = scale[noteIndex];
+        if (accidental) {
+            note = simplifyNote(note + accidental);
+        }
+        return note;
     }).filter(note => note !== '');
 };
 
@@ -113,19 +122,9 @@ const createHarmonicInterpretations = (question) => {
             harmonicFunctionMap[(number - root + 12) % 12]
         );
 
-        // Invalidate chord if it contains both ♭3 and ♯5
-        if (harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♯5')) {
-            return;
-        }
-
-        // Invalidate chord if it contains 7 and ♭9
-        if (harmonicFunctions.includes('7') && harmonicFunctions.includes('♭9')) {
-            return;
-        }
-
-        // Invalidate chord if it contains ♯5 without 3 or ♭3
-        if (harmonicFunctions.includes('♯5') && !harmonicFunctions.includes('3') && !harmonicFunctions.includes('♭3')) {
-            return;
+        // Special case for fully diminished seventh chord
+        if (harmonicFunctions.includes('1') && harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♭5') && harmonicFunctions.includes('13')) {
+            harmonicFunctions = ['1', '♭3', '♭5', '♭♭7'];
         }
 
         const tensionFunctions = convertToTensions([...harmonicFunctions]); // Copy array for comparison
@@ -140,6 +139,7 @@ const createHarmonicInterpretations = (question) => {
 
     return interpretations;
 };
+
 
 const simplifyNote = (note) => {
     if (note === "F♭") return "E";
@@ -241,6 +241,7 @@ const findMostStableChord = (interpretations) => {
 
     return bestChord;
 };
+
 export const buildChordSymbol = (root, harmonicFunctions) => {
     if (harmonicFunctions.length === 1 && harmonicFunctions[0] === '1') {
         return root;
@@ -279,12 +280,22 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
 
     // Add triad quality
     if (hasFlat3) {
-        symbol += 'm';
+        if (hasFlat5 && !hasSharp5) {
+            symbol += '○'; // Diminished triad
+        } else {
+            symbol += 'm'; // Minor triad
+        }
+    } else {
+        if (hasSharp5) {
+            symbol += '+'; // Augmented triad
+        }
     }
-    if (hasFlat5) {
+
+    // Add altered fifth if it's not part of a special case
+    if (hasFlat5 && !symbol.includes('○')) {
         symbol += '(♭5)';
-    } else if (hasSharp5) {
-        symbol += '+';
+    } else if (hasSharp5 && !symbol.includes('+')) {
+        symbol += '(♯5)';
     }
 
     // Add seventh
@@ -327,15 +338,10 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
         symbol += ' no ' + missingOvertones.join(',');
     }
 
-    // Apply specific replacements
-    if (symbol.endsWith('m(♭5)')) {
-        symbol = symbol.replace('m(♭5)', '°');
-    } else if (hasFlat3 && hasFlat5 && hasFlat7) {
-        symbol = symbol.replace('m7(♭5)', 'ø');
-    }
-
     return symbol;
 };
+
+
 
 // Function to convert harmonic function to display format
 export const convertHarmonicFunctionForDisplay = (func) => {

@@ -1,5 +1,6 @@
 import React from 'react';
 import '../styles/HarmonicTree.css';
+import { convertHarmonicFunctionForDisplay } from '../utils/HarmonicUtils';
 
 const HarmonicTree = ({ chordAnalysis }) => {
     const harmonicLevels = ['1', '3', '5', '7', '9', '11', '13'];
@@ -48,7 +49,9 @@ const HarmonicTree = ({ chordAnalysis }) => {
                                     {note && <span className="note">{note}</span>}
                                 </div>
                             </div>
-                            <div className="harmonic-function">{harmonicFunction}</div>
+                            <div className="harmonic-function">
+                                {convertHarmonicFunctionForDisplay(harmonicFunction)}
+                            </div>
                         </div>
                     );
                 })}

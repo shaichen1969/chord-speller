@@ -137,7 +137,7 @@ function AppContent() {
           playNote={playNote}
           showCheckmark={showCheckmark}
         />
-        {analyzedChord && (
+        {currentQuestion.length < 6 && analyzedChord && (
           <HarmonicTree chordAnalysis={analyzedChord} />
         )}
       </main>

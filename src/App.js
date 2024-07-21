@@ -88,10 +88,11 @@ function AppContent() {
   const handleGuess = useCallback((note) => {
     if (currentQuestion.includes(note) && !feedback[note]) {
       setFeedback(prevFeedback => ({ ...prevFeedback, [note]: 'correct' }));
-      setScore(prevScore => prevScore + 10);
       setCorrectGuesses(prevCorrectGuesses => prevCorrectGuesses + 1);
 
       if (correctGuesses + 1 === currentQuestion.length) {
+        // Award points only when the entire chord is guessed correctly
+        setScore(prevScore => prevScore + (5 * numNotes));
         setShowCheckmark(true);
         setTimeout(() => {
           setShowCheckmark(false);
@@ -101,12 +102,19 @@ function AppContent() {
       }
     } else if (!feedback[note]) {
       setFeedback(prevFeedback => ({ ...prevFeedback, [note]: 'incorrect' }));
-      setScore(prevScore => Math.max(0, prevScore - 5));
+      setScore(prevScore => Math.max(0, prevScore - 5)); // 5-point penalty for wrong guess
     }
-  }, [currentQuestion, feedback, correctGuesses, generateNewQuestion, playChord]);
+  }, [currentQuestion, feedback, correctGuesses, generateNewQuestion, playChord, numNotes]);
+
+  const handleSkip = useCallback(() => {
+    const newQuestion = generateNewQuestion();
+    playChord(newQuestion);
+    setScore(prevScore => Math.max(0, prevScore - (5 * numNotes))); // Penalty for skipping
+  }, [generateNewQuestion, playChord, numNotes]);
 
   const onPlayReference = useCallback(() => {
     playChord('C4');
+    setScore(prevScore => Math.max(0, prevScore - 5)); // 5-point penalty for using reference
   }, [playChord]);
 
   const handleSetNumNotes = useCallback((newNumNotes) => {
@@ -146,6 +154,7 @@ function AppContent() {
           onPlayReference={onPlayReference}
           gameLength={gameLength}
           finalScore={finalScore}
+          onSkip={handleSkip}
         />
         <Piano
           feedback={feedback}

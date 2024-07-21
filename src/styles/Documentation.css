@@ -37,18 +37,22 @@
     margin-top: 1rem;
     font-size: 0.9rem;
     line-height: 1.6;
+    color: #ffffff;
+    /* Default text color */
 }
 
 .documentation-text h3 {
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
     color: #3273dc;
+    /* Changed to blue */
 }
 
 .documentation-text h4 {
     margin-top: 1rem;
     margin-bottom: 0.5rem;
-    color: #23d160;
+    color: #3273dc;
+    /* Changed to blue */
 }
 
 .documentation-text ul,

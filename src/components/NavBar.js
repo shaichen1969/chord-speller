@@ -1,3 +1,5 @@
+// Navbar.js
+
 import React, { useState } from 'react';
 import { Settings, HelpCircle } from 'lucide-react';
 import '../styles/NavBar.css';

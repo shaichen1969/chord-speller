@@ -1,3 +1,5 @@
+// App.js
+
 import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from './components/NavBar';
 import Piano from './components/Piano';
@@ -5,6 +7,7 @@ import GameCenter from './components/GameControlCenter';
 import { analyzeChord } from './utils/ChordAnalyzerUtils';
 import HarmonicTree from './components/HarmonicTree';
 import { PianoProvider, usePiano } from './PianoContext';
+import Documentation from './components/Documentation';
 import './styles/App.css';
 
 function AppContent() {
@@ -21,6 +24,7 @@ function AppContent() {
   const [pianoSound, setPianoSound] = useState(true);
   const [gameLength, setGameLength] = useState(60);
   const [showCheckmark, setShowCheckmark] = useState(false);
+  const [isDocumentationOpen, setIsDocumentationOpen] = useState(false);
   const { playNote, playChord, notes } = usePiano();
   const availableNotes = ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'];
 
@@ -127,6 +131,14 @@ function AppContent() {
     endRound();
   }, [endRound]);
 
+  const openDocumentation = useCallback(() => {
+    setIsDocumentationOpen(true);
+  }, []);
+
+  const closeDocumentation = useCallback(() => {
+    setIsDocumentationOpen(false);
+  }, []);
+
   return (
     <div className="App">
       <Navbar
@@ -136,6 +148,7 @@ function AppContent() {
         setPianoSound={setPianoSound}
         gameLength={gameLength}
         setGameLength={handleSetGameLength}
+        openDocumentation={openDocumentation}
       />
       <main className="app-content">
         <GameCenter
@@ -169,6 +182,7 @@ function AppContent() {
           <HarmonicTree chordAnalysis={analyzedChord} />
         )}
       </main>
+      <Documentation isOpen={isDocumentationOpen} onClose={closeDocumentation} />
     </div>
   );
 }

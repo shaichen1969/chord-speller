@@ -16,9 +16,84 @@ const Documentation = ({ isOpen, onClose }) => {
                     <ol>
                         <li><strong>Start a Round:</strong> Kick off your training session by clicking the "Go" button. This sets the game in motion, initializing the game state, setting your score to zero, and generating a fresh chord question.</li>
                         <li><strong>Answering Questions:</strong> Listen carefully to the chord and identify the notes by selecting the correct keys on the virtual piano. Each correct note will be marked, and your score will increase.</li>
-                        <li><strong>Scoring Mechanism:</strong> Each correct guess earns you 10 points multiplied by the number of notes in the chord. Incorrect guesses are penalized by a 5-point deduction. Skipping a chord results in a 5-point penalty.</li>
                         <li><strong>Game Modes:</strong> Choose your challenge with game lengths set to 1 minute, 2 minutes, 3 minutes, or "Eternity". When the timer runs out (except in Eternity mode), the round ends, and your final score is displayed.</li>
                         <li><strong>Ending a Round:</strong> Wrap up your session at any time by clicking the "End Round" button, and see how well you've done with your final score.</li>
+                    </ol>
+
+                    <h3>Scoring System</h3>
+                    <h4>Overview</h4>
+                    <p>The scoring system is designed to provide a clear metric for player progress and to determine when a player is ready to advance to more complex chords. The system rewards accuracy and penalizes mistakes, with the goal of encouraging careful listening and precise identification of chord components.</p>
+
+                    <h4>Scoring Rules</h4>
+                    <ol>
+                        <li><strong>Correct Chord Identification:</strong>
+                            <ul>
+                                <li>Points Awarded: 5 points × number of notes in the chord</li>
+                                <li>Example: Correctly identifying a 3-note chord awards 15 points</li>
+                            </ul>
+                        </li>
+                        <li><strong>Incorrect Guess:</strong>
+                            <ul>
+                                <li>Penalty: 5 points deducted for each incorrect guess</li>
+                                <li>This applies to individual note guesses within a chord</li>
+                            </ul>
+                        </li>
+                        <li><strong>Using Reference Pitch:</strong>
+                            <ul>
+                                <li>Penalty: 5 points deducted each time the reference pitch is played</li>
+                            </ul>
+                        </li>
+                        <li><strong>Skipping a Chord:</strong>
+                            <ul>
+                                <li>Penalty: 5 points × number of notes in the skipped chord</li>
+                                <li>Example: Skipping a 3-note chord results in a 15-point deduction</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <h4>Progression Benchmark</h4>
+                    <p>A score of approximately 100 points in a one-minute game is considered a good benchmark for moving to more complex chords. This target encourages players to:</p>
+                    <ul>
+                        <li>Accurately identify chords</li>
+                        <li>Minimize incorrect guesses</li>
+                        <li>Use the reference pitch sparingly</li>
+                        <li>Avoid skipping chords unless necessary</li>
+                    </ul>
+
+                    <h4>Strategy Tips</h4>
+                    <ol>
+                        <li>Prioritize accuracy over speed. It's better to take time and correctly identify a chord than to make quick, incorrect guesses.</li>
+                        <li>Use the reference pitch judiciously. While it can help orient you, frequent use will significantly impact your score.</li>
+                        <li>Only skip chords if you're truly stuck. The penalty for skipping is substantial, especially for more complex chords.</li>
+                        <li>Focus on identifying the root and quality of the chord first, then work on pinpointing additional notes.</li>
+                    </ol>
+
+                    <h4>Examples</h4>
+                    <ol>
+                        <li>Player correctly identifies a 3-note chord:
+                            <ul>
+                                <li>Score: +15 points (5 × 3 notes)</li>
+                            </ul>
+                        </li>
+                        <li>Player makes two incorrect guesses before correctly identifying a 4-note chord:
+                            <ul>
+                                <li>Penalty for incorrect guesses: -10 points (5 × 2 guesses)</li>
+                                <li>Score for correct identification: +20 points (5 × 4 notes)</li>
+                                <li>Net score: +10 points</li>
+                            </ul>
+                        </li>
+                        <li>Player uses the reference pitch twice and then correctly identifies a 3-note chord:
+                            <ul>
+                                <li>Penalty for reference use: -10 points (5 × 2 uses)</li>
+                                <li>Score for correct identification: +15 points (5 × 3 notes)</li>
+                                <li>Net score: +5 points</li>
+                            </ul>
+                        </li>
+                        <li>Player skips a 5-note chord:
+                            <ul>
+                                <li>Penalty: -25 points (5 × 5 notes)</li>
+                            </ul>
+                        </li>
                     </ol>
 
                     <h3>How the Harmonic Ear Trainer Analyzes Chords</h3>
@@ -90,12 +165,6 @@ const Documentation = ({ isOpen, onClose }) => {
                             <ul>
                                 <li><strong>Options:</strong> On, Off.</li>
                                 <li><strong>Usage:</strong> Turn off the sound if you prefer to practice silently or to avoid disturbing others.</li>
-                            </ul>
-                        </li>
-                        <li><strong>Chord Complexity:</strong> Adjusts the complexity of the chords generated.
-                            <ul>
-                                <li><strong>Options:</strong> Simple, Intermediate, Complex.</li>
-                                <li><strong>Usage:</strong> Start with simple chords and gradually increase the complexity as your skills improve.</li>
                             </ul>
                         </li>
                     </ul>

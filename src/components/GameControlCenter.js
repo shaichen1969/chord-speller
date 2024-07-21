@@ -100,6 +100,7 @@ const GameCenter = ({
     roundActive,
     startRound,
     onPlayReference,
+    onSkip,
     endRound,
     numNotes,
     playChord,
@@ -114,9 +115,7 @@ const GameCenter = ({
     };
 
     const handleSkip = () => {
-        const newQuestion = generateNewQuestion();
-        playChord(newQuestion);
-        setScore(prevScore => Math.max(0, prevScore - 5));
+        onSkip();
     };
 
     const handlePlayReference = () => {

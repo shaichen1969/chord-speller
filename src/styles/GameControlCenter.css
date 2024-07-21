@@ -3,7 +3,7 @@
     text-align: center;
     background-color: #363636;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); 
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -113,6 +113,7 @@
     padding-left: 1rem;
     padding-right: 1rem;
 }
+
 .button.is-dark-blue-gray {
     background-color: #1c1f26;
     /* Very dark blue-gray color */
@@ -127,6 +128,7 @@
     /* Slightly lighter blue-gray on hover */
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
 }
+
 @media screen and (max-width: 768px) {
     .game-center-content {
         padding: 1rem;
@@ -162,5 +164,38 @@
 
     .button.is-medium {
         width: 100%;
+    }
+
+    .react-tooltip {
+        background-color: rgba(44, 62, 80, 0.9) !important;
+        color: #ecf0f1 !important;
+        border-radius: 4px !important;
+        font-size: 14px !important;
+        padding: 8px 12px !important;
+        z-index: 9999 !important;
+    }
+
+    .button {
+        transition: all 0.3s ease;
+    }
+
+    .button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .button:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Add this at the end of your GameControlCenter.css file if it's not already there */
+    .react-tooltip {
+        background-color: rgba(44, 62, 80, 0.9) !important;
+        color: #ecf0f1 !important;
+        border-radius: 4px !important;
+        font-size: 14px !important;
+        padding: 8px 12px !important;
+        z-index: 9999 !important;
     }
 }

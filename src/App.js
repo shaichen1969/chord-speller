@@ -6,6 +6,7 @@ import { analyzeChord } from './utils/ChordAnalyzerUtils';
 import HarmonicTree from './components/HarmonicTree';
 import { PianoProvider, usePiano } from './PianoContext';
 import './styles/App.css';
+import 'react-tooltip/dist/react-tooltip.css';
 
 function AppContent() {
   const [gameState, setGameState] = useState('idle');
@@ -18,7 +19,7 @@ function AppContent() {
   const [roundActive, setRoundActive] = useState(false);
   const [numNotes, setNumNotes] = useState(3);
   const [pianoSound, setPianoSound] = useState(true);
-  const [gameLength, setGameLength] = useState(60); // Default to 1 minute
+  const [gameLength, setGameLength] = useState(60);
   const [showCheckmark, setShowCheckmark] = useState(false);
   const { playNote, playChord, notes } = usePiano();
   const availableNotes = ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'];
@@ -80,7 +81,7 @@ function AppContent() {
     setAnalyzedChord(null);
     setCorrectGuesses(0);
     setScore(0);
-    setTimeLeft(gameLength);  // Reset timeLeft to the current gameLength
+    setTimeLeft(gameLength);
   }, [gameLength]);
 
   const handleGuess = useCallback((note) => {

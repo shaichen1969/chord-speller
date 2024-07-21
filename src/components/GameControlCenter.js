@@ -1,6 +1,7 @@
-import React from 'react';
-import '../styles/GameControlCenter.css';
+import React, { useCallback } from 'react';
 import { Play, SkipForward, Music, Square } from 'lucide-react';
+import { Tooltip } from 'react-tooltip';
+import '../styles/GameControlCenter.css';
 import * as Tone from 'tone';
 
 const GameControls = ({ onPlay, onSkip, onPlayReference, onStop, gameState, roundActive }) => {
@@ -11,33 +12,49 @@ const GameControls = ({ onPlay, onSkip, onPlayReference, onStop, gameState, roun
                 onClick={onPlay}
                 disabled={gameState !== 'playing' || !roundActive}
                 aria-label="Play"
+                data-tooltip-id="play-tooltip"
+                data-tooltip-content="Play question"
             >
                 <Play />
             </button>
+
             <button
                 className="button is-warning is-medium"
                 onClick={onSkip}
                 disabled={gameState !== 'playing' || !roundActive}
                 aria-label="Skip"
+                data-tooltip-id="skip-tooltip"
+                data-tooltip-content="Skip question"
             >
                 <SkipForward />
             </button>
+
             <button
                 className="button is-success is-medium"
                 onClick={onPlayReference}
                 disabled={!roundActive}
                 aria-label="Play Reference"
+                data-tooltip-id="reference-tooltip"
+                data-tooltip-content="Play reference C"
             >
                 <Music />
             </button>
+
             <button
                 className="button is-danger is-medium"
                 onClick={onStop}
                 disabled={!roundActive}
                 aria-label="Stop"
+                data-tooltip-id="stop-tooltip"
+                data-tooltip-content="End round"
             >
                 <Square />
             </button>
+
+            <Tooltip id="play-tooltip" place="top" delayShow={1000} />
+            <Tooltip id="skip-tooltip" place="top" delayShow={1000} />
+            <Tooltip id="reference-tooltip" place="top" delayShow={1000} />
+            <Tooltip id="stop-tooltip" place="top" delayShow={1000} />
         </div>
     );
 };
@@ -47,7 +64,7 @@ const GameCenter = ({
     setGameState,
     currentQuestion,
     generateNewQuestion,
-    playNote,
+    playChord,
     score,
     setScore,
     timeLeft,
@@ -56,32 +73,31 @@ const GameCenter = ({
     onPlayReference,
     endRound,
     numNotes,
-    playChord,
     gameLength
 }) => {
-    const handlePlay = async () => {
-        if (Tone.context.state !== 'running') {
-            await Tone.start();
-        }
-        playChord(currentQuestion);
-    };
-
-    const handleSkip = () => {
-        const newQuestion = generateNewQuestion();
-        playChord(newQuestion);
-        setScore(prevScore => Math.max(0, prevScore - 5));
-    };
-
-    const handlePlayReference = () => {
-        onPlayReference();
-    };
-
     const formatTime = (seconds) => {
         if (gameLength === Infinity) return 'Eternity';
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
         return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
     };
+
+    const handlePlay = useCallback(async () => {
+        if (Tone.context.state !== 'running') {
+            await Tone.start();
+        }
+        playChord(currentQuestion);
+    }, [currentQuestion, playChord]);
+
+    const handleSkip = useCallback(() => {
+        const newQuestion = generateNewQuestion();
+        playChord(newQuestion);
+        setScore(prevScore => Math.max(0, prevScore - 5));
+    }, [generateNewQuestion, playChord, setScore]);
+
+    const handlePlayReference = useCallback(() => {
+        onPlayReference();
+    }, [onPlayReference]);
 
     const instructionText = roundActive ? 'Listen to the chord and guess the notes!' : 'Press "Go" to begin round';
 
@@ -105,7 +121,10 @@ const GameCenter = ({
             <div className="game-controls-wrapper">
                 <div className="button-container">
                     {!roundActive ? (
-                        <button className="button is-large is-primary is-dark-blue-gray" onClick={startRound}>
+                        <button
+                            className="button is-large is-primary is-dark-blue-gray"
+                            onClick={startRound}
+                        >
                             Go
                         </button>
                     ) : (

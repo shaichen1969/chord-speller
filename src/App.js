@@ -5,7 +5,6 @@ import GameCenter from './components/GameControlCenter';
 import { analyzeChord } from './utils/ChordAnalyzerUtils';
 import HarmonicTree from './components/HarmonicTree';
 import { PianoProvider, usePiano } from './PianoContext';
-import Documentation from './components/Documentation';
 import './styles/App.css';
 
 function AppContent() {
@@ -13,6 +12,7 @@ function AppContent() {
   const [currentQuestion, setCurrentQuestion] = useState([]);
   const [analyzedChord, setAnalyzedChord] = useState(null);
   const [score, setScore] = useState(0);
+  const [finalScore, setFinalScore] = useState(0);
   const [feedback, setFeedback] = useState({});
   const [correctGuesses, setCorrectGuesses] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
@@ -21,7 +21,6 @@ function AppContent() {
   const [pianoSound, setPianoSound] = useState(true);
   const [gameLength, setGameLength] = useState(60);
   const [showCheckmark, setShowCheckmark] = useState(false);
-  const [isDocumentationOpen, setIsDocumentationOpen] = useState(false);
   const { playNote, playChord, notes } = usePiano();
   const availableNotes = ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'];
 
@@ -69,6 +68,7 @@ function AppContent() {
     setGameState('playing');
     setRoundActive(true);
     setScore(0);
+    setFinalScore(0);
     setTimeLeft(gameLength);
     const newQuestion = generateNewQuestion();
     console.log("Playing chord:", newQuestion);
@@ -76,14 +76,14 @@ function AppContent() {
   }, [generateNewQuestion, playChord, gameLength]);
 
   const endRound = useCallback(() => {
-    setGameState('idle');
+    setGameState('finished');
     setRoundActive(false);
     setCurrentQuestion([]);
     setAnalyzedChord(null);
     setCorrectGuesses(0);
-    setScore(0);
+    setFinalScore(score);
     setTimeLeft(gameLength);
-  }, [gameLength]);
+  }, [gameLength, score]);
 
   const handleGuess = useCallback((note) => {
     if (currentQuestion.includes(note) && !feedback[note]) {
@@ -119,9 +119,6 @@ function AppContent() {
     endRound();
   }, [endRound]);
 
-  const openDocumentation = () => setIsDocumentationOpen(true);
-  const closeDocumentation = () => setIsDocumentationOpen(false);
-
   return (
     <div className="App">
       <Navbar
@@ -131,7 +128,6 @@ function AppContent() {
         setPianoSound={setPianoSound}
         gameLength={gameLength}
         setGameLength={handleSetGameLength}
-        openDocumentation={openDocumentation}
       />
       <main className="app-content">
         <GameCenter
@@ -149,6 +145,7 @@ function AppContent() {
           numNotes={numNotes}
           onPlayReference={onPlayReference}
           gameLength={gameLength}
+          finalScore={finalScore}
         />
         <Piano
           feedback={feedback}
@@ -163,7 +160,6 @@ function AppContent() {
           <HarmonicTree chordAnalysis={analyzedChord} />
         )}
       </main>
-      <Documentation isOpen={isDocumentationOpen} onClose={closeDocumentation} />
     </div>
   );
 }

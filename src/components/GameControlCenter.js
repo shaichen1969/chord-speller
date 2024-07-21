@@ -1,15 +1,22 @@
-import React, { useCallback } from 'react';
-import { Play, SkipForward, Music, Square } from 'lucide-react';
-import { Tooltip } from 'react-tooltip';
+import React, { useState } from 'react';
 import '../styles/GameControlCenter.css';
+import { Play, SkipForward, Music, Square } from 'lucide-react';
 import * as Tone from 'tone';
+import { Tooltip } from 'react-tooltip';
 
 const GameControls = ({ onPlay, onSkip, onPlayReference, onStop, gameState, roundActive }) => {
+    const [showTooltip, setShowTooltip] = useState(false);
+
+    const showTooltipBriefly = () => {
+        setShowTooltip(true);
+        setTimeout(() => setShowTooltip(false), 2000);
+    };
+
     return (
         <div className="buttons">
             <button
                 className="button is-primary is-medium"
-                onClick={onPlay}
+                onClick={() => { onPlay(); showTooltipBriefly(); }}
                 disabled={gameState !== 'playing' || !roundActive}
                 aria-label="Play"
                 data-tooltip-id="play-tooltip"
@@ -17,10 +24,9 @@ const GameControls = ({ onPlay, onSkip, onPlayReference, onStop, gameState, roun
             >
                 <Play />
             </button>
-
             <button
                 className="button is-warning is-medium"
-                onClick={onSkip}
+                onClick={() => { onSkip(); showTooltipBriefly(); }}
                 disabled={gameState !== 'playing' || !roundActive}
                 aria-label="Skip"
                 data-tooltip-id="skip-tooltip"
@@ -28,10 +34,9 @@ const GameControls = ({ onPlay, onSkip, onPlayReference, onStop, gameState, roun
             >
                 <SkipForward />
             </button>
-
             <button
                 className="button is-success is-medium"
-                onClick={onPlayReference}
+                onClick={() => { onPlayReference(); showTooltipBriefly(); }}
                 disabled={!roundActive}
                 aria-label="Play Reference"
                 data-tooltip-id="reference-tooltip"
@@ -39,10 +44,9 @@ const GameControls = ({ onPlay, onSkip, onPlayReference, onStop, gameState, roun
             >
                 <Music />
             </button>
-
             <button
                 className="button is-danger is-medium"
-                onClick={onStop}
+                onClick={() => { onStop(); showTooltipBriefly(); }}
                 disabled={!roundActive}
                 aria-label="Stop"
                 data-tooltip-id="stop-tooltip"
@@ -50,11 +54,10 @@ const GameControls = ({ onPlay, onSkip, onPlayReference, onStop, gameState, roun
             >
                 <Square />
             </button>
-
-            <Tooltip id="play-tooltip" place="top" delayShow={1000} />
-            <Tooltip id="skip-tooltip" place="top" delayShow={1000} />
-            <Tooltip id="reference-tooltip" place="top" delayShow={1000} />
-            <Tooltip id="stop-tooltip" place="top" delayShow={1000} />
+            <Tooltip id="play-tooltip" place="top" effect="solid" isOpen={showTooltip} />
+            <Tooltip id="skip-tooltip" place="top" effect="solid" isOpen={showTooltip} />
+            <Tooltip id="reference-tooltip" place="top" effect="solid" isOpen={showTooltip} />
+            <Tooltip id="stop-tooltip" place="top" effect="solid" isOpen={showTooltip} />
         </div>
     );
 };
@@ -64,7 +67,7 @@ const GameCenter = ({
     setGameState,
     currentQuestion,
     generateNewQuestion,
-    playChord,
+    playNote,
     score,
     setScore,
     timeLeft,
@@ -73,8 +76,27 @@ const GameCenter = ({
     onPlayReference,
     endRound,
     numNotes,
-    gameLength
+    playChord,
+    gameLength,
+    finalScore
 }) => {
+    const handlePlay = async () => {
+        if (Tone.context.state !== 'running') {
+            await Tone.start();
+        }
+        playChord(currentQuestion);
+    };
+
+    const handleSkip = () => {
+        const newQuestion = generateNewQuestion();
+        playChord(newQuestion);
+        setScore(prevScore => Math.max(0, prevScore - 5));
+    };
+
+    const handlePlayReference = () => {
+        onPlayReference();
+    };
+
     const formatTime = (seconds) => {
         if (gameLength === Infinity) return 'Eternity';
         const minutes = Math.floor(seconds / 60);
@@ -82,24 +104,14 @@ const GameCenter = ({
         return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
     };
 
-    const handlePlay = useCallback(async () => {
-        if (Tone.context.state !== 'running') {
-            await Tone.start();
-        }
-        playChord(currentQuestion);
-    }, [currentQuestion, playChord]);
-
-    const handleSkip = useCallback(() => {
-        const newQuestion = generateNewQuestion();
-        playChord(newQuestion);
-        setScore(prevScore => Math.max(0, prevScore - 5));
-    }, [generateNewQuestion, playChord, setScore]);
-
-    const handlePlayReference = useCallback(() => {
-        onPlayReference();
-    }, [onPlayReference]);
-
-    const instructionText = roundActive ? 'Listen to the chord and guess the notes!' : 'Press "Go" to begin round';
+    let instructionText = '';
+    if (roundActive) {
+        instructionText = 'Listen to the chord and guess the notes!';
+    } else if (gameState === 'finished') {
+        instructionText = `Round finished! Your score: ${finalScore}`;
+    } else {
+        instructionText = 'Press "Go" to begin round';
+    }
 
     return (
         <div className="game-center-content has-background-dark">
@@ -108,7 +120,7 @@ const GameCenter = ({
                 <div className="level-item has-text-centered">
                     <div>
                         <p className="heading has-text-light">Score</p>
-                        <p className="title has-text-light">{score}</p>
+                        <p className="title has-text-light">{roundActive ? score : finalScore}</p>
                     </div>
                 </div>
                 <div className="level-item has-text-centered">
@@ -121,11 +133,8 @@ const GameCenter = ({
             <div className="game-controls-wrapper">
                 <div className="button-container">
                     {!roundActive ? (
-                        <button
-                            className="button is-large is-primary is-dark-blue-gray"
-                            onClick={startRound}
-                        >
-                            Go
+                        <button className="button is-large is-primary is-dark-blue-gray" onClick={startRound}>
+                            {gameState === 'finished' ? 'Play Again' : 'Go'}
                         </button>
                     ) : (
                         <GameControls

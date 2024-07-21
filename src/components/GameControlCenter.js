@@ -1,63 +1,89 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import '../styles/GameControlCenter.css';
 import { Play, SkipForward, Music, Square } from 'lucide-react';
 import * as Tone from 'tone';
 import { Tooltip } from 'react-tooltip';
 
 const GameControls = ({ onPlay, onSkip, onPlayReference, onStop, gameState, roundActive }) => {
-    const [showTooltip, setShowTooltip] = useState(false);
+    const [activeTooltip, setActiveTooltip] = useState(null);
+    const [tooltipTimer, setTooltipTimer] = useState(null);
 
-    const showTooltipBriefly = () => {
-        setShowTooltip(true);
-        setTimeout(() => setShowTooltip(false), 2000);
-    };
+    const showTooltip = useCallback((id) => {
+        const timer = setTimeout(() => {
+            setActiveTooltip(id);
+        }, 1000);
+        setTooltipTimer(timer);
+    }, []);
+
+    const hideTooltip = useCallback(() => {
+        if (tooltipTimer) {
+            clearTimeout(tooltipTimer);
+        }
+        setActiveTooltip(null);
+    }, [tooltipTimer]);
+
+    useEffect(() => {
+        return () => {
+            if (tooltipTimer) {
+                clearTimeout(tooltipTimer);
+            }
+        };
+    }, [tooltipTimer]);
 
     return (
         <div className="buttons">
             <button
                 className="button is-primary is-medium"
-                onClick={() => { onPlay(); showTooltipBriefly(); }}
+                onClick={onPlay}
                 disabled={gameState !== 'playing' || !roundActive}
                 aria-label="Play"
                 data-tooltip-id="play-tooltip"
                 data-tooltip-content="Play question"
+                onMouseEnter={() => showTooltip('play-tooltip')}
+                onMouseLeave={hideTooltip}
             >
                 <Play />
             </button>
             <button
                 className="button is-warning is-medium"
-                onClick={() => { onSkip(); showTooltipBriefly(); }}
+                onClick={onSkip}
                 disabled={gameState !== 'playing' || !roundActive}
                 aria-label="Skip"
                 data-tooltip-id="skip-tooltip"
                 data-tooltip-content="Skip question"
+                onMouseEnter={() => showTooltip('skip-tooltip')}
+                onMouseLeave={hideTooltip}
             >
                 <SkipForward />
             </button>
             <button
                 className="button is-success is-medium"
-                onClick={() => { onPlayReference(); showTooltipBriefly(); }}
+                onClick={onPlayReference}
                 disabled={!roundActive}
                 aria-label="Play Reference"
                 data-tooltip-id="reference-tooltip"
                 data-tooltip-content="Play reference C"
+                onMouseEnter={() => showTooltip('reference-tooltip')}
+                onMouseLeave={hideTooltip}
             >
                 <Music />
             </button>
             <button
                 className="button is-danger is-medium"
-                onClick={() => { onStop(); showTooltipBriefly(); }}
+                onClick={onStop}
                 disabled={!roundActive}
                 aria-label="Stop"
                 data-tooltip-id="stop-tooltip"
                 data-tooltip-content="End round"
+                onMouseEnter={() => showTooltip('stop-tooltip')}
+                onMouseLeave={hideTooltip}
             >
                 <Square />
             </button>
-            <Tooltip id="play-tooltip" place="top" effect="solid" isOpen={showTooltip} />
-            <Tooltip id="skip-tooltip" place="top" effect="solid" isOpen={showTooltip} />
-            <Tooltip id="reference-tooltip" place="top" effect="solid" isOpen={showTooltip} />
-            <Tooltip id="stop-tooltip" place="top" effect="solid" isOpen={showTooltip} />
+            <Tooltip id="play-tooltip" place="top" effect="solid" isOpen={activeTooltip === 'play-tooltip'} />
+            <Tooltip id="skip-tooltip" place="top" effect="solid" isOpen={activeTooltip === 'skip-tooltip'} />
+            <Tooltip id="reference-tooltip" place="top" effect="solid" isOpen={activeTooltip === 'reference-tooltip'} />
+            <Tooltip id="stop-tooltip" place="top" effect="solid" isOpen={activeTooltip === 'stop-tooltip'} />
         </div>
     );
 };

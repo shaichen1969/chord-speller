@@ -7,9 +7,20 @@
     padding: 1rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     width: 200px;
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
+}
+
+.harmonic-tree.expanded {
     height: 400px;
-    display: flex;
-    flex-direction: column;
+    opacity: 1;
+}
+
+.harmonic-tree.collapsed {
+    height: 30px;
+    width: 30px;
+    padding: 0;
+    opacity: 0.8;
 }
 
 .chord-symbol {
@@ -23,6 +34,7 @@
 .tree-container {
     position: relative;
     flex-grow: 1;
+    height: calc(100% - 60px);
 }
 
 .tree-level {
@@ -77,12 +89,56 @@
     text-align: right;
 }
 
+.tree-toggle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #ffffff;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.tree-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.harmonic-tree.expanded .tree-toggle {
+    top: 10px;
+    right: 10px;
+    left: auto;
+    transform: none;
+}
+
+.unstable-message {
+    color: #e74c3c;
+    font-size: 1rem;
+    text-align: center;
+    padding: 1rem;
+}
+
 @media (max-width: 768px) {
     .harmonic-tree {
         position: static;
         width: 100%;
         height: auto;
         margin-top: 1rem;
+    }
+
+    .harmonic-tree.collapsed {
+        width: 30px;
+        height: 30px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .tree-container {
@@ -95,10 +151,4 @@
         position: static;
         flex-direction: column;
     }
-   .unstable-message {
-       color: #e74c3c;
-       font-size: 1rem;
-       text-align: center;
-       padding: 1rem;
-   }
 }

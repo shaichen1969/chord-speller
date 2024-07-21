@@ -56,7 +56,8 @@ const GameCenter = ({
     onPlayReference,
     endRound,
     numNotes,
-    playChord
+    playChord,
+    gameLength
 }) => {
     const handlePlay = async () => {
         if (Tone.context.state !== 'running') {
@@ -68,20 +69,20 @@ const GameCenter = ({
     const handleSkip = () => {
         const newQuestion = generateNewQuestion();
         playChord(newQuestion);
-        // Deduct points for skipping,
         setScore(prevScore => Math.max(0, prevScore - 5));
     };
 
     const handlePlayReference = () => {
-       
         onPlayReference();
     };
 
     const formatTime = (seconds) => {
+        if (gameLength === Infinity) return 'Eternity';
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
         return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
     };
+
     const instructionText = roundActive ? 'Listen to the chord and guess the notes!' : 'Press "Go" to begin round';
 
     return (

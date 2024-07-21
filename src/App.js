@@ -18,6 +18,7 @@ function AppContent() {
   const [roundActive, setRoundActive] = useState(false);
   const [numNotes, setNumNotes] = useState(3);
   const [pianoSound, setPianoSound] = useState(true);
+  const [gameLength, setGameLength] = useState(60); // Default to 1 minute
   const [showCheckmark, setShowCheckmark] = useState(false);
   const { playNote, playChord, notes } = usePiano();
   const availableNotes = ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'];
@@ -52,25 +53,25 @@ function AppContent() {
 
   useEffect(() => {
     let timer;
-    if (roundActive && timeLeft > 0) {
+    if (roundActive && timeLeft > 0 && gameLength !== Infinity) {
       timer = setInterval(() => {
         setTimeLeft((prevTime) => prevTime - 1);
       }, 1000);
-    } else if (timeLeft === 0) {
+    } else if (timeLeft === 0 && gameLength !== Infinity) {
       endRound();
     }
     return () => clearInterval(timer);
-  }, [roundActive, timeLeft]);
+  }, [roundActive, timeLeft, gameLength]);
 
   const startRound = useCallback(() => {
     setGameState('playing');
     setRoundActive(true);
     setScore(0);
-    setTimeLeft(60);
+    setTimeLeft(gameLength);
     const newQuestion = generateNewQuestion();
     console.log("Playing chord:", newQuestion);
     playChord(newQuestion);
-  }, [generateNewQuestion, playChord]);
+  }, [generateNewQuestion, playChord, gameLength]);
 
   const endRound = useCallback(() => {
     setGameState('idle');
@@ -78,7 +79,9 @@ function AppContent() {
     setCurrentQuestion([]);
     setAnalyzedChord(null);
     setCorrectGuesses(0);
-  }, []);
+    setScore(0);
+    setTimeLeft(gameLength);  // Reset timeLeft to the current gameLength
+  }, [gameLength]);
 
   const handleGuess = useCallback((note) => {
     if (currentQuestion.includes(note) && !feedback[note]) {
@@ -104,13 +107,25 @@ function AppContent() {
     playChord('C4');
   }, [playChord]);
 
+  const handleSetNumNotes = useCallback((newNumNotes) => {
+    setNumNotes(newNumNotes);
+    endRound();
+  }, [endRound]);
+
+  const handleSetGameLength = useCallback((newGameLength) => {
+    setGameLength(newGameLength);
+    endRound();
+  }, [endRound]);
+
   return (
     <div className="App">
       <Navbar
         numNotes={numNotes}
-        setNumNotes={setNumNotes}
+        setNumNotes={handleSetNumNotes}
         pianoSound={pianoSound}
         setPianoSound={setPianoSound}
+        gameLength={gameLength}
+        setGameLength={handleSetGameLength}
       />
       <main className="app-content">
         <GameCenter
@@ -127,6 +142,7 @@ function AppContent() {
           endRound={endRound}
           numNotes={numNotes}
           onPlayReference={onPlayReference}
+          gameLength={gameLength}
         />
         <Piano
           feedback={feedback}

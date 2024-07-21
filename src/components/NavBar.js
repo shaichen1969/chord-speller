@@ -2,7 +2,14 @@ import React, { useState } from 'react';
 import '../styles/NavBar.css';
 import { Settings } from 'lucide-react';
 
-const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound }) => {
+const GameLengths = {
+    ONE_MINUTE: 60,
+    TWO_MINUTES: 120,
+    THREE_MINUTES: 180,
+    ETERNITY: Infinity
+};
+
+const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound, gameLength, setGameLength }) => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     const toggleSettings = () => {
@@ -36,7 +43,6 @@ const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound }) => {
                             </div>
                             <div className="dropdown-menu" id="settings-menu" role="menu">
                                 <div className="dropdown-content has-background-dark">
-                                   
                                     <div className="dropdown-item">
                                         <div className="field">
                                             <label className="label has-text-light">Chord Complexity</label>
@@ -51,6 +57,24 @@ const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound }) => {
                                                                 {i + 1}
                                                             </option>
                                                         ))}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="dropdown-item">
+                                        <div className="field">
+                                            <label className="label has-text-light">Game Length</label>
+                                            <div className="control">
+                                                <div className="select is-fullwidth">
+                                                    <select
+                                                        value={gameLength}
+                                                        onChange={(e) => setGameLength(Number(e.target.value))}
+                                                    >
+                                                        <option value={GameLengths.ONE_MINUTE}>1 Minute</option>
+                                                        <option value={GameLengths.TWO_MINUTES}>2 Minutes</option>
+                                                        <option value={GameLengths.THREE_MINUTES}>3 Minutes</option>
+                                                        <option value={GameLengths.ETERNITY}>Eternity</option>
                                                     </select>
                                                 </div>
                                             </div>

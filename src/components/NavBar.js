@@ -1,15 +1,8 @@
 import React, { useState } from 'react';
+import { Settings, HelpCircle } from 'lucide-react';
 import '../styles/NavBar.css';
-import { Settings } from 'lucide-react';
 
-const GameLengths = {
-    ONE_MINUTE: 60,
-    TWO_MINUTES: 120,
-    THREE_MINUTES: 180,
-    ETERNITY: Infinity
-};
-
-const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound, gameLength, setGameLength }) => {
+const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound, gameLength, setGameLength, openDocumentation }) => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     const toggleSettings = () => {
@@ -26,6 +19,18 @@ const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound, gameLength, 
 
             <div className="navbar-menu">
                 <div className="navbar-end">
+                    <div className="navbar-item">
+                        <button
+                            className="button is-dark"
+                            onClick={openDocumentation}
+                            aria-label="Open Documentation"
+                        >
+                            <span className="icon is-small">
+                                <HelpCircle size={18} />
+                            </span>
+                            <span>Help</span>
+                        </button>
+                    </div>
                     <div className="navbar-item">
                         <div className={`dropdown is-right ${isSettingsOpen ? 'is-active' : ''}`}>
                             <div className="dropdown-trigger">
@@ -71,10 +76,10 @@ const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound, gameLength, 
                                                         value={gameLength}
                                                         onChange={(e) => setGameLength(Number(e.target.value))}
                                                     >
-                                                        <option value={GameLengths.ONE_MINUTE}>1 Minute</option>
-                                                        <option value={GameLengths.TWO_MINUTES}>2 Minutes</option>
-                                                        <option value={GameLengths.THREE_MINUTES}>3 Minutes</option>
-                                                        <option value={GameLengths.ETERNITY}>Eternity</option>
+                                                        <option value={60}>1 Minute</option>
+                                                        <option value={120}>2 Minutes</option>
+                                                        <option value={180}>3 Minutes</option>
+                                                        <option value={Infinity}>Eternity</option>
                                                     </select>
                                                 </div>
                                             </div>

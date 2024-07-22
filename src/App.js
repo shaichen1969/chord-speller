@@ -106,7 +106,7 @@ function AppContent() {
       }
     } else if (!feedback[note]) {
       setFeedback(prevFeedback => ({ ...prevFeedback, [note]: 'incorrect' }));
-      setScore(prevScore => Math.max(0, prevScore - 5)); // 5-point penalty for wrong guess
+      setScore(prevScore => Math.max(0, prevScore - 5 * numNotes)); // 5-point penalty for wrong guess
     }
   }, [currentQuestion, feedback, correctGuesses, generateNewQuestion, playChord, numNotes]);
 

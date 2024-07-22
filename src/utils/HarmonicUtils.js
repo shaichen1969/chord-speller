@@ -96,18 +96,18 @@ const convertToTensions = (harmonicFunctions) => {
 };
 
 const invalidateQuestion = (question) => {
+    if (question.length < 3) return false; // Not enough notes to form invalid sequence
+
     const sortedQuestion = [...question].sort((a, b) => a - b);
+    const extendedQuestion = [...sortedQuestion, sortedQuestion[0] + 12, sortedQuestion[1] + 12];
 
     // Check for any combination of three notes with half steps between them
-    for (let i = 0; i < sortedQuestion.length - 2; i++) {
-        for (let j = i + 1; j < sortedQuestion.length - 1; j++) {
-            for (let k = j + 1; k < sortedQuestion.length; k++) {
-                const interval1 = (sortedQuestion[j] - sortedQuestion[i] + 12) % 12;
-                const interval2 = (sortedQuestion[k] - sortedQuestion[j] + 12) % 12;
-                if (interval1 === 1 && interval2 === 1) {
-                    return true; // Invalid if there are three consecutive half steps
-                }
-            }
+    for (let i = 0; i < extendedQuestion.length - 2; i++) {
+        const interval1 = extendedQuestion[i + 1] - extendedQuestion[i];
+        const interval2 = extendedQuestion[i + 2] - extendedQuestion[i + 1];
+
+        if (interval1 === 1 && interval2 === 1) {
+            return true; // Invalid if there are three consecutive half steps
         }
     }
 
@@ -132,7 +132,10 @@ const createHarmonicInterpretations = (question) => {
         if (harmonicFunctions.includes('♭9') && harmonicFunctions.includes('♯9')) {
             return; // Skip this interpretation
         }
-
+        if (harmonicFunctions.includes('1') && harmonicFunctions.includes('♭3') &&
+            harmonicFunctions.includes('♭5') && harmonicFunctions.includes('13') && harmonicFunctions.includes('♭7')) {
+            return; // Skip this interpretation
+        }
         // Special case for diminished seventh chord with 9th
         if (harmonicFunctions.includes('1') && harmonicFunctions.includes('♭3') &&
             harmonicFunctions.includes('♭5') && harmonicFunctions.includes('13')) {

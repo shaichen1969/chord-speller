@@ -20,6 +20,8 @@
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
+    text-align: left;
+    /* Add this line to ensure left alignment */
 }
 
 .close-button {
@@ -38,29 +40,41 @@
     font-size: 0.9rem;
     line-height: 1.6;
     color: #ffffff;
-    /* Default text color */
+    text-align: left;
+    /* Add this line to ensure left alignment */
 }
 
 .documentation-text h3 {
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
     color: #3273dc;
-    /* Changed to blue */
 }
 
 .documentation-text h4 {
     margin-top: 1rem;
     margin-bottom: 0.5rem;
     color: #3273dc;
-    /* Changed to blue */
 }
 
 .documentation-text ul,
 .documentation-text ol {
     margin-left: 1.5rem;
     margin-bottom: 1rem;
+    padding-left: 0;
+    /* Add this line to remove default padding */
 }
 
 .documentation-text li {
     margin-bottom: 0.5rem;
+}
+
+/* Add these rules to ensure all text elements are left-aligned */
+.documentation-text p,
+.documentation-text h2,
+.documentation-text h3,
+.documentation-text h4,
+.documentation-text ul,
+.documentation-text ol,
+.documentation-text li {
+    text-align: left;
 }

@@ -10,7 +10,14 @@
     position: relative;
     overflow: hidden;
 }
+.piano-container.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}
 
+.piano-container.disabled .key {
+    cursor: default;
+}
 .piano {
     display: flex;
     position: relative;

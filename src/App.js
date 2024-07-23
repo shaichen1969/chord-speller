@@ -108,7 +108,7 @@ function AppContent() {
     console.log("Playing chord:", newQuestion);
     playChord(newQuestion);
     logEvent(analytics, 'round_start', { gameLength: gameLength, numNotes: numNotes });
-  }, [generateNewQuestion, playChord, gameLength, numNotes]);
+  }, [generateNewQuestion, playChord, gameLength, numNotes, setGameState]);
 
   const handleGuess = useCallback((note) => {
     if (currentQuestion.includes(note) && !feedback[note]) {

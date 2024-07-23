@@ -12,17 +12,19 @@ const Piano = ({ feedback, gameState, currentQuestion, onGuess, pianoSound, play
     }, [gameState]);
 
     const handleKeyClick = (note) => {
-        if (pianoSound) {
-            playNote(note);
-        }
+        if (gameState === 'playing') {
+            if (pianoSound) {
+                playNote(note);
+            }
 
-        if (gameState === 'playing' && onGuess && !feedback[note]) {
-            onGuess(note);
+            if (onGuess && !feedback[note]) {
+                onGuess(note);
+            }
         }
     };
 
     return (
-        <div className="piano-container">
+        <div className={`piano-container ${gameState !== 'playing' ? 'disabled' : ''}`}>
             <div className="piano" ref={pianoRef}>
                 {notes.map((note, index) => (
                     <div

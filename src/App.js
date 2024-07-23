@@ -36,6 +36,17 @@ function AppContent() {
     logEvent(analytics, 'session_start');
   }, []);
 
+  const endRound = useCallback(() => {
+    setGameState('finished');
+    setRoundActive(false);
+    setCurrentQuestion([]);
+    setAnalyzedChord(null);
+    setCorrectGuesses(0);
+    setFinalScore(score);
+    setTimeLeft(gameLength === Infinity ? Infinity : gameLength);
+    logEvent(analytics, 'round_end', { score: score, gameLength: gameLength, numNotes: numNotes });
+  }, [gameLength, score, numNotes]);
+
   const generateNewQuestion = useCallback(() => {
     const newQuestion = [];
     const notesCopy = [...availableNotes];
@@ -65,39 +76,39 @@ function AppContent() {
   }, [numNotes, availableNotes]);
 
   useEffect(() => {
+    if (gameLength !== Infinity && timeLeft === Infinity) {
+      setTimeLeft(gameLength);
+    }
+  }, [gameLength, timeLeft]);
+
+  useEffect(() => {
     let timer;
     if (roundActive && timeLeft > 0 && gameLength !== Infinity) {
       timer = setInterval(() => {
-        setTimeLeft((prevTime) => prevTime - 1);
+        setTimeLeft((prevTime) => {
+          if (typeof prevTime !== 'number' || isNaN(prevTime)) {
+            return gameLength;
+          }
+          return Math.max(0, prevTime - 1);
+        });
       }, 1000);
     } else if (timeLeft === 0 && gameLength !== Infinity) {
       endRound();
     }
     return () => clearInterval(timer);
-  }, [roundActive, timeLeft, gameLength]);
+  }, [roundActive, timeLeft, gameLength, endRound]);
 
   const startRound = useCallback(() => {
     setGameState('playing');
     setRoundActive(true);
     setScore(0);
     setFinalScore(0);
-    setTimeLeft(gameLength);
+    setTimeLeft(gameLength === Infinity ? Infinity : gameLength);
     const newQuestion = generateNewQuestion();
     console.log("Playing chord:", newQuestion);
     playChord(newQuestion);
     logEvent(analytics, 'round_start', { gameLength: gameLength, numNotes: numNotes });
   }, [generateNewQuestion, playChord, gameLength, numNotes]);
-
-  const endRound = useCallback(() => {
-    setGameState('finished');
-    setRoundActive(false);
-    setCurrentQuestion([]);
-    setAnalyzedChord(null);
-    setCorrectGuesses(0);
-    setFinalScore(score);
-    setTimeLeft(gameLength);
-    logEvent(analytics, 'round_end', { score: score, gameLength: gameLength, numNotes: numNotes });
-  }, [gameLength, score, numNotes]);
 
   const handleGuess = useCallback((note) => {
     if (currentQuestion.includes(note) && !feedback[note]) {
@@ -108,16 +119,12 @@ function AppContent() {
         setScore(prevScore => prevScore + (5 * numNotes));
         setShowCheckmark(true);
 
-        // Stop all currently playing notes
         if (sampler) {
           sampler.releaseAll();
         }
 
-        // Play the correct sound
         const audio = new Audio(correctSound);
-        //1 second delay before playing the correct sound
         setTimeout(() => audio.play(), 100);
-        
 
         setTimeout(() => {
           setShowCheckmark(false);
@@ -154,9 +161,12 @@ function AppContent() {
 
   const handleSetGameLength = useCallback((newGameLength) => {
     setGameLength(newGameLength);
-    endRound();
+    setTimeLeft(newGameLength === Infinity ? Infinity : newGameLength);
+    if (roundActive) {
+      endRound();
+    }
     logEvent(analytics, 'game_length_change', { gameLength: newGameLength });
-  }, [endRound]);
+  }, [endRound, roundActive]);
 
   const openDocumentation = useCallback(() => {
     setIsDocumentationOpen(true);
@@ -188,6 +198,7 @@ function AppContent() {
           score={score}
           setScore={setScore}
           timeLeft={timeLeft}
+          setTimeLeft={setTimeLeft}
           roundActive={roundActive}
           startRound={startRound}
           endRound={endRound}

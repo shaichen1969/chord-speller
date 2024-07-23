@@ -1,35 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
+// GameControlCenter.js
+
+import React from 'react';
 import '../styles/GameControlCenter.css';
 import { Play, SkipForward, Music, Square } from 'lucide-react';
 import * as Tone from 'tone';
 import { Tooltip } from 'react-tooltip';
 
 const GameControls = ({ onPlay, onSkip, onPlayReference, onStop, gameState, roundActive }) => {
-    const [activeTooltip, setActiveTooltip] = useState(null);
-    const [tooltipTimer, setTooltipTimer] = useState(null);
-
-    const showTooltip = useCallback((id) => {
-        const timer = setTimeout(() => {
-            setActiveTooltip(id);
-        }, 1000);
-        setTooltipTimer(timer);
-    }, []);
-
-    const hideTooltip = useCallback(() => {
-        if (tooltipTimer) {
-            clearTimeout(tooltipTimer);
-        }
-        setActiveTooltip(null);
-    }, [tooltipTimer]);
-
-    useEffect(() => {
-        return () => {
-            if (tooltipTimer) {
-                clearTimeout(tooltipTimer);
-            }
-        };
-    }, [tooltipTimer]);
-
     return (
         <div className="buttons">
             <button
@@ -39,8 +16,6 @@ const GameControls = ({ onPlay, onSkip, onPlayReference, onStop, gameState, roun
                 aria-label="Play"
                 data-tooltip-id="play-tooltip"
                 data-tooltip-content="Play question"
-                onMouseEnter={() => showTooltip('play-tooltip')}
-                onMouseLeave={hideTooltip}
             >
                 <Play />
             </button>
@@ -51,8 +26,6 @@ const GameControls = ({ onPlay, onSkip, onPlayReference, onStop, gameState, roun
                 aria-label="Skip"
                 data-tooltip-id="skip-tooltip"
                 data-tooltip-content="Skip question"
-                onMouseEnter={() => showTooltip('skip-tooltip')}
-                onMouseLeave={hideTooltip}
             >
                 <SkipForward />
             </button>
@@ -63,8 +36,6 @@ const GameControls = ({ onPlay, onSkip, onPlayReference, onStop, gameState, roun
                 aria-label="Play Reference"
                 data-tooltip-id="reference-tooltip"
                 data-tooltip-content="Play reference C"
-                onMouseEnter={() => showTooltip('reference-tooltip')}
-                onMouseLeave={hideTooltip}
             >
                 <Music />
             </button>
@@ -75,15 +46,13 @@ const GameControls = ({ onPlay, onSkip, onPlayReference, onStop, gameState, roun
                 aria-label="Stop"
                 data-tooltip-id="stop-tooltip"
                 data-tooltip-content="End round"
-                onMouseEnter={() => showTooltip('stop-tooltip')}
-                onMouseLeave={hideTooltip}
             >
                 <Square />
             </button>
-            <Tooltip id="play-tooltip" place="top" effect="solid" isOpen={activeTooltip === 'play-tooltip'} />
-            <Tooltip id="skip-tooltip" place="top" effect="solid" isOpen={activeTooltip === 'skip-tooltip'} />
-            <Tooltip id="reference-tooltip" place="top" effect="solid" isOpen={activeTooltip === 'reference-tooltip'} />
-            <Tooltip id="stop-tooltip" place="top" effect="solid" isOpen={activeTooltip === 'stop-tooltip'} />
+            <Tooltip id="play-tooltip" place="top" effect="solid" />
+            <Tooltip id="skip-tooltip" place="top" effect="solid" />
+            <Tooltip id="reference-tooltip" place="top" effect="solid" />
+            <Tooltip id="stop-tooltip" place="top" effect="solid" />
         </div>
     );
 };
@@ -93,17 +62,17 @@ const GameCenter = ({
     setGameState,
     currentQuestion,
     generateNewQuestion,
-    playNote,
+    playChord,
     score,
     setScore,
     timeLeft,
+    setTimeLeft,
     roundActive,
     startRound,
     onPlayReference,
     onSkip,
     endRound,
     numNotes,
-    playChord,
     gameLength,
     finalScore
 }) => {
@@ -123,7 +92,7 @@ const GameCenter = ({
     };
 
     const formatTime = (seconds) => {
-        if (gameLength === Infinity) return 'Eternity';
+        if (seconds === Infinity) return 'Eternity';
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
         return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;

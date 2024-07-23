@@ -1,6 +1,6 @@
 // App.js
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Navbar from './components/NavBar';
 import Piano from './components/Piano';
 import GameCenter from './components/GameControlCenter';
@@ -8,6 +8,7 @@ import { analyzeChord } from './utils/ChordAnalyzerUtils';
 import HarmonicTree from './components/HarmonicTree';
 import { PianoProvider, usePiano } from './PianoContext';
 import Documentation from './components/Documentation';
+import correctSound from './assets/media/piano/correct.mp3';
 import './styles/App.css';
 import { analytics } from './Firebase';
 import { logEvent } from "firebase/analytics";
@@ -22,13 +23,14 @@ function AppContent() {
   const [correctGuesses, setCorrectGuesses] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
   const [roundActive, setRoundActive] = useState(false);
-  const [numNotes, setNumNotes] = useState(3);
+  const [numNotes, setNumNotes] = useState(2);
   const [pianoSound, setPianoSound] = useState(true);
   const [gameLength, setGameLength] = useState(60);
   const [showCheckmark, setShowCheckmark] = useState(false);
   const [isDocumentationOpen, setIsDocumentationOpen] = useState(false);
-  const { playNote, playChord, notes } = usePiano();
-  const availableNotes = ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'];
+  const { playNote, playChord, notes, sampler } = usePiano();
+
+  const availableNotes = useMemo(() => ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'], []);
 
   useEffect(() => {
     logEvent(analytics, 'session_start');
@@ -105,6 +107,18 @@ function AppContent() {
       if (correctGuesses + 1 === currentQuestion.length) {
         setScore(prevScore => prevScore + (5 * numNotes));
         setShowCheckmark(true);
+
+        // Stop all currently playing notes
+        if (sampler) {
+          sampler.releaseAll();
+        }
+
+        // Play the correct sound
+        const audio = new Audio(correctSound);
+        //1 second delay before playing the correct sound
+        setTimeout(() => audio.play(), 100);
+        
+
         setTimeout(() => {
           setShowCheckmark(false);
           const newQuestion = generateNewQuestion();
@@ -117,7 +131,7 @@ function AppContent() {
       setScore(prevScore => Math.max(0, prevScore - 5 * numNotes));
       logEvent(analytics, 'incorrect_guess', { numNotes: numNotes });
     }
-  }, [currentQuestion, feedback, correctGuesses, generateNewQuestion, playChord, numNotes, score]);
+  }, [currentQuestion, feedback, correctGuesses, generateNewQuestion, playChord, numNotes, score, sampler]);
 
   const handleSkip = useCallback(() => {
     const newQuestion = generateNewQuestion();

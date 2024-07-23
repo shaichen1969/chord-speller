@@ -9,6 +9,8 @@ import HarmonicTree from './components/HarmonicTree';
 import { PianoProvider, usePiano } from './PianoContext';
 import Documentation from './components/Documentation';
 import './styles/App.css';
+import { analytics } from './Firebase';
+import { logEvent } from "firebase/analytics";
 
 function AppContent() {
   const [gameState, setGameState] = useState('idle');
@@ -27,6 +29,10 @@ function AppContent() {
   const [isDocumentationOpen, setIsDocumentationOpen] = useState(false);
   const { playNote, playChord, notes } = usePiano();
   const availableNotes = ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'];
+
+  useEffect(() => {
+    logEvent(analytics, 'session_start');
+  }, []);
 
   const generateNewQuestion = useCallback(() => {
     const newQuestion = [];
@@ -77,7 +83,8 @@ function AppContent() {
     const newQuestion = generateNewQuestion();
     console.log("Playing chord:", newQuestion);
     playChord(newQuestion);
-  }, [generateNewQuestion, playChord, gameLength]);
+    logEvent(analytics, 'round_start', { gameLength: gameLength, numNotes: numNotes });
+  }, [generateNewQuestion, playChord, gameLength, numNotes]);
 
   const endRound = useCallback(() => {
     setGameState('finished');
@@ -87,7 +94,8 @@ function AppContent() {
     setCorrectGuesses(0);
     setFinalScore(score);
     setTimeLeft(gameLength);
-  }, [gameLength, score]);
+    logEvent(analytics, 'round_end', { score: score, gameLength: gameLength, numNotes: numNotes });
+  }, [gameLength, score, numNotes]);
 
   const handleGuess = useCallback((note) => {
     if (currentQuestion.includes(note) && !feedback[note]) {
@@ -95,7 +103,6 @@ function AppContent() {
       setCorrectGuesses(prevCorrectGuesses => prevCorrectGuesses + 1);
 
       if (correctGuesses + 1 === currentQuestion.length) {
-        // Award points only when the entire chord is guessed correctly
         setScore(prevScore => prevScore + (5 * numNotes));
         setShowCheckmark(true);
         setTimeout(() => {
@@ -103,36 +110,43 @@ function AppContent() {
           const newQuestion = generateNewQuestion();
           playChord(newQuestion);
         }, 1000);
+        logEvent(analytics, 'correct_chord', { numNotes: numNotes, score: score + (5 * numNotes) });
       }
     } else if (!feedback[note]) {
       setFeedback(prevFeedback => ({ ...prevFeedback, [note]: 'incorrect' }));
-      setScore(prevScore => Math.max(0, prevScore - 5 * numNotes)); // 5-point penalty for wrong guess
+      setScore(prevScore => Math.max(0, prevScore - 5 * numNotes));
+      logEvent(analytics, 'incorrect_guess', { numNotes: numNotes });
     }
-  }, [currentQuestion, feedback, correctGuesses, generateNewQuestion, playChord, numNotes]);
+  }, [currentQuestion, feedback, correctGuesses, generateNewQuestion, playChord, numNotes, score]);
 
   const handleSkip = useCallback(() => {
     const newQuestion = generateNewQuestion();
     playChord(newQuestion);
-    setScore(prevScore => Math.max(0, prevScore - (5 * numNotes))); // Penalty for skipping
+    setScore(prevScore => Math.max(0, prevScore - (5 * numNotes)));
+    logEvent(analytics, 'skip_question', { numNotes: numNotes });
   }, [generateNewQuestion, playChord, numNotes]);
 
   const onPlayReference = useCallback(() => {
     playChord('C4');
-    setScore(prevScore => Math.max(0, prevScore - 5)); // 5-point penalty for using reference
+    setScore(prevScore => Math.max(0, prevScore - 5));
+    logEvent(analytics, 'play_reference');
   }, [playChord]);
 
   const handleSetNumNotes = useCallback((newNumNotes) => {
     setNumNotes(newNumNotes);
     endRound();
+    logEvent(analytics, 'difficulty_change', { numNotes: newNumNotes });
   }, [endRound]);
 
   const handleSetGameLength = useCallback((newGameLength) => {
     setGameLength(newGameLength);
     endRound();
+    logEvent(analytics, 'game_length_change', { gameLength: newGameLength });
   }, [endRound]);
 
   const openDocumentation = useCallback(() => {
     setIsDocumentationOpen(true);
+    logEvent(analytics, 'open_documentation');
   }, []);
 
   const closeDocumentation = useCallback(() => {

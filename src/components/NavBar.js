@@ -1,11 +1,14 @@
-// Navbar.js
-
 import React, { useState } from 'react';
-import { Settings, HelpCircle } from 'lucide-react';
+import { Settings, HelpCircle, Menu } from 'lucide-react';
 import '../styles/NavBar.css';
 
 const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound, gameLength, setGameLength, openDocumentation }) => {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
 
     const toggleSettings = () => {
         setIsSettingsOpen(!isSettingsOpen);
@@ -17,21 +20,18 @@ const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound, gameLength, 
                 <span className="navbar-item">
                     <strong className="is-size-4">HARMONIC EAR TRAINER</strong>
                 </span>
+                <span className="navbar-burger" onClick={toggleMenu}>
+                    <Menu size={24} color="#fff" />
+                </span>
             </div>
 
-            <div className="navbar-menu">
+            <div className={`navbar-menu ${isMenuOpen ? 'is-active' : ''}`}>
                 <div className="navbar-end">
-                    <div className="navbar-item">
-                        <button
-                            className="button is-dark"
-                            onClick={openDocumentation}
-                            aria-label="Open Documentation"
-                        >
-                            <span className="icon is-small">
-                                <HelpCircle size={18} />
-                            </span>
-                            <span>Help</span>
-                        </button>
+                    <div className="navbar-item" onClick={openDocumentation}>
+                        <span className="icon is-small">
+                            <HelpCircle size={18} />
+                        </span>
+                        <span>Help</span>
                     </div>
                     <div className="navbar-item">
                         <div className={`dropdown is-right ${isSettingsOpen ? 'is-active' : ''}`}>

@@ -28,8 +28,8 @@ const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound, gameLength, 
             <div className={`navbar-menu ${isMenuOpen ? 'is-active' : ''}`}>
                 <div className="navbar-end">
                     <div className="navbar-item" onClick={openDocumentation}>
-                        <span className="icon is-small">
-                            <HelpCircle size={18} />
+                        <span className="icon is-small" style={{ marginRight: '8px' }}>
+                            <HelpCircle size={18}  />
                         </span>
                         <span>Help</span>
                     </div>

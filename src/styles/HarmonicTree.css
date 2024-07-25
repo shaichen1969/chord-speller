@@ -144,11 +144,35 @@
     .tree-container {
         display: flex;
         justify-content: space-around;
-        height: 200px;
+        height: 120px;
     }
 
     .tree-level {
         position: static;
         flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        height: 100%;
+    }
+
+    .level-label,
+    .harmonic-function {
+        width: auto;
+        text-align: center;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .note-circle {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .level-note {
+        margin: 0;
     }
 }

@@ -10,23 +10,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       # Set up Node.js environment
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'  # Updated to a more recent LTS version
+          node-version: '20'  # Updated to the latest LTS version
       
       # Install dependencies
       - name: Install dependencies
-        run: npm ci  # Using 'npm ci' for more reliable installs in CI environments
+        run: npm ci
       
       # Build the project
       - name: Build project
         run: npm run build
         env:
-          CI: false  # This prevents treats warnings as errors in create-react-app builds
+          CI: false
 
       # Install Firebase CLI
       - name: Install Firebase CLI

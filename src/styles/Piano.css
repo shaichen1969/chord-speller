@@ -10,6 +10,7 @@
     position: relative;
     overflow: hidden;
 }
+
 .piano-container.disabled {
     pointer-events: none;
     opacity: 0.6;
@@ -18,6 +19,7 @@
 .piano-container.disabled .key {
     cursor: default;
 }
+
 .piano {
     display: flex;
     position: relative;
@@ -191,5 +193,53 @@
 
     .big-checkmark {
         font-size: 6rem;
+    }
+}
+
+@media (max-width: 480px) and (orientation: portrait) {
+    .piano-container {
+        height: 150px;
+        padding: 10px;
+    }
+
+    .piano {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .white {
+        width: 14.28%;
+        /* 100% / 7 white keys */
+        height: 130px;
+    }
+
+    .black {
+        width: 8%;
+        height: 80px;
+    }
+
+    .key:nth-child(2) {
+        left: 10.71%;
+        /* 75% of white key width */
+    }
+
+    .key:nth-child(4) {
+        left: 25%;
+    }
+
+    .key:nth-child(7) {
+        left: 53.57%;
+    }
+
+    .key:nth-child(9) {
+        left: 67.86%;
+    }
+
+    .key:nth-child(11) {
+        left: 82.14%;
+    }
+
+    .feedback-indicator {
+        font-size: 14px;
     }
 }

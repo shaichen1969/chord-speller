@@ -10,8 +10,6 @@ import { PianoProvider, usePiano } from './PianoContext';
 import Documentation from './components/Documentation';
 import correctSound from './assets/media/piano/correct.mp3';
 import './styles/App.css';
-import { analytics } from './Firebase';
-import { logEvent } from "firebase/analytics";
 
 function AppContent() {
   const [gameState, setGameState] = useState('idle');
@@ -30,12 +28,14 @@ function AppContent() {
   const [isDocumentationOpen, setIsDocumentationOpen] = useState(false);
   const [expectedNotes, setExpectedNotes] = useState([]);
   const [currentNoteIndex, setCurrentNoteIndex] = useState(0);
+  const [correctlyGuessedNotes, setCorrectlyGuessedNotes] = useState([]);
   const { playNote, playChord, notes, sampler } = usePiano();
 
+  // eslint-disable-next-line no-unused-vars
   const availableNotes = useMemo(() => ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'], []);
 
   useEffect(() => {
-    logEvent(analytics, 'session_start', { app: 'Chord Spelling Master' });
+    // Removed logEvent call
   }, []);
 
   const endRound = useCallback(() => {
@@ -46,7 +46,7 @@ function AppContent() {
     setCorrectGuesses(0);
     setFinalScore(score);
     setTimeLeft(gameLength === Infinity ? Infinity : gameLength);
-    logEvent(analytics, 'round_end', { score: score, gameLength: gameLength, numNotes: numNotes });
+    // Removed logEvent call
   }, [gameLength, score, numNotes]);
 
   const generateNewQuestion = useCallback(() => {
@@ -63,6 +63,7 @@ function AppContent() {
     setFeedback({}); // Reset feedback completely
     setCorrectGuesses(0);
     setCurrentNoteIndex(0);
+    setCorrectlyGuessedNotes([]); // Reset correctly guessed notes
 
     const questionIndices = newQuestion.map(note => availableNotes.indexOf(note));
     const analysis = analyzeChord(questionIndices);
@@ -117,7 +118,7 @@ function AppContent() {
     const newQuestion = generateNewQuestion();
     console.log("Playing chord:", newQuestion);
     playChord(newQuestion);
-    logEvent(analytics, 'round_start', { gameLength: gameLength, numNotes: numNotes });
+    // Removed logEvent call
   }, [generateNewQuestion, playChord, gameLength, numNotes]);
 
   const handleGuess = useCallback((note) => {
@@ -155,6 +156,7 @@ function AppContent() {
       });
       setCorrectGuesses(prevCorrectGuesses => prevCorrectGuesses + 1);
       setCurrentNoteIndex(prevIndex => prevIndex + 1);
+      setCorrectlyGuessedNotes(prevNotes => [...prevNotes, expectedNote]);
 
       if (currentNoteIndex + 1 === expectedNotes.length) {
         console.log("All notes guessed correctly!");
@@ -173,35 +175,31 @@ function AppContent() {
           const newQuestion = generateNewQuestion();
           playChord(newQuestion);
         }, 1000);
-        logEvent(analytics, 'correct_chord', { numNotes: numNotes, score: score + (5 * numNotes) });
       }
     } else {
       console.log("Incorrect guess");
       if (!feedback[note]) {
         setFeedback(prevFeedback => ({ ...prevFeedback, [note]: 'incorrect' }));
         setScore(prevScore => Math.max(0, prevScore - 5));
-        logEvent(analytics, 'incorrect_guess', { numNotes: numNotes });
       }
     }
-  }, [currentNoteIndex, expectedNotes, feedback, correctGuesses, generateNewQuestion, playChord, numNotes, score, sampler]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentNoteIndex, expectedNotes, feedback, generateNewQuestion, playChord, numNotes, sampler]);
 
   const handleSkip = useCallback(() => {
     const newQuestion = generateNewQuestion();
     playChord(newQuestion);
     setScore(prevScore => Math.max(0, prevScore - (5 * numNotes)));
-    logEvent(analytics, 'skip_question', { numNotes: numNotes });
   }, [generateNewQuestion, playChord, numNotes]);
 
   const onPlayReference = useCallback(() => {
     playChord('C4');
     setScore(prevScore => Math.max(0, prevScore - 5));
-    logEvent(analytics, 'play_reference');
   }, [playChord]);
 
   const handleSetNumNotes = useCallback((newNumNotes) => {
     setNumNotes(newNumNotes);
     endRound();
-    logEvent(analytics, 'difficulty_change', { numNotes: newNumNotes });
   }, [endRound]);
 
   const handleSetGameLength = useCallback((newGameLength) => {
@@ -210,12 +208,10 @@ function AppContent() {
     if (roundActive) {
       endRound();
     }
-    logEvent(analytics, 'game_length_change', { gameLength: newGameLength });
   }, [endRound, roundActive]);
 
   const openDocumentation = useCallback(() => {
     setIsDocumentationOpen(true);
-    logEvent(analytics, 'open_documentation');
   }, []);
 
   const closeDocumentation = useCallback(() => {
@@ -263,7 +259,7 @@ function AppContent() {
           showCheckmark={showCheckmark}
         />
         {currentQuestion.length < 6 && analyzedChord && (
-          <HarmonicTree chordAnalysis={analyzedChord} />
+          <HarmonicTree chordAnalysis={analyzedChord} correctlyGuessedNotes={correctlyGuessedNotes} />
         )}
       </main>
       <Documentation isOpen={isDocumentationOpen} onClose={closeDocumentation} />

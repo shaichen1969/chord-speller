@@ -1,4 +1,4 @@
-// App.js t
+// App.js te
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Navbar from './components/NavBar';

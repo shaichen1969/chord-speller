@@ -61,3 +61,10 @@ src/assets/media/piano/sound_33.mp3
 src/assets/media/piano/sound_34.mp3
 src/assets/media/piano/sound_35.mp3
 src/App.css
+node_modules
+build
+.DS_Store
+.env
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

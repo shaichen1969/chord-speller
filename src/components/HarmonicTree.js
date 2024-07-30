@@ -22,36 +22,37 @@ const HarmonicTree = ({ chordAnalysis, correctlyGuessedNotes }) => {
         return note.replace('♭', 'b').replace('♯', '#');
     };
 
-    const treeLevels = ['1', '3', '5', '7', '9', '11', '13'].map((level, index) => {
-        const func = harmonicFunctionsFound.find(f => f.replace(/[♭♯]/, '') === level) || '';
-        const note = notes[harmonicFunctionsFound.indexOf(func)] || '';
-        const isGuessed = correctlyGuessedNotes.some(guessedNote => 
-            normalizeNote(guessedNote) === normalizeNote(note)
-        );
+    const treeLevels = ['13', '11', '9', '7', '5', '3', '1']
+        .filter(level => harmonicFunctionsFound.some(f => f.replace(/[♭♯]/, '') === level))
+        .map((level) => {
+            const func = harmonicFunctionsFound.find(f => f.replace(/[♭♯]/, '') === level) || '';
+            const note = notes[harmonicFunctionsFound.indexOf(func)] || '';
+            const isGuessed = correctlyGuessedNotes.some(guessedNote => 
+                normalizeNote(guessedNote) === normalizeNote(note)
+            );
 
-        return {
-            level,
-            note,
-            harmonicFunction: func,
-            isGuessed
-        };
-    });
+            return {
+                level,
+                note,
+                isGuessed
+            };
+        });
 
     return (
         <div className="harmonic-tree">
+            <div className="chord-symbol">{chordSymbol}</div>
             <div className="tree-container">
-                {treeLevels.map(({ level, note, harmonicFunction, isGuessed }, index) => (
+                {treeLevels.map(({ level, note, isGuessed }, index) => (
                     <div key={index} className="tree-level">
                         <div className="level-label">{level}</div>
                         <div className="note-circle">
                             <div className={`level-note ${isGuessed ? 'filled' : ''}`}>
-                                <span className="note">{isGuessed ? note : ''}</span>
+                                {isGuessed ? note : ''}
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
-            <div className="chord-symbol">{chordSymbol}</div>
         </div>
     );
 };

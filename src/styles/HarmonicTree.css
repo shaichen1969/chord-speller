@@ -3,7 +3,9 @@
     padding: 16px; /* Increased from 12px */
     display: flex;
     flex-direction: column;
-    height: 364px; /* Increased from 280px */
+    height: auto; /* Changed from fixed height */
+    min-height: 200px; /* Added minimum height */
+    max-height: 364px; /* Added maximum height */
     position: absolute;
     bottom: 26px; /* Adjusted from 20px */
     right: 26px; /* Adjusted from 20px */
@@ -15,60 +17,59 @@
 
 .chord-symbol {
     text-align: center;
-    font-size: 1.1rem;
+    font-size: 1.43rem; /* Increased from 1.1rem */
     font-weight: bold;
-    margin-top: 8px;
+    margin-bottom: 10px; /* Increased from 8px */
     color: #3498db;
 }
 
 .tree-container {
     flex-grow: 1;
     display: flex;
-    flex-direction: column-reverse;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: flex-end; /* Changed from space-between */
 }
 
 .tree-level {
     display: flex;
     align-items: center;
-    height: 32px;
+    height: 42px; /* Increased from 32px */
+    margin-bottom: 10px; /* Added margin between levels */
+}
+
+.tree-level:last-child {
+    margin-bottom: 0; /* Remove margin for the last level */
 }
 
 .level-label {
-    width: 20px;
-    font-size: 0.8rem;
+    width: 26px; /* Increased from 20px */
+    font-size: 1.04rem; /* Increased from 0.8rem */
     text-align: right;
-    margin-right: 8px;
+    margin-right: 10px; /* Increased from 8px */
     color: #bdc3c7;
 }
 
 .note-circle {
-    width: 28px;
-    height: 28px;
+    width: 36px; /* Increased from 28px */
+    height: 36px; /* Increased from 28px */
     border: 1px solid #34495e;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 auto;
 }
 
 .level-note {
-    width: 26px;
-    height: 26px;
+    width: 34px; /* Increased from 26px */
+    height: 34px; /* Increased from 26px */
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 0.9rem;
+    font-size: 1.17rem; /* Increased from 0.9rem */
     font-weight: bold;
-    transition: all 0.3s ease;
 }
 
 .level-note.filled {
     background-color: #2ecc71;
-}
-
-.harmonic-function {
-    display: none;
 }

@@ -1,178 +1,74 @@
 .harmonic-tree {
+    width: 208px;  /* Increased from 160px */
+    padding: 16px; /* Increased from 12px */
+    display: flex;
+    flex-direction: column;
+    height: 364px; /* Increased from 280px */
     position: absolute;
-    bottom: 20px;
-    right: 20px;
-    background-color: rgba(44, 62, 80, 0.8);
-    border-radius: 8px;
-    padding: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 200px;
-    transition: all 0.3s ease-in-out;
-    overflow: hidden;
-}
-
-.harmonic-tree.expanded {
-    height: 400px;
-    opacity: 1;
-}
-
-.harmonic-tree.collapsed {
-    height: 30px;
-    width: 30px;
-    padding: 0;
-    opacity: 0.8;
+    bottom: 26px; /* Adjusted from 20px */
+    right: 26px; /* Adjusted from 20px */
+    background-color: rgba(44, 62, 80, 0.9);
+    border-radius: 10px; /* Slightly increased for proportion */
+    box-shadow: 0 5px 26px rgba(0, 0, 0, 0.3);
+    color: #ecf0f1;
 }
 
 .chord-symbol {
-    color: #3498db;
-    font-size: 1.2rem;
-    font-weight: bold;
     text-align: center;
-    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-top: 8px;
+    color: #3498db;
 }
 
 .tree-container {
-    position: relative;
     flex-grow: 1;
-    height: calc(100% - 60px);
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-between;
 }
 
 .tree-level {
-    position: absolute;
-    left: 0;
-    right: 0;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    height: 32px;
 }
 
 .level-label {
-    color: #bdc3c7;
-    font-weight: bold;
+    width: 20px;
     font-size: 0.8rem;
-    width: 20%;
-    text-align: left;
+    text-align: right;
+    margin-right: 8px;
+    color: #bdc3c7;
 }
 
 .note-circle {
-    width: 30px;
-    display: flex;
-    justify-content: center;
-}
-
-.level-note {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
+    border: 1px solid #34495e;
     border-radius: 50%;
-    background-color: rgba(52, 152, 219, 0.3);
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 0 auto;
+}
+
+.level-note {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9rem;
+    font-weight: bold;
     transition: all 0.3s ease;
 }
 
 .level-note.filled {
-    background-color: #3498db;
-}
-
-.note {
-    color: #ffffff;
-    font-weight: bold;
-    font-size: 0.8rem;
+    background-color: #2ecc71;
 }
 
 .harmonic-function {
-    color: #e74c3c;
-    font-size: 0.8rem;
-    font-weight: bold;
-    width: 20%;
-    text-align: right;
-}
-
-.tree-toggle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #ffffff;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    transition: background-color 0.3s ease-in-out;
-}
-
-.tree-toggle:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.harmonic-tree.expanded .tree-toggle {
-    top: 10px;
-    right: 10px;
-    left: auto;
-    transform: none;
-}
-
-.unstable-message {
-    color: #e74c3c;
-    font-size: 1rem;
-    text-align: center;
-    padding: 1rem;
-}
-
-@media (max-width: 768px) {
-    .harmonic-tree {
-        position: static;
-        width: 100%;
-        height: auto;
-        margin-top: 1rem;
-    }
-
-    .harmonic-tree.collapsed {
-        width: 30px;
-        height: 30px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .tree-container {
-        display: flex;
-        justify-content: space-around;
-        height: 120px;
-    }
-
-    .tree-level {
-        position: static;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
-        height: 100%;
-    }
-
-    .level-label,
-    .harmonic-function {
-        width: auto;
-        text-align: center;
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .note-circle {
-        flex-grow: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .level-note {
-        margin: 0;
-    }
+    display: none;
 }

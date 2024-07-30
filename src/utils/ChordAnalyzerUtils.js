@@ -25,17 +25,17 @@ const selectPreferredSpelling = (sharpSpelling, flatSpelling) => {
     return flatAccidentals <= sharpAccidentals ? 'flat' : 'sharp';
 };
 
-export const analyzeChord = (question) => {
-    if (!question || question.length === 0) {
+export const analyzeChord = (questionIndices) => {
+    if (!questionIndices || questionIndices.length === 0) {
         return null;
     }
 
-    const invalid = invalidateQuestion(question);
+    const invalid = invalidateQuestion(questionIndices);
     if (invalid) {
         return null;
     }
 
-    const interpretations = createHarmonicInterpretations(question);
+    const interpretations = createHarmonicInterpretations(questionIndices);
     const bestChord = findMostStableChord(interpretations);
     if (!bestChord) {
         return null;
@@ -59,7 +59,7 @@ export const analyzeChord = (question) => {
     const result = {
         root: preferredRoot,
         altRoot: preferredSpelling === 'flat' ? sharpRoot : flatRoot,
-        notes: question.map(note => noteMap[note]),
+        notes: questionIndices.map(note => noteMap[note]),
         harmonicFunctionsFound: harmonicFunctions,
         spelledChord: preferredSpelledChord.join(', '),
         enharmonicSpelledChord: (preferredSpelling === 'flat' ? sharpSpelledChord : flatSpelledChord).join(', '),

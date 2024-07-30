@@ -21,7 +21,7 @@ function AppContent() {
   const [correctGuesses, setCorrectGuesses] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
   const [roundActive, setRoundActive] = useState(false);
-  const [numNotes, setNumNotes] = useState(2);
+  const [numNotes, setNumNotes] = useState(5);
   const [pianoSound, setPianoSound] = useState(true);
   const [gameLength, setGameLength] = useState(60);
   const [showCheckmark, setShowCheckmark] = useState(false);
@@ -31,11 +31,9 @@ function AppContent() {
   const [correctlyGuessedNotes, setCorrectlyGuessedNotes] = useState([]);
   const { playNote, playChord, notes, sampler } = usePiano();
 
-  // eslint-disable-next-line no-unused-vars
   const availableNotes = useMemo(() => ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'], []);
 
   useEffect(() => {
-    // Removed logEvent call
   }, []);
 
   const endRound = useCallback(() => {
@@ -46,7 +44,6 @@ function AppContent() {
     setCorrectGuesses(0);
     setFinalScore(score);
     setTimeLeft(gameLength === Infinity ? Infinity : gameLength);
-    // Removed logEvent call
   }, [gameLength, score, numNotes]);
 
   const generateNewQuestion = useCallback(() => {
@@ -60,27 +57,21 @@ function AppContent() {
     }
 
     setCurrentQuestion(newQuestion);
-    setFeedback({}); // Reset feedback completely
+    setFeedback({});
     setCorrectGuesses(0);
     setCurrentNoteIndex(0);
-    setCorrectlyGuessedNotes([]); // Reset correctly guessed notes
+    setCorrectlyGuessedNotes([]);
 
     const questionIndices = newQuestion.map(note => availableNotes.indexOf(note));
     const analysis = analyzeChord(questionIndices);
-    console.log("Generated question:", newQuestion);
-    console.log("Analyzed chord:", analysis);
-    console.log("Expected note order (spelledChord):", analysis.spelledChord);
 
     if (analysis === null || !analysis.chordSymbol) {
-      console.log("No stable chords found");
       setAnalyzedChord({ chordSymbol: "No stable chords found" });
       setExpectedNotes([]);
     } else {
       setAnalyzedChord(analysis);
-      // Convert the spelledChord string to an array and replace ♯ with # and ♭ with b
       const spelledChordArray = analysis.spelledChord.split(', ').map(note => note.replace('♯', '#').replace('♭', 'b'));
       setExpectedNotes(spelledChordArray);
-      console.log("New question - Expected notes set to:", spelledChordArray);
     }
 
     return newQuestion;
@@ -116,22 +107,18 @@ function AppContent() {
     setFinalScore(0);
     setTimeLeft(gameLength === Infinity ? Infinity : gameLength);
     const newQuestion = generateNewQuestion();
-    console.log("Playing chord:", newQuestion);
     playChord(newQuestion);
-    // Removed logEvent call
   }, [generateNewQuestion, playChord, gameLength, numNotes]);
 
   const handleGuess = useCallback((note) => {
-    const guessedNoteWithoutOctave = note.slice(0, -1);  // Remove the last character (octave)
+    const guessedNoteWithoutOctave = note.slice(0, -1);
     const expectedNote = expectedNotes[currentNoteIndex];
     
-    // Function to normalize note names
     const normalizeNote = (noteName) => {
       const sharpToFlat = {
         'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb',
         'C♯': 'Db', 'D♯': 'Eb', 'F♯': 'Gb', 'G♯': 'Ab', 'A♯': 'Bb'
       };
-      // Replace ♭ (Unicode flat symbol) with b
       noteName = noteName.replace('♭', 'b');
       return sharpToFlat[noteName] || noteName;
     };
@@ -139,18 +126,11 @@ function AppContent() {
     const normalizedGuess = normalizeNote(guessedNoteWithoutOctave);
     const normalizedExpected = normalizeNote(expectedNote);
 
-    console.log(`Guessed: ${note} (${guessedNoteWithoutOctave}) | Expected: ${expectedNote} | Normalized Guess: ${normalizedGuess} | Normalized Expected: ${normalizedExpected} | Match: ${normalizedGuess === normalizedExpected}`);
-    console.log("Current note index:", currentNoteIndex);
-    console.log("Full expected notes array:", expectedNotes);
-
     if (normalizedGuess === normalizedExpected) {
-      console.log("Correct guess!");
       setFeedback(prevFeedback => {
-        // Remove all 'incorrect' feedbacks
         const newFeedback = Object.fromEntries(
           Object.entries(prevFeedback).filter(([_, value]) => value !== 'incorrect')
         );
-        // Add the new correct feedback
         newFeedback[note] = 'correct';
         return newFeedback;
       });
@@ -159,7 +139,6 @@ function AppContent() {
       setCorrectlyGuessedNotes(prevNotes => [...prevNotes, expectedNote]);
 
       if (currentNoteIndex + 1 === expectedNotes.length) {
-        console.log("All notes guessed correctly!");
         setScore(prevScore => prevScore + (5 * numNotes));
         setShowCheckmark(true);
 
@@ -177,13 +156,11 @@ function AppContent() {
         }, 1000);
       }
     } else {
-      console.log("Incorrect guess");
       if (!feedback[note]) {
         setFeedback(prevFeedback => ({ ...prevFeedback, [note]: 'incorrect' }));
         setScore(prevScore => Math.max(0, prevScore - 5));
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentNoteIndex, expectedNotes, feedback, generateNewQuestion, playChord, numNotes, sampler]);
 
   const handleSkip = useCallback(() => {

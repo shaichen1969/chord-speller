@@ -18,7 +18,7 @@ const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound, gameLength, 
         <nav className="navbar is-dark" aria-label="main navigation">
             <div className="navbar-brand">
                 <span className="navbar-item">
-                    <strong className="is-size-4">HARMONIC EAR TRAINER</strong>
+                    <strong className="is-size-4">CHORD SPELLING MASTER</strong>
                 </span>
                 <span className="navbar-burger" onClick={toggleMenu}>
                     <Menu size={24} color="#fff" />

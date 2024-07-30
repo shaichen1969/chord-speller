@@ -33,7 +33,7 @@ function AppContent() {
   const availableNotes = useMemo(() => ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'], []);
 
   useEffect(() => {
-    logEvent(analytics, 'session_start');
+    logEvent(analytics, 'session_start', { app: 'Chord Spelling Master' });
   }, []);
 
   const endRound = useCallback(() => {

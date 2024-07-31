@@ -1,4 +1,4 @@
-// App.js test
+// App.js testsdf
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Navbar from './components/NavBar';
@@ -10,6 +10,7 @@ import { PianoProvider, usePiano } from './PianoContext';
 import Documentation from './components/Documentation';
 import correctSound from './assets/media/piano/correct.mp3';
 import './styles/App.css';
+import { generateCompleteChord } from './utils/ChordGeneratorUtils';
 
 function AppContent() {
   const [gameState, setGameState] = useState('idle');
@@ -21,7 +22,7 @@ function AppContent() {
   const [correctGuesses, setCorrectGuesses] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
   const [roundActive, setRoundActive] = useState(false);
-  const [numNotes, setNumNotes] = useState(5);
+  const [numNotes, setNumNotes] = useState(4);
   const [pianoSound, setPianoSound] = useState(true);
   const [gameLength, setGameLength] = useState(60);
   const [showCheckmark, setShowCheckmark] = useState(false);
@@ -29,6 +30,7 @@ function AppContent() {
   const [expectedNotes, setExpectedNotes] = useState([]);
   const [currentNoteIndex, setCurrentNoteIndex] = useState(0);
   const [correctlyGuessedNotes, setCorrectlyGuessedNotes] = useState([]);
+  const [isPredictable, setIsPredictable] = useState(true);
   const { playNote, playChord, notes, sampler } = usePiano();
 
   const availableNotes = useMemo(() => ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'], []);
@@ -47,13 +49,17 @@ function AppContent() {
   }, [gameLength, score, numNotes]);
 
   const generateNewQuestion = useCallback(() => {
-    const newQuestion = [];
-    const notesCopy = [...availableNotes];
+    let newQuestion = [];
+    if (isPredictable) {
+      newQuestion = generateCompleteChord(numNotes);
+    } else {
+      const notesCopy = [...availableNotes];
 
-    for (let i = 0; i < numNotes; i++) {
-      const randomIndex = Math.floor(Math.random() * notesCopy.length);
-      newQuestion.push(notesCopy[randomIndex]);
-      notesCopy.splice(randomIndex, 1);
+      for (let i = 0; i < numNotes; i++) {
+        const randomIndex = Math.floor(Math.random() * notesCopy.length);
+        newQuestion.push(notesCopy[randomIndex]);
+        notesCopy.splice(randomIndex, 1);
+      }
     }
 
     setCurrentQuestion(newQuestion);
@@ -75,7 +81,7 @@ function AppContent() {
     }
 
     return newQuestion;
-  }, [numNotes, availableNotes]);
+  }, [numNotes, availableNotes, isPredictable]);
 
   useEffect(() => {
     if (gameLength !== Infinity && timeLeft === Infinity) {
@@ -108,7 +114,7 @@ function AppContent() {
     setTimeLeft(gameLength === Infinity ? Infinity : gameLength);
     const newQuestion = generateNewQuestion();
     playChord(newQuestion);
-  }, [generateNewQuestion, playChord, gameLength, numNotes]);
+  }, [generateNewQuestion, playChord, gameLength]);
 
   const handleGuess = useCallback((note) => {
     const guessedNoteWithoutOctave = note.slice(0, -1);

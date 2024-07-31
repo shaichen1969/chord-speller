@@ -267,11 +267,57 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
     let hasFlat3 = harmonicFunctions.includes('♭3');
     let has3 = harmonicFunctions.includes('3');
     let hasFlat5 = harmonicFunctions.includes('♭5');
+    let has5 = harmonicFunctions.includes('5');
     let hasSharp5 = harmonicFunctions.includes('♯5');
     let hasFlat7 = harmonicFunctions.includes('♭7');
     let hasMajor7 = harmonicFunctions.includes('7');
+    let has9 = harmonicFunctions.includes('9');
+    let hasFlat9 = harmonicFunctions.includes('♭9');
+    let hasSharp9 = harmonicFunctions.includes('♯9');
+    let has11 = harmonicFunctions.includes('11');
+    let hasSharp11 = harmonicFunctions.includes('♯11');
+    let has13 = harmonicFunctions.includes('13');
+    let hasFlat13 = harmonicFunctions.includes('♭13');
 
-    // Determine chord quality
+    // Check for four-note chords with 1, 3, 5, and an extension without 7
+    if (harmonicFunctions.length === 4 && 
+        harmonicFunctions.includes('1') && 
+        (has3 || hasFlat3) && 
+        (has5 || hasFlat5 || hasSharp5) && 
+        !hasFlat7 && !hasMajor7 &&
+        (has9 || hasFlat9 || hasSharp9 || has11 || hasSharp11 || has13 || hasFlat13)) {
+        
+        // Determine chord quality
+        if (hasFlat3) {
+            symbol += 'm';
+        }
+        if (hasFlat5) {
+            symbol += '(♭5)';
+        } else if (hasSharp5) {
+            symbol += '+';
+        }
+
+        // Add the extension
+        if (has9) {
+            symbol += ' add 9';
+        } else if (hasFlat9) {
+            symbol += ' add ♭9';
+        } else if (hasSharp9) {
+            symbol += ' add ♯9';
+        } else if (has11) {
+            symbol += ' add 11';
+        } else if (hasSharp11) {
+            symbol += ' add ♯11';
+        } else if (has13) {
+            symbol += ' add 13';
+        } else if (hasFlat13) {
+            symbol += ' add ♭13';
+        }
+
+        return symbol;
+    }
+
+    // Existing logic for other chord types
     if (hasFlat3 && hasFlat5) {
         symbol += '○'; // Diminished triad
     } else if (hasFlat3) {
@@ -311,6 +357,10 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
     if (missingOvertones.length > 0) {
         symbol += ' no ' + missingOvertones.join(',');
     }
+    
+
+
+
 
     return symbol;
 };

@@ -1,4 +1,4 @@
-name: Deploy Chord Spelling Master to Firebase Hosting on push to main
+name: Build Chord Spelling Master on push to main
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build_and_deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,15 +28,9 @@ jobs:
         env:
           CI: false
 
-      # Install Firebase CLI
-      - name: Install Firebase CLI
-        run: npm install -g firebase-tools@latest
-
-      # Deploy to Firebase
-      - name: Deploy to Firebase
-        uses: FirebaseExtended/action-hosting-deploy@v0
+      # Optional: Archive the build artifacts
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_CHORD_SPELLING_MASTER }}'
-          channelId: live
-          projectId: chord-speller
+          name: build
+          path: build

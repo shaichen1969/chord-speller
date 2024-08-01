@@ -4,7 +4,7 @@ import {
     invalidateQuestion,
     createHarmonicInterpretations,
     reorderHarmonicFunctions,
-    findMostStableChord,
+    findMostStableChords,
     simplifyNoteWithFlats,
     simplifyNoteWithSharps,
     buildChordSymbol
@@ -27,46 +27,63 @@ const selectPreferredSpelling = (sharpSpelling, flatSpelling) => {
 
 export const analyzeChord = (questionIndices) => {
     if (!questionIndices || questionIndices.length === 0) {
+        console.log("Invalid input: empty or null questionIndices");
         return null;
     }
 
     const invalid = invalidateQuestion(questionIndices);
     if (invalid) {
+        console.log("Invalid chord configuration");
         return null;
     }
+
+    console.log("Analyzing chord with notes:", questionIndices.map(note => noteMap[note]));
 
     const interpretations = createHarmonicInterpretations(questionIndices);
-    const bestChord = findMostStableChord(interpretations);
-    if (!bestChord) {
+    console.log("All interpretations:", interpretations);
+
+    const bestChords = findMostStableChords(interpretations);
+    if (bestChords.length === 0) {
+        console.log("No stable chords found");
         return null;
     }
 
-    const harmonicFunctions = reorderHarmonicFunctions(bestChord.harmonicFunctions);
+    console.log("Best chord interpretations:", bestChords);
 
-    const sharpRoot = bestChord.root.includes('♭') ? simplifyNoteWithSharps(bestChord.root) : bestChord.root;
-    const flatRoot = bestChord.root.includes('♯') ? simplifyNoteWithFlats(bestChord.root) : bestChord.root;
+    const results = bestChords.map(bestChord => {
+        const harmonicFunctions = reorderHarmonicFunctions(bestChord.harmonicFunctions);
 
-    const sharpSpelledChord = harmonicFunctionToNote(sharpRoot, harmonicFunctions);
-    const flatSpelledChord = harmonicFunctionToNote(flatRoot, harmonicFunctions);
+        const sharpRoot = bestChord.root.includes('♭') ? simplifyNoteWithSharps(bestChord.root) : bestChord.root;
+        const flatRoot = bestChord.root.includes('♯') ? simplifyNoteWithFlats(bestChord.root) : bestChord.root;
 
-    const preferredSpelling = selectPreferredSpelling(sharpSpelledChord, flatSpelledChord);
+        const sharpSpelledChord = harmonicFunctionToNote(sharpRoot, harmonicFunctions);
+        const flatSpelledChord = harmonicFunctionToNote(flatRoot, harmonicFunctions);
 
-    const preferredRoot = preferredSpelling === 'flat' ? flatRoot : sharpRoot;
-    const preferredSpelledChord = preferredSpelling === 'flat' ? flatSpelledChord : sharpSpelledChord;
+        const preferredSpelling = selectPreferredSpelling(sharpSpelledChord, flatSpelledChord);
 
-    const chordSymbol = buildChordSymbol(preferredRoot, harmonicFunctions);
+        const preferredRoot = preferredSpelling === 'flat' ? flatRoot : sharpRoot;
+        const preferredSpelledChord = preferredSpelling === 'flat' ? flatSpelledChord : sharpSpelledChord;
 
-    const result = {
-        root: preferredRoot,
-        altRoot: preferredSpelling === 'flat' ? sharpRoot : flatRoot,
-        notes: questionIndices.map(note => noteMap[note]),
-        harmonicFunctionsFound: harmonicFunctions,
-        spelledChord: preferredSpelledChord.join(', '),
-        enharmonicSpelledChord: (preferredSpelling === 'flat' ? sharpSpelledChord : flatSpelledChord).join(', '),
-        preferredSpelling: preferredSpelling,
-        preferredSpellingNotes: preferredSpelledChord.join(', '),
-        chordSymbol: chordSymbol
-    };
-console.log(result);
-    return result;
+        const chordSymbol = buildChordSymbol(preferredRoot, harmonicFunctions);
+
+        return {
+            root: preferredRoot,
+            altRoot: preferredSpelling === 'flat' ? sharpRoot : flatRoot,
+            notes: questionIndices.map(note => noteMap[note]),
+            harmonicFunctionsFound: harmonicFunctions,
+            spelledChord: preferredSpelledChord.join(', '),
+            enharmonicSpelledChord: (preferredSpelling === 'flat' ? sharpSpelledChord : flatSpelledChord).join(', '),
+            preferredSpelling: preferredSpelling,
+            preferredSpellingNotes: preferredSpelledChord.join(', '),
+            chordSymbol: chordSymbol
+        };
+    });
+
+    if (results.length > 1) {
+        console.log("Tie found. Multiple interpretations:", results);
+    } else {
+        console.log("Single interpretation found:", results[0]);
+    }
+
+    return results[0];
 };

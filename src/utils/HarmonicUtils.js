@@ -33,7 +33,7 @@ const harmonicFunctionMap = {
 const displayOrder = ['1', '♭3', '3', '♭5', '5', '♯5', '6','♭7', '7', '♭9', '9', '♯9', '11', '♯11', '♭13', '13'];
 
 const scoreMap = {
-    '1': 0, '♭3': 3, '3': 3, '♭5': 5, '5': 5, '♯5': 5,'6':6,
+    '1': 0, '♭3': 3, '3': 3, '♭5': 5, '5': 5, '♯5': 5,'6':7,
     '♭7': 7, '7': 7, '♭9': 9, '9': 9, '♯9': 9,
     '11': 11, '♯11': 11, '♭13': 13, '13': 13
 };
@@ -128,7 +128,9 @@ const createHarmonicInterpretations = (question) => {
             harmonicFunctionMap[(number - root + 12) % 12]
         );
 
-        // Invalidate interpretation with both ♭3 and ♯5
+        console.log(`Interpretation for root ${noteMap[root]}:`, harmonicFunctions);
+
+        // Existing validation checks
         if (harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♯5')) {
             return; // Skip this interpretation
         }
@@ -136,8 +138,6 @@ const createHarmonicInterpretations = (question) => {
             harmonicFunctions.includes('6')) {
             return; // Skip this interpretation
         }
-
-        // Invalidate interpretation with both ♭9 and ♯9
         if (harmonicFunctions.includes('♭9') && harmonicFunctions.includes('♯9')) {
             return; // Skip this interpretation
         }
@@ -145,6 +145,13 @@ const createHarmonicInterpretations = (question) => {
             harmonicFunctions.includes('♭5') && harmonicFunctions.includes('13') && harmonicFunctions.includes('♭7')) {
             return; // Skip this interpretation
         }
+
+        // New validation check for '1', '3', '♭5', '6'
+        if (harmonicFunctions.includes('1') && harmonicFunctions.includes('3') &&
+            harmonicFunctions.includes('♭5') && harmonicFunctions.includes('6')) {
+            return; // Skip this interpretation
+        }
+
         // Special case for diminished seventh chord with 9th
         if (harmonicFunctions.includes('1') && harmonicFunctions.includes('♭3') &&
             harmonicFunctions.includes('♭5') && harmonicFunctions.includes('13')) {
@@ -165,6 +172,8 @@ const createHarmonicInterpretations = (question) => {
             harmonicFunctionsBefore: harmonicFunctions
         };
     });
+
+    console.log("All interpretations:", interpretations);
 
     return interpretations;
 };
@@ -253,21 +262,28 @@ const calculateChordScore = (harmonicFunctions) => {
     return harmonicFunctions.reduce((score, func) => score + (scoreMap[func] || 0), 0);
 };
 
-const findMostStableChord = (interpretations) => {
-    let bestChord = null;
+const findMostStableChords = (interpretations) => {
+    let bestChords = [];
     let lowestScore = Infinity;
 
     for (const root in interpretations) {
         const { harmonicFunctions } = interpretations[root];
         const score = calculateChordScore(harmonicFunctions);
 
+        console.log(`Interpretation for root ${root}:`, harmonicFunctions, `Score: ${score}`);
+        console.log(`Detailed scoring:`, harmonicFunctions.map(func => `${func}: ${scoreMap[func]}`));
+
         if (score < lowestScore) {
             lowestScore = score;
-            bestChord = { root, score, harmonicFunctions };
+            bestChords = [{ root, score, harmonicFunctions }];
+        } else if (score === lowestScore) {
+            bestChords.push({ root, score, harmonicFunctions });
         }
     }
 
-    return bestChord;
+    console.log("Best chords found:", bestChords);
+
+    return bestChords;
 };
 
 
@@ -367,5 +383,5 @@ export {
     getRandomNotes,
     getOrderedNotes,
     calculateChordScore,
-    findMostStableChord
+    findMostStableChords
 };

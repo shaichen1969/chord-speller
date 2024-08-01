@@ -139,9 +139,7 @@ const createHarmonicInterpretations = (question) => {
         }
 
         // Invalidate interpretation with both ♭9 and ♯9
-        if (harmonicFunctions.includes('♭9') && harmonicFunctions.includes('♯9')) {
-            return; // Skip this interpretation
-        }
+        
         if (harmonicFunctions.includes('1') && harmonicFunctions.includes('♭3') &&
             harmonicFunctions.includes('♭5') && harmonicFunctions.includes('13') && harmonicFunctions.includes('♭7')) {
             return; // Skip this interpretation
@@ -153,6 +151,9 @@ const createHarmonicInterpretations = (question) => {
         }
 
         const tensionFunctions = convertToTensions([...harmonicFunctions]);
+        if (harmonicFunctions.includes('♭9') && harmonicFunctions.includes('♯9')) {
+            return; // Skip this interpretation
+        }
 
         interpretations[noteMap[root]] = {
             root: noteMap[root],
@@ -343,7 +344,7 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
     if (hasFlat7) {
         symbol += '7';
     } else if (hasMajor7) {
-        symbol += 'Δ7';
+        symbol += 'Δ';
     }
     //support half-diminished chords
     if (hasFlat3 && hasFlat5 && hasFlat7) {

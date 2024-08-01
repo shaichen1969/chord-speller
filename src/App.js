@@ -49,12 +49,14 @@ function AppContent() {
   }, [gameLength, score]);
 
   const generateNewQuestion = useCallback(() => {
+    console.log("Generating new question. isPredictable:", isPredictable, "numNotes:", numNotes);
+
     let newQuestion = [];
     if (isPredictable) {
       newQuestion = generateCompleteChord(numNotes);
     } else {
+      // Use a new copy of availableNotes each time
       const notesCopy = [...availableNotes];
-
       for (let i = 0; i < numNotes; i++) {
         const randomIndex = Math.floor(Math.random() * notesCopy.length);
         newQuestion.push(notesCopy[randomIndex]);
@@ -62,18 +64,23 @@ function AppContent() {
       }
     }
 
+    console.log("New question generated:", newQuestion);
+
+    // Immediately analyze the new question
+    const questionIndices = newQuestion.map(note => availableNotes.indexOf(note));
+    const analysis = analyzeChord(questionIndices);
+    console.log("Chord analysis:", analysis);
+
+    // Use the newly generated question and analysis to update state
     setCurrentQuestion(newQuestion);
     setFeedback({});
     setCorrectGuesses(0);
     setCurrentNoteIndex(0);
     setCorrectlyGuessedNotes([]);
 
-    const questionIndices = newQuestion.map(note => availableNotes.indexOf(note));
-    const analysis = analyzeChord(questionIndices);
-
     if (analysis === null || !analysis.chordSymbol) {
-      setAnalyzedChord({ chordSymbol: "No stable chords found" });
-      setExpectedNotes([]);
+      console.log("No stable chords found, regenerating");
+      return generateNewQuestion(); // Recursively try again
     } else {
       setAnalyzedChord(analysis);
       const spelledChordArray = analysis.spelledChord.split(', ').map(note => note.replace('♯', '#').replace('♭', 'b'));
@@ -81,7 +88,7 @@ function AppContent() {
     }
 
     return newQuestion;
-  }, [numNotes, availableNotes, isPredictable]);
+  }, [numNotes, availableNotes, isPredictable, analyzeChord]);
 
   useEffect(() => {
     if (gameLength !== Infinity && timeLeft === Infinity) {
@@ -107,6 +114,7 @@ function AppContent() {
   }, [roundActive, timeLeft, gameLength, endRound]);
 
   const startRound = useCallback(() => {
+    console.log("Starting new round. GameState:", gameState);
     setGameState('playing');
     setRoundActive(true);
     setScore(0);

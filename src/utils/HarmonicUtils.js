@@ -301,7 +301,8 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
             symbol += '(♭5)';
         } else if (hasSharp5) {
             symbol += '+';
-        } else if (has6) {
+        }
+        if (has6) {
             symbol += '6';
         }
         else if (has9) {

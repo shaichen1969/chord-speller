@@ -46,7 +46,7 @@ function AppContent() {
     setCorrectGuesses(0);
     setFinalScore(score);
     setTimeLeft(gameLength === Infinity ? Infinity : gameLength);
-  }, [gameLength, score, numNotes]);
+  }, [gameLength, score]);
 
   const generateNewQuestion = useCallback(() => {
     let newQuestion = [];

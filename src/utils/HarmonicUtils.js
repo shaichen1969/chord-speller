@@ -303,7 +303,7 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
         symbol += '6';
     }
     if (has7) {
-        symbol += 'maj7';
+        symbol += '△7'; // Using triangle symbol for major 7th
     } else if (hasFlat7) {
         symbol += '7';
     }

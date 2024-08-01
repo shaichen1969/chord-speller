@@ -23,6 +23,12 @@ const HarmonicTree = ({ chordAnalysis, correctlyGuessedNotes }) => {
     };
 
     const treeLevels = ['13', '11', '9', '7', '5', '3', '1']
+        .map(level => {
+            if (level === '7' && !harmonicFunctionsFound.includes('7') && harmonicFunctionsFound.includes('6')) {
+                return '6';
+            }
+            return level;
+        })
         .filter(level => harmonicFunctionsFound.some(f => f.replace(/[♭♯]/, '') === level))
         .map((level) => {
             const func = harmonicFunctionsFound.find(f => f.replace(/[♭♯]/, '') === level) || '';

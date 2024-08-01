@@ -84,17 +84,16 @@ const convertToTensions = (harmonicFunctions) => {
     const containsFlat7 = harmonicFunctions.includes('♭7');
     const containsMajor7 = harmonicFunctions.includes('7');
 
+    let hasFlat9 = harmonicFunctions.includes('♭9');
+
     harmonicFunctions.forEach((func, index) => {
-        if (func === '♭3' && contains3) {
+        if (func === '♭3' && contains3 && !hasFlat9) {
             harmonicFunctions[index] = '♯9';
-        }
-        if (func === '♭5' && contains5) {
+        } else if (func === '♭5' && contains5) {
             harmonicFunctions[index] = '♯11';
-        }
-        if (func === '♯5' && (contains5 || containsFlat5)) {
+        } else if (func === '♯5' && (contains5 || containsFlat5)) {
             harmonicFunctions[index] = '♭13';
-        }
-        if (func === '6' && (containsFlat7 || containsMajor7)) {
+        } else if (func === '6' && (containsFlat7 || containsMajor7)) {
             harmonicFunctions[index] = '13';
         }
     });
@@ -139,7 +138,9 @@ const createHarmonicInterpretations = (question) => {
         }
 
         // Invalidate interpretation with both ♭9 and ♯9
-        
+        if (harmonicFunctions.includes('♭9') && harmonicFunctions.includes('♯9')) {
+            return; // Skip this interpretation
+        }
         if (harmonicFunctions.includes('1') && harmonicFunctions.includes('♭3') &&
             harmonicFunctions.includes('♭5') && harmonicFunctions.includes('13') && harmonicFunctions.includes('♭7')) {
             return; // Skip this interpretation
@@ -151,7 +152,9 @@ const createHarmonicInterpretations = (question) => {
         }
 
         const tensionFunctions = convertToTensions([...harmonicFunctions]);
-        if (harmonicFunctions.includes('♭9') && harmonicFunctions.includes('♯9')) {
+
+        // Add this check after tension conversion
+        if (tensionFunctions.includes('♭9') && tensionFunctions.includes('♯9')) {
             return; // Skip this interpretation
         }
 
@@ -270,109 +273,71 @@ const findMostStableChord = (interpretations) => {
 
 
 export const buildChordSymbol = (root, harmonicFunctions) => {
-    if (harmonicFunctions.length === 1 && harmonicFunctions[0] === '1') {
-        return root;
-    }
-
     let symbol = root;
-    let hasFlat3 = harmonicFunctions.includes('♭3');
     let has3 = harmonicFunctions.includes('3');
-    let hasFlat5 = harmonicFunctions.includes('♭5');
+    let hasFlat3 = harmonicFunctions.includes('♭3');
     let has5 = harmonicFunctions.includes('5');
+    let hasFlat5 = harmonicFunctions.includes('♭5');
     let hasSharp5 = harmonicFunctions.includes('♯5');
     let has6 = harmonicFunctions.includes('6');
+    let has7 = harmonicFunctions.includes('7');
     let hasFlat7 = harmonicFunctions.includes('♭7');
-    let hasMajor7 = harmonicFunctions.includes('7');
-    let has9 = harmonicFunctions.includes('9');
-    let hasFlat9 = harmonicFunctions.includes('♭9');
-    let hasSharp9 = harmonicFunctions.includes('♯9');
-    let has11 = harmonicFunctions.includes('11');
-    let hasSharp11 = harmonicFunctions.includes('♯11');
-    let has13 = harmonicFunctions.includes('13');
-    let hasFlat13 = harmonicFunctions.includes('♭13');
+    let extensions = [];
 
-    // Check for four-note chords with 1, 3, 5, and an extension without 7
-    if (harmonicFunctions.length === 4 &&
-        harmonicFunctions.includes('1') &&
-        (has3 || hasFlat3) &&
-        (has5 || hasFlat5 || hasSharp5) &&
-        !hasFlat7 && !hasMajor7 &&
-        (has9 || hasFlat9 || hasSharp9 || has11 || hasSharp11 || has13 || hasFlat13)) {
-
-        // Determine chord quality
-        if (hasFlat3) {
-            symbol += 'm';
-        }
-        if (hasFlat5) {
-            symbol += '(♭5)';
-        } else if (hasSharp5) {
-            symbol += '+';
-        }
-        if (has6) {
-            symbol += '6';
-        }
-        else if (has9) {
-            symbol += ' add 9';
-        } else if (hasFlat9) {
-            symbol += ' add ♭9';
-        } else if (hasSharp9) {
-            symbol += ' add ♯9';
-        } else if (has11) {
-            symbol += ' add 11';
-        } else if (hasSharp11) {
-            symbol += ' add ♯11';
-        } else if (has13) {
-            symbol += ' add 13';
-        } else if (hasFlat13) {
-            symbol += ' add ♭13';
-        }
-        return symbol;
+    // Handle triad quality
+    if (hasFlat3) {
+        symbol += 'm';
     }
 
-    // Existing logic for other chord types
+    // Handle diminished and half-diminished chords
     if (hasFlat3 && hasFlat5) {
-        symbol += '○'; // Diminished triad
-    } else if (hasFlat3) {
-        symbol += 'm'; // Minor triad
-    } else if (has3 && hasFlat5) {
-        symbol += '(♭5)';
-    } else if (hasSharp5) {
-        symbol += '+';
+        if (hasFlat7) {
+            return symbol.replace('m', '') + 'ø'; // Half-diminished
+        } else if (!has7 && !has6) {
+            return symbol.replace('m', '') + '°'; // Fully diminished
+        }
     }
 
-    // Add seventh when present
-    if (hasFlat7) {
+    // Handle 6th and 7th chords
+    if (has6) {
+        symbol += '6';
+    }
+    if (has7) {
+        symbol += 'maj7';
+    } else if (hasFlat7) {
         symbol += '7';
-    } else if (hasMajor7) {
-        symbol += 'Δ';
-    }
-    //support half-diminished chords
-    if (hasFlat3 && hasFlat5 && hasFlat7) {
-        symbol += 'ø';
     }
 
-    // Add alterations and extensions
-    let alterations = harmonicFunctions.filter(func =>
-        ['9', '♭9', '♯9', '11', '♯11', '13', '♭13'].includes(func)
-    );
-
-    if (alterations.length > 0) {
-        symbol += '(' + alterations.join(',') + ')';
+    // Handle altered 5th
+    if (hasFlat5 && !hasSharp5) {
+        extensions.push('♭5');
+    } else if (hasSharp5 && !hasFlat5) {
+        extensions.push('♯5');
+    } else if (hasFlat5 && hasSharp5) {
+        extensions.push('♭5');
+        extensions.push('♯5');
     }
 
-    // Determine highest overtone and missing overtones
-    const overtones = ['3', '5', '7', '9', '11', '13'];
-    const highestOvertone = Math.max(...overtones.filter(o =>
-        harmonicFunctions.some(f => f.replace(/[♭♯]/, '') === o)
-    ).map(o => parseInt(o)));
+    // Handle extensions and alterations
+    ['9', '11', '13'].forEach(ext => {
+        if (harmonicFunctions.includes(ext)) extensions.push(ext);
+        if (harmonicFunctions.includes('♭' + ext)) extensions.push('♭' + ext);
+        if (harmonicFunctions.includes('♯' + ext)) extensions.push('♯' + ext);
+    });
 
-    const missingOvertones = overtones
-        .filter(o => parseInt(o) < highestOvertone)
-        .filter(o => !harmonicFunctions.some(f => f.replace(/[♭♯]/, '') === o));
-
-    if (missingOvertones.length > 0) {
-        symbol += ' no ' + missingOvertones.join(',');
+    // Add extensions to symbol
+    if (extensions.length > 0) {
+        symbol += '(' + extensions.join(',') + ')';
     }
+
+    // Handle special cases for missing 3rd or 5th
+    if (!has3 && !hasFlat3 && harmonicFunctions.length > 1) {
+        symbol += ' no 3';
+    }
+    if (!has5 && !hasFlat5 && !hasSharp5 && harmonicFunctions.length > 1) {
+        symbol += ' no 5';
+    }
+
     return symbol;
 };
 

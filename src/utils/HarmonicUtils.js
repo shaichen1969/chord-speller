@@ -26,16 +26,16 @@ const majorScales = {
 
 const harmonicFunctionMap = {
     0: '1', 1: '♭9', 2: '9', 3: '♭3', 4: '3', 5: '11',
-    6: '♭5', 7: '5', 8: '♯5', 9: '13', 10: '♭7', 11: '7'
+    6: '♭5', 7: '5', 8: '♯5', 9: '6', 10: '♭7', 11: '7'
 };
 
 
-const displayOrder = ['1', '♭3', '3', '♭5', '5', '♯5', '♭7', '7', '♭9', '9', '♯9', '11', '♯11', '♭13', '13'];
+const displayOrder = ['1', '♭3', '3', '♭5', '5', '♯5', '6','♭7', '7', '♭9', '9', '♯9', '11', '♯11', '♭13', '13'];
 
 const scoreMap = {
-    '1': 0, '♭3': 3, '3': 3, '♭5': 5, '5': 5, '♯5': 5,
+    '1': 0, '♭3': 3, '3': 3, '♭5': 5, '5': 5, '♯5': 5,'6':6,
     '♭7': 7, '7': 7, '♭9': 9, '9': 9, '♯9': 9,
-    '11': 11, '♯11': 11, '♭13': 13, '13': 6
+    '11': 11, '♯11': 11, '♭13': 13, '13': 13
 };
 
 const harmonicFunctionToNote = (root, harmonicFunctions) => {
@@ -73,11 +73,15 @@ const harmonicFunctionToNote = (root, harmonicFunctions) => {
 };
 
 const convertToTensions = (harmonicFunctions) => {
+    //eslint-disable-next-line
     const containsFlat3 = harmonicFunctions.includes('♭3');
     const contains3 = harmonicFunctions.includes('3');
     const containsFlat5 = harmonicFunctions.includes('♭5');
     const contains5 = harmonicFunctions.includes('5');
+    //eslint-disable-next-line
     const containsSharp5 = harmonicFunctions.includes('♯5');
+    const containsFlat7 = harmonicFunctions.includes('♭7');
+    const containsMajor7 = harmonicFunctions.includes('7');
 
     harmonicFunctions.forEach((func, index) => {
         if (func === '♭3' && contains3) {
@@ -89,6 +93,9 @@ const convertToTensions = (harmonicFunctions) => {
         if (func === '♯5' && (contains5 || containsFlat5)) {
             harmonicFunctions[index] = '♭13';
         }
+        if (func === '6' && (containsFlat7 || containsMajor7)) {
+            harmonicFunctions[index] = '13';
+        }
     });
 
     // Remove duplicates
@@ -96,8 +103,6 @@ const convertToTensions = (harmonicFunctions) => {
 };
 
 const invalidateQuestion = (question) => {
-    if (question.length < 3) return false; // Not enough notes to form invalid sequence
-
     const sortedQuestion = [...question].sort((a, b) => a - b);
     const extendedQuestion = [...sortedQuestion, sortedQuestion[0] + 12, sortedQuestion[1] + 12];
 
@@ -269,6 +274,7 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
     let hasFlat5 = harmonicFunctions.includes('♭5');
     let has5 = harmonicFunctions.includes('5');
     let hasSharp5 = harmonicFunctions.includes('♯5');
+    let has6 = harmonicFunctions.includes('6');
     let hasFlat7 = harmonicFunctions.includes('♭7');
     let hasMajor7 = harmonicFunctions.includes('7');
     let has9 = harmonicFunctions.includes('9');
@@ -280,13 +286,13 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
     let hasFlat13 = harmonicFunctions.includes('♭13');
 
     // Check for four-note chords with 1, 3, 5, and an extension without 7
-    if (harmonicFunctions.length === 4 && 
-        harmonicFunctions.includes('1') && 
-        (has3 || hasFlat3) && 
-        (has5 || hasFlat5 || hasSharp5) && 
+    if (harmonicFunctions.length === 4 &&
+        harmonicFunctions.includes('1') &&
+        (has3 || hasFlat3) &&
+        (has5 || hasFlat5 || hasSharp5) &&
         !hasFlat7 && !hasMajor7 &&
         (has9 || hasFlat9 || hasSharp9 || has11 || hasSharp11 || has13 || hasFlat13)) {
-        
+
         // Determine chord quality
         if (hasFlat3) {
             symbol += 'm';
@@ -295,10 +301,10 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
             symbol += '(♭5)';
         } else if (hasSharp5) {
             symbol += '+';
+        } else if (has6) {
+            symbol += '6';
         }
-
-        // Add the extension
-        if (has9) {
+        else if (has9) {
             symbol += ' add 9';
         } else if (hasFlat9) {
             symbol += ' add ♭9';
@@ -313,7 +319,6 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
         } else if (hasFlat13) {
             symbol += ' add ♭13';
         }
-
         return symbol;
     }
 
@@ -333,6 +338,10 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
         symbol += '7';
     } else if (hasMajor7) {
         symbol += 'Δ7';
+    }
+    //support half-diminished chords
+    if (hasFlat3 && hasFlat5 && hasFlat7) {
+        symbol += 'ø';
     }
 
     // Add alterations and extensions
@@ -357,11 +366,6 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
     if (missingOvertones.length > 0) {
         symbol += ' no ' + missingOvertones.join(',');
     }
-    
-
-
-
-
     return symbol;
 };
 

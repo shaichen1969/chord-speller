@@ -67,6 +67,6 @@ export const analyzeChord = (questionIndices) => {
         preferredSpellingNotes: preferredSpelledChord.join(', '),
         chordSymbol: chordSymbol
     };
-
+console.log(result);
     return result;
 };

@@ -133,6 +133,10 @@ const createHarmonicInterpretations = (question) => {
         if (harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♯5')) {
             return; // Skip this interpretation
         }
+        if (harmonicFunctions.includes('3') && harmonicFunctions.includes('♯5') &&
+            harmonicFunctions.includes('6')) {
+            return; // Skip this interpretation
+        }
 
         // Invalidate interpretation with both ♭9 and ♯9
         if (harmonicFunctions.includes('♭9') && harmonicFunctions.includes('♯9')) {

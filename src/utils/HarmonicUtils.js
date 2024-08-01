@@ -52,6 +52,7 @@ const harmonicFunctionToNote = (root, harmonicFunctions) => {
             case '♭5': noteIndex = 4; accidental = '♭'; break;
             case '5': noteIndex = 4; break;
             case '♯5': noteIndex = 4; accidental = '♯'; break;
+            case '6': noteIndex = 5; break;
             case '♭7': noteIndex = 6; accidental = '♭'; break;
             case '7': noteIndex = 6; break;
             case '9': noteIndex = 1; break;

@@ -151,7 +151,7 @@ const createHarmonicInterpretations = (question) => {
 
         // Add this check after tension conversion
         if (tensionFunctions.includes('♭9') && tensionFunctions.includes('♯9')) {
-            return; // Skip this interpretation
+            return; // Skip this interpretationnpm 
         }
 
         interpretations[noteMap[root]] = {

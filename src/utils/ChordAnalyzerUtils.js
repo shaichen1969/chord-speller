@@ -27,28 +27,20 @@ const selectPreferredSpelling = (sharpSpelling, flatSpelling) => {
 
 export const analyzeChord = (questionIndices) => {
     if (!questionIndices || questionIndices.length === 0) {
-        console.log("Invalid input: empty or null questionIndices");
         return null;
     }
 
     const invalid = invalidateQuestion(questionIndices);
     if (invalid) {
-        console.log("Invalid chord configuration");
         return null;
     }
 
-    console.log("Analyzing chord with notes:", questionIndices.map(note => noteMap[note]));
-
     const interpretations = createHarmonicInterpretations(questionIndices);
-    console.log("All interpretations:", interpretations);
 
     const bestChords = findMostStableChords(interpretations);
     if (bestChords.length === 0) {
-        console.log("No stable chords found");
         return null;
     }
-
-    console.log("Best chord interpretations:", bestChords);
 
     const results = bestChords.map(bestChord => {
         const harmonicFunctions = reorderHarmonicFunctions(bestChord.harmonicFunctions);
@@ -79,11 +71,5 @@ export const analyzeChord = (questionIndices) => {
         };
     });
 
-    if (results.length > 1) {
-        console.log("Tie found. Multiple interpretations:", results);
-    } else {
-        console.log("Single interpretation found:", results[0]);
-    }
-
-    return results[0];
+    return results.length > 1 ? results : results[0];
 };

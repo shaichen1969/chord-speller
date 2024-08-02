@@ -74,28 +74,27 @@ const harmonicFunctionToNote = (root, harmonicFunctions) => {
 };
 
 const convertToTensions = (harmonicFunctions) => {
-    //eslint-disable-next-line
     const containsFlat3 = harmonicFunctions.includes('♭3');
     const contains3 = harmonicFunctions.includes('3');
     const containsFlat5 = harmonicFunctions.includes('♭5');
     const contains5 = harmonicFunctions.includes('5');
-    //eslint-disable-next-line
     const containsSharp5 = harmonicFunctions.includes('♯5');
     const containsFlat7 = harmonicFunctions.includes('♭7');
     const containsMajor7 = harmonicFunctions.includes('7');
 
     let hasFlat9 = harmonicFunctions.includes('♭9');
 
-    harmonicFunctions.forEach((func, index) => {
-        if (func === '♭3' && contains3 && !hasFlat9) {
-            harmonicFunctions[index] = '♯9';
+    harmonicFunctions = harmonicFunctions.map(func => {
+        if (func === '♭3' && contains3) {
+            return '♯9';
         } else if (func === '♭5' && contains5) {
-            harmonicFunctions[index] = '♯11';
+            return '♯11';
         } else if (func === '♯5' && (contains5 || containsFlat5)) {
-            harmonicFunctions[index] = '♭13';
+            return '♭13';
         } else if (func === '6' && (containsFlat7 || containsMajor7)) {
-            harmonicFunctions[index] = '13';
+            return '13';
         }
+        return func;
     });
 
     // Remove duplicates
@@ -114,6 +113,13 @@ const invalidateQuestion = (question) => {
         if (interval1 === 1 && interval2 === 1) {
             return true; // Invalid if there are three consecutive half steps
         }
+    }
+
+    // Check for the presence of both minor and major third
+    const hasMinorThird = question.some(note => question.includes((note + 3) % 12));
+    const hasMajorThird = question.some(note => question.includes((note + 4) % 12));
+    if (hasMinorThird && hasMajorThird) {
+        return true; // Invalid if both minor and major thirds are present
     }
 
     return false;
@@ -149,6 +155,11 @@ const createHarmonicInterpretations = (question) => {
         // New validation check for '1', '3', '♭5', '6'
         if (harmonicFunctions.includes('1') && harmonicFunctions.includes('3') &&
             harmonicFunctions.includes('♭5') && harmonicFunctions.includes('6')) {
+            return; // Skip this interpretation
+        }
+
+        // New validation check for both ♭3 and 3
+        if (harmonicFunctions.includes('♭3') && harmonicFunctions.includes('3')) {
             return; // Skip this interpretation
         }
 
@@ -308,9 +319,9 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
     // Handle diminished and half-diminished chords
     if (hasFlat3 && hasFlat5) {
         if (hasFlat7) {
-            return symbol.replace('m', '') + 'ø'; // Half-diminished
+            symbol = symbol.replace('m', '') + 'ø'; // Half-diminished
         } else if (!has7 && !has6) {
-            return symbol.replace('m', '') + '°'; // Fully diminished
+            symbol = symbol.replace('m', '') + '°'; // Fully diminished
         }
     }
 
@@ -320,12 +331,12 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
     }
     if (has7) {
         symbol += '△7'; // Using triangle symbol for major 7th
-    } else if (hasFlat7) {
+    } else if (hasFlat7 && !symbol.includes('ø') && !symbol.includes('°')) {
         symbol += '7';
     }
 
     // Handle altered 5th
-    if (hasFlat5 && !hasSharp5) {
+    if (hasFlat5 && !hasSharp5 && !symbol.includes('ø') && !symbol.includes('°')) {
         extensions.push('♭5');
     } else if (hasSharp5 && !hasFlat5) {
         extensions.push('♯5');
@@ -350,7 +361,7 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
     if (!has3 && !hasFlat3 && harmonicFunctions.length > 1) {
         symbol += ' no 3';
     }
-    if (!has5 && !hasFlat5 && !hasSharp5 && harmonicFunctions.length > 1) {
+    if (!has5 && !hasFlat5 && !hasSharp5 && harmonicFunctions.length > 1 && !symbol.includes('°')) {
         symbol += ' no 5';
     }
 

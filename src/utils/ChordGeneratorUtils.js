@@ -10,6 +10,7 @@ const valueToNote = Object.fromEntries(
 );
 
 export function generateCompleteChord(numNotes) {
+  console.log('generateCompleteChord');
   if (numNotes < 3 || numNotes > 7) {
     throw new Error('Number of notes must be between 3 and 7');
   }

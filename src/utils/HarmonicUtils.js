@@ -74,7 +74,6 @@ const harmonicFunctionToNote = (root, harmonicFunctions) => {
 };
 
 const convertToTensions = (harmonicFunctions) => {
-    console.log('convert reached');
     const containsFlat3 = harmonicFunctions.includes('♭3');
     const contains3 = harmonicFunctions.includes('3');
     const containsFlat5 = harmonicFunctions.includes('♭5');
@@ -126,7 +125,6 @@ const createHarmonicInterpretations = (question) => {
         let harmonicFunctions = question.map(number =>
             harmonicFunctionMap[(number - root + 12) % 12]
         );
-        console.log(harmonicFunctions);
         // Existing validation checks
         if (harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♯5')) {
             return; // Skip this interpretation

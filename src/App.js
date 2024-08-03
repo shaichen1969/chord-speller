@@ -30,7 +30,8 @@ function AppContent() {
   const [expectedNotes, setExpectedNotes] = useState([]);
   const [currentNoteIndex, setCurrentNoteIndex] = useState(0);
   const [correctlyGuessedNotes, setCorrectlyGuessedNotes] = useState([]);
-  const [isPredictable, setIsPredictable] = useState(false);
+  const [isPredictable, setIsPredictable] = useState(true); 
+    
   const { playNote, playChord, notes, sampler } = usePiano();
 
   const availableNotes = useMemo(() => ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'], []);

@@ -1,4 +1,4 @@
-// App.js testssdfdfsadasdtesttest
+// App.js 
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Navbar from './components/NavBar';
@@ -30,11 +30,34 @@ function AppContent() {
   const [expectedNotes, setExpectedNotes] = useState([]);
   const [currentNoteIndex, setCurrentNoteIndex] = useState(0);
   const [correctlyGuessedNotes, setCorrectlyGuessedNotes] = useState([]);
-  const [isPredictable, setIsPredictable] = useState(true); 
-    
+  const [questionMode, setQuestionMode] = useState('random');
+
   const { playNote, playChord, notes, sampler } = usePiano();
 
   const availableNotes = useMemo(() => ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'], []);
+
+  const generateNewQuestion = useCallback(() => {
+    const newQuestion = generateCompleteChord(questionMode, numNotes);
+    
+    setCurrentQuestion(newQuestion);
+    setFeedback({});
+    setCorrectGuesses(0);
+    setCurrentNoteIndex(0);
+    setCorrectlyGuessedNotes([]);
+
+    const questionIndices = newQuestion.map(note => availableNotes.indexOf(note));
+    const analysis = analyzeChord(questionIndices);
+
+    if (analysis === null || !analysis.chordSymbol) {
+      return generateNewQuestion(); // Recursively try again
+    } else {
+      setAnalyzedChord(analysis);
+      const spelledChordArray = analysis.spelledChord.split(', ').map(note => note.replace('♯', '#').replace('♭', 'b'));
+      setExpectedNotes(spelledChordArray);
+    }
+
+    return newQuestion;
+  }, [questionMode, numNotes, availableNotes, analyzeChord]);
 
   useEffect(() => {
   }, []);
@@ -48,39 +71,6 @@ function AppContent() {
     setFinalScore(score);
     setTimeLeft(gameLength === Infinity ? Infinity : gameLength);
   }, [gameLength, score]);
-
-  const generateNewQuestion = useCallback(() => {
-    let newQuestion = [];
-    if (isPredictable) {
-      newQuestion = generateCompleteChord(numNotes);
-    } else {
-      const notesCopy = [...availableNotes];
-      for (let i = 0; i < numNotes; i++) {
-        const randomIndex = Math.floor(Math.random() * notesCopy.length);
-        newQuestion.push(notesCopy[randomIndex]);
-        notesCopy.splice(randomIndex, 1);
-      }
-    }
-
-    const questionIndices = newQuestion.map(note => availableNotes.indexOf(note));
-    const analysis = analyzeChord(questionIndices);
-
-    setCurrentQuestion(newQuestion);
-    setFeedback({});
-    setCorrectGuesses(0);
-    setCurrentNoteIndex(0);
-    setCorrectlyGuessedNotes([]);
-
-    if (analysis === null || !analysis.chordSymbol) {
-      return generateNewQuestion(); // Recursively try again
-    } else {
-      setAnalyzedChord(analysis);
-      const spelledChordArray = analysis.spelledChord.split(', ').map(note => note.replace('♯', '#').replace('♭', 'b'));
-      setExpectedNotes(spelledChordArray);
-    }
-
-    return newQuestion;
-  }, [numNotes, availableNotes, isPredictable, analyzeChord]);
 
   useEffect(() => {
     if (gameLength !== Infinity && timeLeft === Infinity) {
@@ -118,7 +108,7 @@ function AppContent() {
   const handleGuess = useCallback((note) => {
     const guessedNoteWithoutOctave = note.slice(0, -1);
     const expectedNote = expectedNotes[currentNoteIndex];
-    
+
     const normalizeNote = (noteName) => {
       const sharpToFlat = {
         'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb',
@@ -210,6 +200,8 @@ function AppContent() {
         gameLength={gameLength}
         setGameLength={handleSetGameLength}
         openDocumentation={openDocumentation}
+        questionMode={questionMode}
+        setQuestionMode={setQuestionMode}
       />
       <main className="app-content">
         <GameCenter

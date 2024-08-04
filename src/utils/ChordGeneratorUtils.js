@@ -1,7 +1,7 @@
 import { analyzeChord } from './ChordAnalyzerUtils';
 
 const noteValues = {
-  'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4, 'F': 5, 
+  'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4, 'F': 5,
   'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8, 'Ab': 8, 'A': 9, 'A#': 10, 'Bb': 10, 'B': 11
 };
 
@@ -9,62 +9,77 @@ const valueToNote = Object.fromEntries(
   Object.entries(noteValues).map(([note, value]) => [value, note])
 );
 
-export function generateCompleteChord(numNotes) {
-  console.log('generateCompleteChord');
-  if (numNotes < 3 || numNotes > 7) {
-    throw new Error('Number of notes must be between 3 and 7');
+const availableNotes = ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'];
+
+const generateRandomChord = (numNotes) => {
+  const notesCopy = [...availableNotes];
+  let newChord = [];
+  for (let i = 0; i < numNotes; i++) {
+    const randomIndex = Math.floor(Math.random() * notesCopy.length);
+    newChord.push(notesCopy[randomIndex]);
+    notesCopy.splice(randomIndex, 1);
+  }
+  return newChord;
+};
+
+const generateTriad = () => {
+  const rootNote = Math.floor(Math.random() * 12);
+  const triadTypes = [[4, 3], [3, 4], [3, 3], [4, 4]]; // Major, Minor, Diminished, Augmented
+  const selectedType = triadTypes[Math.floor(Math.random() * triadTypes.length)];
+  
+  return [
+    rootNote,
+    (rootNote + selectedType[0]) % 12,
+    (rootNote + selectedType[0] + selectedType[1]) % 12
+  ].map(note => valueToNote[note] + '4');
+};
+
+const generateSeventh = () => {
+  const triad = generateTriad().map(note => noteValues[note.slice(0, -1)]);
+  const seventhTypes = [10, 11]; // Minor 7th, Major 7th
+  const seventh = [...triad, (triad[0] + seventhTypes[Math.floor(Math.random() * seventhTypes.length)]) % 12];
+  return seventh.map(note => valueToNote[note] + '4');
+};
+
+const generateExtended = () => {
+  const seventh = generateSeventh().map(note => noteValues[note.slice(0, -1)]);
+  const extensions = [14, 17, 21]; // 9th, 11th, 13th
+  const numExtensions = Math.floor(Math.random() * 2) + 1; // 1 or 2 extensions
+  
+  for (let i = 0; i < numExtensions; i++) {
+    const extension = extensions[Math.floor(Math.random() * extensions.length)];
+    seventh.push((seventh[0] + extension) % 12);
+  }
+  
+  return seventh.map(note => valueToNote[note] + '4');
+};
+
+export function generateCompleteChord(questionMode, numNotes = 4) {
+  let chord;
+  switch (questionMode) {
+    case 'random':
+      chord = generateRandomChord(numNotes);
+      break;
+    case 'triad':
+      chord = generateTriad();
+      break;
+    case 'seventh':
+      chord = generateSeventh();
+      break;
+    case 'extended':
+      chord = generateExtended();
+      break;
+    default:
+      chord = generateTriad();
   }
 
-  const rootNote = Math.floor(Math.random() * 12);
-  let chord;
+  const questionIndices = chord.map(note => availableNotes.indexOf(note));
+  const analysis = analyzeChord(questionIndices);
 
-  do {
-    chord = [rootNote];
-    
-    // Add third (major or minor)
-    chord.push((rootNote + (Math.random() < 0.5 ? 4 : 3)) % 12);
-    
-    // Add fifth (perfect, diminished, or augmented)
-    const fifthOptions = [6, 7, 8]; // ♭5, 5, ♯5
-    chord.push((rootNote + fifthOptions[Math.floor(Math.random() * fifthOptions.length)]) % 12);
+  if (analysis === null || !analysis.chordSymbol || analysis.chordSymbol === "No stable chords found") {
+    // If the generated chord is not valid, try again
+    return generateCompleteChord(questionMode, numNotes);
+  }
 
-    if (numNotes >= 4) {
-      // Decide whether to add a seventh or a tension
-      if (Math.random() < 0.7 || numNotes > 4) { // 70% chance for seventh or if more than 4 notes
-        // Add seventh (major or minor)
-        chord.push((rootNote + (Math.random() < 0.5 ? 11 : 10)) % 12);
-      } else {
-        // Add a tension (9, 11, or 13)
-        const tensions = [14, 17, 21]; // 9, 11, 13
-        chord.push((rootNote + tensions[Math.floor(Math.random() * tensions.length)]) % 12);
-      }
-    }
-
-    if (numNotes >= 5) {
-      // Add remaining tensions or sevenths
-      const remainingOptions = [10, 11, 14, 17, 21].filter(interval => {
-        const noteValue = (rootNote + interval) % 12;
-        return !chord.includes(noteValue);
-      });
-      while (chord.length < numNotes && remainingOptions.length > 0) {
-        const optionIndex = Math.floor(Math.random() * remainingOptions.length);
-        chord.push((rootNote + remainingOptions[optionIndex]) % 12);
-        remainingOptions.splice(optionIndex, 1);
-      }
-    }
-
-    // Shuffle the chord tones (except the root)
-    for (let i = chord.length - 1; i > 1; i--) {
-      const j = 1 + Math.floor(Math.random() * (i - 1));
-      [chord[i], chord[j]] = [chord[j], chord[i]];
-    }
-
-  } while (!isValidChord(chord));
-
-  return chord.map(note => valueToNote[note] + '4');
-}
-
-function isValidChord(chord) {
-  const analysis = analyzeChord(chord);
-  return analysis && analysis.chordSymbol && analysis.chordSymbol !== "No stable chords found";
+  return chord;
 }

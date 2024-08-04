@@ -20,7 +20,7 @@ const majorScales = {
     'A♭': ['A♭', 'B♭', 'C', 'D♭', 'E♭', 'F', 'G'],
     'A': ['A', 'B', 'C♯', 'D', 'E', 'F♯', 'G♯'],
     'A♯': ['A♯', 'B♯', 'C♯♯', 'D♯', 'E♯', 'F♯♯', 'G♯♯'],
-    'B♭': ['B♭', 'C', 'D', 'E���', 'F', 'G', 'A'],
+    'B♭': ['B♭', 'C', 'D', 'E', 'F', 'G', 'A'],
     'B': ['B', 'C♯', 'D♯', 'E', 'F♯', 'G♯', 'A♯']
 };
 
@@ -102,6 +102,7 @@ const convertToTensions = (harmonicFunctions) => {
 };
 
 const invalidateQuestion = (question) => {
+    console.log('Invalidating question:', question);
     const sortedQuestion = [...question].sort((a, b) => a - b);
     const extendedQuestion = [...sortedQuestion, sortedQuestion[0] + 12, sortedQuestion[1] + 12];
 
@@ -111,45 +112,57 @@ const invalidateQuestion = (question) => {
         const interval2 = extendedQuestion[i + 2] - extendedQuestion[i + 1];
 
         if (interval1 === 1 && interval2 === 1) {
+            console.log('Question invalidated: three consecutive half steps');
             return true; // Invalid if there are three consecutive half steps
         }
     }
+    console.log('Question valid');
     return false;
 };
 
 
 const createHarmonicInterpretations = (question) => {
+    console.log('Creating harmonic interpretations for:', question);
     let interpretations = {};
 
     question.forEach(root => {
         let harmonicFunctions = question.map(number =>
             harmonicFunctionMap[(number - root + 12) % 12]
         );
+        console.log('Root:', root, 'Harmonic functions:', harmonicFunctions);
+        
         // Existing validation checks
         if (harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♯5')) {
+            console.log('Skipping interpretation: ♭3 and ♯5');
             return; // Skip this interpretation
         }
         if (harmonicFunctions.includes('3') && harmonicFunctions.includes('♯5') &&
             harmonicFunctions.includes('6')) {
+            console.log('Skipping interpretation: 3, ♯5, and 6');
             return; // Skip this interpretation
         }
         if (harmonicFunctions.includes('♭9') && harmonicFunctions.includes('♭3') && harmonicFunctions.includes('3')) {
+            console.log('Skipping interpretation: ♭9, ♭3, and 3');
             return; // Skip this interpretation
         }
         if (harmonicFunctions.includes('1') && harmonicFunctions.includes('♭3') &&
             harmonicFunctions.includes('♭5') && harmonicFunctions.includes('6') && harmonicFunctions.includes('♭7')) {
+            console.log('Skipping interpretation: 1, ♭3, ♭5, 6, and ♭7');
             return; // Skip this interpretation
         }
         // Special case for diminished seventh chord with 9th
         if (harmonicFunctions.includes('1') && harmonicFunctions.includes('♭3') &&
             harmonicFunctions.includes('♭5') && harmonicFunctions.includes('13')) {
+            console.log('Converting 13 to ♭7 for diminished seventh chord');
             harmonicFunctions = harmonicFunctions.map(func => func === '13' ? '♭7' : func);
         }
         const tensionFunctions = convertToTensions([...harmonicFunctions]);
+        console.log('Tension functions:', tensionFunctions);
 
         // Add this check after tension conversion
         if (tensionFunctions.includes('♭9') && tensionFunctions.includes('♯9')) {
-            return; // Skip this interpretationnpm 
+            console.log('Skipping interpretation: ♭9 and ♯9');
+            return; // Skip this interpretation
         }
 
         interpretations[noteMap[root]] = {
@@ -160,6 +173,7 @@ const createHarmonicInterpretations = (question) => {
         };
     });
 
+    console.log('Final interpretations:', interpretations);
     return interpretations;
 };
 
@@ -244,16 +258,25 @@ const getOrderedNotes = (root, notes) => {
 };
 
 const calculateChordScore = (harmonicFunctions) => {
-    return harmonicFunctions.reduce((score, func) => score + (scoreMap[func] || 0), 0);
+    let score = harmonicFunctions.reduce((score, func) => score + (scoreMap[func] || 0), 0);
+    
+    // Check for augmented chord (1, 3, #5)
+    if (harmonicFunctions.includes('1') && harmonicFunctions.includes('3') && harmonicFunctions.includes('♯5')) {
+        score += 0.5; // Add a small value to differentiate augmented chords
+    }
+    
+    return score;
 };
 
 const findMostStableChords = (interpretations) => {
+    console.log('Finding most stable chords from interpretations:', interpretations);
     let bestChords = [];
     let lowestScore = Infinity;
 
     for (const root in interpretations) {
         const { harmonicFunctions } = interpretations[root];
         const score = calculateChordScore(harmonicFunctions);
+        console.log('Root:', root, 'Score:', score, 'Harmonic functions:', harmonicFunctions);
 
         if (score < lowestScore) {
             lowestScore = score;
@@ -263,12 +286,21 @@ const findMostStableChords = (interpretations) => {
         }
     }
 
+    // If there's a tie, pick a random winner
+    if (bestChords.length > 1) {
+        const randomIndex = Math.floor(Math.random() * bestChords.length);
+        bestChords = [bestChords[randomIndex]];
+        console.log('Tie broken randomly. Chosen chord:', bestChords[0]);
+    }
+
+    console.log('Best chords:', bestChords);
     return bestChords;
 };
 
 
 
 export const buildChordSymbol = (root, harmonicFunctions) => {
+    console.log('Building chord symbol for root:', root, 'and harmonic functions:', harmonicFunctions);
     let symbol = root;
     let has3 = harmonicFunctions.includes('3');
     let hasFlat3 = harmonicFunctions.includes('♭3');
@@ -334,6 +366,7 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
         symbol += ' no 5';
     }
 
+    console.log('Final chord symbol:', symbol);
     return symbol;
 };
 

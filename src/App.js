@@ -30,7 +30,7 @@ function AppContent() {
   const [expectedNotes, setExpectedNotes] = useState([]);
   const [currentNoteIndex, setCurrentNoteIndex] = useState(0);
   const [correctlyGuessedNotes, setCorrectlyGuessedNotes] = useState([]);
-  const [questionMode, setQuestionMode] = useState('triads');
+  const [questionMode, setQuestionMode] = useState('triadPlusTension');
 
   const { playNote, playChord, notes, sampler } = usePiano();
 

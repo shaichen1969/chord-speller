@@ -41,18 +41,48 @@ const generateSeventh = () => {
   return seventh.map(note => valueToNote[note] + '4');
 };
 
-const generateExtended = () => {
-  const seventh = generateSeventh().map(note => noteValues[note.slice(0, -1)]);
-  const extensions = [14, 17, 21]; // 9th, 11th, 13th
-  const numExtensions = Math.floor(Math.random() * 2) + 1; // 1 or 2 extensions
+const generateTriadPlusTension = () => {
+  console.log('generateTriadPlusTension');
+  const triad = generateTriad();
+  const triadNotes = triad.map(note => noteValues[note.slice(0, -1)]);
+  const root = triadNotes[0];
+  const third = triadNotes[1];
+  const fifth = triadNotes[2];
   
-  for (let i = 0; i < numExtensions; i++) {
-    const extension = extensions[Math.floor(Math.random() * extensions.length)];
-    seventh.push((seventh[0] + extension) % 12);
+  let possibleTensions = [];
+  
+  // Check if it's a major triad
+  const isMajorTriad = (third - root + 12) % 12 === 4;
+  
+  // Rule 1: 9 is always a whole step above 1
+  possibleTensions.push((root + 2) % 12);
+  
+  // Rule 2: 11 needs to be a whole step above 3
+  if ((third + 2) % 12 !== root) {
+    possibleTensions.push((third + 2) % 12);
   }
   
-  return seventh.map(note => valueToNote[note] + '4');
+  // Rule 3: 13 always needs to be a whole step above 5
+  if ((fifth + 2) % 12 !== root) {
+    possibleTensions.push((fifth + 2) % 12);
+  }
+  
+  // Rule 4: Exception for major triads
+  if (isMajorTriad) {
+    possibleTensions.push((root + 1) % 12); // ♭9
+    possibleTensions.push((root + 3) % 12); // ♯9
+    possibleTensions.push((fifth + 1) % 12); // ♭13
+  }
+  
+  // Select a random tension from the possible ones
+  const tension = possibleTensions[Math.floor(Math.random() * possibleTensions.length)];
+  
+  // Add the tension to the triad
+  triad.push(valueToNote[tension] + '4');
+  
+  return triad;
 };
+
 const generateJazzChords = () => {
   const seventh = generateSeventh().map(note => noteValues[note.slice(0, -1)]);
   let isDominant=false;
@@ -75,7 +105,7 @@ const generateJazzChords = () => {
   return seventh.map(note => valueToNote[note] + '4');
 };
 
-export function generateCompleteChord(questionMode, numNotes = 4) {
+export function generateCompleteChord(questionMode, numNotes = 4, attempts = 0) {
   let chord;
   switch (questionMode) {
     case 'random':
@@ -87,20 +117,28 @@ export function generateCompleteChord(questionMode, numNotes = 4) {
     case 'seventh':
       chord = generateSeventh();
       break;
-    case 'extended':
-      chord = generateExtended();
+    case 'triadPlusTension':
+      chord = generateTriadPlusTension();
+      break;
+    case 'jazzChords':
+      chord = generateJazzChords();
       break;
     default:
       chord = generateTriad();
   }
 
-  const questionIndices = chord.map(note => availableNotes.indexOf(note));
-  const analysis = analyzeChord(questionIndices);
+  try {
+    const questionIndices = chord.map(note => availableNotes.indexOf(note));
+    const analysis = analyzeChord(questionIndices);
 
-  if (analysis === null || !analysis.chordSymbol || analysis.chordSymbol === "No stable chords found") {
-    // If the generated chord is not valid, try again
-    return generateCompleteChord(questionMode, numNotes);
+    if (analysis === null || !analysis.chordSymbol || analysis.chordSymbol === "No stable chords found") {
+      // If the generated chord is not valid, try again
+      return generateCompleteChord(questionMode, numNotes, attempts + 1);
+    }
+
+    return chord;
+  } catch (error) {
+    console.error('Error analyzing chord:', error);
+    return generateCompleteChord(questionMode, numNotes, attempts + 1);
   }
-
-  return chord;
 }

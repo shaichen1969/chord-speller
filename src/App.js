@@ -1,6 +1,7 @@
 // App.js 
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { BrowserRouter as Router, Route, Routes, useParams } from 'react-router-dom';
 import Navbar from './components/NavBar';
 import Piano from './components/Piano';
 import GameCenter from './components/GameControlCenter';
@@ -11,8 +12,10 @@ import Documentation from './components/Documentation';
 import correctSound from './assets/media/piano/correct.mp3';
 import './styles/App.css';
 import { generateCompleteChord } from './utils/ChordGeneratorUtils';
+import LandingPage from './components/LandingPage';
 
 function AppContent() {
+  const { mode } = useParams();
   const [gameState, setGameState] = useState('idle');
   const [currentQuestion, setCurrentQuestion] = useState([]);
   const [analyzedChord, setAnalyzedChord] = useState(null);
@@ -30,7 +33,7 @@ function AppContent() {
   const [expectedNotes, setExpectedNotes] = useState([]);
   const [currentNoteIndex, setCurrentNoteIndex] = useState(0);
   const [correctlyGuessedNotes, setCorrectlyGuessedNotes] = useState([]);
-  const [questionMode, setQuestionMode] = useState('random');
+  const [questionMode, setQuestionMode] = useState(mode || 'random');
 
   const { playNote, playChord, notes, sampler } = usePiano();
 
@@ -236,9 +239,14 @@ function AppContent() {
 
 function App() {
   return (
-    <PianoProvider>
-      <AppContent />
-    </PianoProvider>
+    <Router>
+      <PianoProvider>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/play/:mode" element={<AppContent />} />
+        </Routes>
+      </PianoProvider>
+    </Router>
   );
 }
 

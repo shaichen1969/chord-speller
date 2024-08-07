@@ -14,7 +14,7 @@ const LandingPage = () => {
     ];
 
     return (
-        <div className="landing-page">
+        <div className="landing-content">
             <h1 className="title">Chord Spelling Master</h1>
             <p className="subtitle">Choose your practice mode</p>
             <div className="card-container">

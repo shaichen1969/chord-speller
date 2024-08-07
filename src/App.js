@@ -37,7 +37,6 @@ function AppContent() {
   const availableNotes = useMemo(() => ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'], []);
 
   const generateNewQuestion = useCallback(() => {
-    console.log('Generating new question. Mode:', questionMode, 'NumNotes:', numNotes);
     const { chord: newQuestion, analysis } = generateCompleteChord(questionMode, numNotes);
     
     setCurrentQuestion(newQuestion);
@@ -49,9 +48,6 @@ function AppContent() {
     setAnalyzedChord(analysis);
     const spelledChordArray = analysis.preferredSpellingNotes.split(', ').map(note => note.replace('♯', '#').replace('♭', 'b'));
     setExpectedNotes(spelledChordArray);
-
-    console.log('New question generated:', newQuestion);
-    console.log('Analysis:', analysis);
 
     return newQuestion;
   }, [questionMode, numNotes]);

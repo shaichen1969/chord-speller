@@ -117,15 +117,22 @@ const invalidateQuestion = (question) => {
 };
 
 const createHarmonicInterpretations = (question, questionMode) => {
-    console.log(questionMode);
     let interpretations = {};
-    if (questionMode ==='triadPlusTension')console.log('condition met!');
- 
+    console.log('question mode is', questionMode);
+    
     question.forEach(root => {
         let harmonicFunctions = question.map(number =>
             harmonicFunctionMap[(number - root + 12) % 12]
         );
         
+        if (questionMode === 'triadPlusTension') {
+            if (harmonicFunctions.includes('♭7') || harmonicFunctions.includes('7')) {
+                return; // Skip this interpretation
+            }
+            if (harmonicFunctions.includes('3') && harmonicFunctions.includes('6') && harmonicFunctions.includes('9')) {
+                return; // Skip this interpretation
+            }
+        }
         // Existing validation checks
         if (harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♯5')) {
             return; // Skip this interpretation
@@ -305,7 +312,9 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
             symbol = symbol.replace('m', '') + '°'; // Fully diminished
         }
     }
-
+    if (has3 && hasSharp5) {
+            symbol += '+'; // Augmented
+    }
     // Handle 6th and 7th chords
     if (has6) {
         symbol += '6';
@@ -319,11 +328,8 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
     // Handle altered 5th
     if (hasFlat5 && !hasSharp5 && !symbol.includes('ø') && !symbol.includes('°')) {
         extensions.push('♭5');
-    } else if (hasSharp5 && !hasFlat5) {
-        extensions.push('♯5');
-    } else if (hasFlat5 && hasSharp5) {
+    }  else if (hasFlat5 ) {
         extensions.push('♭5');
-        extensions.push('♯5');
     }
 
     // Handle extensions and alterations

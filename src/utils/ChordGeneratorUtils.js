@@ -46,10 +46,14 @@ const generateTriadPlusTension = () => {
   const triadNotes = triad.map(note => noteValues[note.slice(0, -1)]);
   const root = triadNotes[0];
   const third = triadNotes[1];
-  const fifth = triadNotes[2];
-  
+  let fifth = triadNotes[2];
+  if ((fifth - root + 12) % 12 === 6) {
+    // Raise the fifth by one semitone
+    fifth = (fifth + 1) % 12;
+    triad[2] = valueToNote[fifth] + '4';
+    triadNotes[2] = fifth;
+  }
   let possibleTensions = [];
-  
   // Check if it's a major triad
   const isMajorTriad = (third - root + 12) % 12 === 4;
   
@@ -115,7 +119,6 @@ export function generateCompleteChord(questionMode, numNotes = 4) {
     analysis = analyzeChord(questionIndices, questionMode);
 
     if (analysis && analysis.chordSymbol && analysis.chordSymbol !== "No stable chords found") {
-      console.log('Valid chord found:', analysis);
       return { chord, analysis };
     }
 

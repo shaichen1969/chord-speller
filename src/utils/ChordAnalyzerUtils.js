@@ -26,16 +26,11 @@ const selectPreferredSpelling = (sharpSpelling, flatSpelling) => {
 };
 
 export const analyzeChord = (questionIndices, questionMode) => {
-    console.log('Analyzing chord. Mode:', questionMode, 'Indices:', questionIndices);
-
     if (invalidateQuestion(questionIndices)) {
-        console.log('Question invalidated');
         return null;
     }
 
     const interpretations = createHarmonicInterpretations(questionIndices, questionMode);
-    console.log('Harmonic interpretations:', interpretations);
-
     const bestChords = findMostStableChords(interpretations);
     if (bestChords.length === 0) {
         return null;

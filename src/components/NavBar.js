@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Settings, HelpCircle, Menu } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Settings, HelpCircle, Home, Menu } from 'lucide-react';
 import '../styles/NavBar.css';
 
-const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound, gameLength, setGameLength, openDocumentation }) => {
+const Navbar = ({ openDocumentation, pianoSound, setPianoSound, gameLength, setGameLength }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -17,21 +18,49 @@ const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound, gameLength, 
     return (
         <nav className="navbar is-dark" aria-label="main navigation">
             <div className="navbar-brand">
-                <span className="navbar-item">
+                <Link to="/" className="navbar-item">
                     <strong className="is-size-4">CHORD SPELLING MASTER</strong>
-                </span>
-                <span className="navbar-burger" onClick={toggleMenu}>
-                    <Menu size={24} color="#fff" />
-                </span>
+                </Link>
+                <a
+                    role="button"
+                    className={`navbar-burger burger ${isMenuOpen ? 'is-active' : ''}`}
+                    aria-label="menu"
+                    aria-expanded="false"
+                    onClick={toggleMenu}
+                >
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                </a>
             </div>
 
             <div className={`navbar-menu ${isMenuOpen ? 'is-active' : ''}`}>
+                <div className="navbar-start">
+                    <Link to="/learn" className="navbar-item">
+                        Learn
+                    </Link>
+                    <Link to="/practice" className="navbar-item">
+                        Practice
+                    </Link>
+                    <Link to="/quiz" className="navbar-item">
+                        Quiz
+                    </Link>
+                </div>
+
                 <div className="navbar-end">
-                    <div className="navbar-item" onClick={openDocumentation}>
-                        <span className="icon is-small" style={{ marginRight: '8px' }}>
-                            <HelpCircle size={18}  />
+                    <Link to="/" className="navbar-item">
+                        <span className="icon is-small">
+                            <Home size={18} />
                         </span>
-                        <span>Help</span>
+                        <span>Home</span>
+                    </Link>
+                    <div className="navbar-item">
+                        <button className="button is-dark" onClick={openDocumentation}>
+                            <span className="icon is-small">
+                                <HelpCircle size={18} />
+                            </span>
+                            <span>Help</span>
+                        </button>
                     </div>
                     <div className="navbar-item">
                         <div className={`dropdown is-right ${isSettingsOpen ? 'is-active' : ''}`}>
@@ -49,33 +78,43 @@ const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound, gameLength, 
                                 </button>
                             </div>
                             <div className="dropdown-menu" id="settings-menu" role="menu">
-                                <div className="dropdown-content has-background-dark">
-                                   
+                                <div className="dropdown-content">
                                     <div className="dropdown-item">
-                                        <div className="field">
-                                            <label className="label has-text-light">Game Length</label>
-                                            <div className="control">
-                                                <div className="select is-fullwidth">
-                                                    <select
-                                                        value={gameLength}
-                                                        onChange={(e) => setGameLength(Number(e.target.value))}
-                                                    >
-                                                        <option value={60}>1 Minute</option>
-                                                        <option value={120}>2 Minutes</option>
-                                                        <option value={180}>3 Minutes</option>
-                                                        <option value={Infinity}>Eternity</option>
-                                                    </select>
-                                                </div>
-                                            </div>
+                                        <p>Piano Sound</p>
+                                        <div className="control">
+                                            <label className="radio">
+                                                <input
+                                                    type="radio"
+                                                    name="pianoSound"
+                                                    checked={pianoSound}
+                                                    onChange={() => setPianoSound(true)}
+                                                />
+                                                On
+                                            </label>
+                                            <label className="radio">
+                                                <input
+                                                    type="radio"
+                                                    name="pianoSound"
+                                                    checked={!pianoSound}
+                                                    onChange={() => setPianoSound(false)}
+                                                />
+                                                Off
+                                            </label>
                                         </div>
                                     </div>
                                     <div className="dropdown-item">
-                                        <button
-                                            className={`button piano-sound-btn ${pianoSound ? 'is-active' : ''}`}
-                                            onClick={() => setPianoSound(!pianoSound)}
-                                        >
-                                            Piano Sound
-                                        </button>
+                                        <p>Game Length</p>
+                                        <div className="select">
+                                            <select
+                                                value={gameLength}
+                                                onChange={(e) => setGameLength(Number(e.target.value))}
+                                            >
+                                                <option value={60}>1 Minute</option>
+                                                <option value={120}>2 Minutes</option>
+                                                <option value={180}>3 Minutes</option>
+                                                <option value={Infinity}>Eternity</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

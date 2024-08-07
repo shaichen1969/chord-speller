@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { PianoProvider } from './PianoContext';
 import Navbar from './components/NavBar';
 import LandingPage from './components/LandingPage';
+import Learn from './components/Learn';
+import Practice from './components/Practice';
+import Quiz from './components/Quiz';
 import AppContent from './components/AppContent';
 import Documentation from './components/Documentation';
 import './styles/App.css';
@@ -29,15 +32,10 @@ function App() {
           <main className="main-content">
             <Routes>
               <Route path="/" element={<LandingPage />} />
-              <Route 
-                path="/play/:mode" 
-                element={
-                  <AppContent 
-                    pianoSound={pianoSound}
-                    gameLength={gameLength}
-                  />
-                } 
-              />
+              <Route path="/learn" element={<Learn />} />
+              <Route path="/practice" element={<Practice />} />
+              <Route path="/quiz" element={<Quiz />} />
+              <Route path="/play/:section/:mode" element={<AppContent pianoSound={pianoSound} gameLength={gameLength} />} />
             </Routes>
           </main>
           <Documentation isOpen={isDocumentationOpen} onClose={closeDocumentation} />

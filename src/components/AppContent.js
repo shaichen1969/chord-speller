@@ -6,8 +6,11 @@ import HarmonicTree from './HarmonicTree';
 import { usePiano } from '../PianoContext';
 import { generateCompleteChord } from '../utils/ChordGeneratorUtils';
 
-function AppContent({ pianoSound, gameLength }) {
-  const { mode } = useParams();
+function AppContent({ pianoSound, gameLength: defaultGameLength }) {
+  const { section, mode } = useParams();
+  const [gameLength, setGameLength] = useState(defaultGameLength);
+  const [showScore, setShowScore] = useState(true);
+  const { mode: gameMode } = useParams();
   const [gameState, setGameState] = useState('idle');
   const [currentQuestion, setCurrentQuestion] = useState([]);
   const [analyzedChord, setAnalyzedChord] = useState(null);
@@ -20,6 +23,20 @@ function AppContent({ pianoSound, gameLength }) {
   const [finalScore, setFinalScore] = useState(0);
 
   const { playNote, playChord } = usePiano();
+
+  useEffect(() => {
+    if (section === 'practice') {
+      setGameLength(Infinity);
+      setShowScore(false);
+    } else if (section === 'learn') {
+      setGameLength(Infinity);
+      setShowScore(false);
+      // Add any additional setup for learn mode
+    } else if (section === 'quiz') {
+      setGameLength(defaultGameLength);
+      setShowScore(true);
+    }
+  }, [section, defaultGameLength]);
 
   useEffect(() => {
     if (roundActive && timeLeft > 0) {
@@ -98,6 +115,7 @@ function AppContent({ pianoSound, gameLength }) {
         endRound={endRound}
         gameLength={gameLength}
         finalScore={finalScore}
+        showScore={showScore}
       />
       <Piano
         feedback={feedback}

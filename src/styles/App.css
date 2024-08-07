@@ -19,7 +19,10 @@
 }
 
 .landing-content,
-.game-content {
+.game-content,
+.learn-content,
+.practice-content,
+.quiz-content {
   padding: 20px;
 }
 

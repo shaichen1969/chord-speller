@@ -42,7 +42,6 @@ const generateSeventh = () => {
 };
 
 const generateTriadPlusTension = () => {
-  console.log('generateTriadPlusTension');
   const triad = generateTriad();
   const triadNotes = triad.map(note => noteValues[note.slice(0, -1)]);
   const root = triadNotes[0];
@@ -105,40 +104,50 @@ const generateJazzChords = () => {
   return seventh.map(note => valueToNote[note] + '4');
 };
 
-export function generateCompleteChord(questionMode, numNotes = 4, attempts = 0) {
+export function generateCompleteChord(questionMode, numNotes = 4) {
   let chord;
-  switch (questionMode) {
-    case 'random':
-      chord = generateRandomChord(numNotes);
-      break;
-    case 'triad':
-      chord = generateTriad();
-      break;
-    case 'seventh':
-      chord = generateSeventh();
-      break;
-    case 'triadPlusTension':
-      chord = generateTriadPlusTension();
-      break;
-    case 'jazzChords':
-      chord = generateJazzChords();
-      break;
-    default:
-      chord = generateTriad();
-  }
-
-  try {
+  let analysis;
+  let attempts = 0;
+  const MAX_ATTEMPTS = 10;
+  while (attempts < MAX_ATTEMPTS) {
+    chord = generateChordByMode(questionMode, numNotes);
     const questionIndices = chord.map(note => availableNotes.indexOf(note));
-    const analysis = analyzeChord(questionIndices);
+    analysis = analyzeChord(questionIndices, questionMode);
 
-    if (analysis === null || !analysis.chordSymbol || analysis.chordSymbol === "No stable chords found") {
-      // If the generated chord is not valid, try again
-      return generateCompleteChord(questionMode, numNotes, attempts + 1);
+    if (analysis && analysis.chordSymbol && analysis.chordSymbol !== "No stable chords found") {
+      console.log('Valid chord found:', analysis);
+      return { chord, analysis };
     }
 
-    return chord;
-  } catch (error) {
-    console.error('Error analyzing chord:', error);
-    return generateCompleteChord(questionMode, numNotes, attempts + 1);
+    attempts++;
+  }
+  return { 
+    chord: ['C4', 'E4', 'G4'], 
+    analysis: { 
+      chordSymbol: 'C', 
+      root: 'C', 
+      harmonicFunctionsFound: ['1', '3', '5'], 
+      preferredSpellingNotes: 'C4, E4, G4',
+      sharpSpelling: 'C4, E4, G4',
+      flatSpelling: 'C4, E4, G4',
+      questionMode
+    }
+  };
+}
+
+function generateChordByMode(questionMode, numNotes) {
+  switch (questionMode) {
+    case 'random':
+      return generateRandomChord(numNotes);
+    case 'triad':
+      return generateTriad();
+    case 'seventh':
+      return generateSeventh();
+    case 'triadPlusTension':
+      return generateTriadPlusTension();
+    case 'jazzChords':
+      return generateJazzChords();
+    default:
+      return generateTriad();
   }
 }

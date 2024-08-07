@@ -37,7 +37,8 @@ function AppContent() {
   const availableNotes = useMemo(() => ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'], []);
 
   const generateNewQuestion = useCallback(() => {
-    const newQuestion = generateCompleteChord(questionMode, numNotes);
+    console.log('Generating new question. Mode:', questionMode, 'NumNotes:', numNotes);
+    const { chord: newQuestion, analysis } = generateCompleteChord(questionMode, numNotes);
     
     setCurrentQuestion(newQuestion);
     setFeedback({});
@@ -45,19 +46,15 @@ function AppContent() {
     setCurrentNoteIndex(0);
     setCorrectlyGuessedNotes([]);
 
-    const questionIndices = newQuestion.map(note => availableNotes.indexOf(note));
-    const analysis = analyzeChord(questionIndices);
+    setAnalyzedChord(analysis);
+    const spelledChordArray = analysis.preferredSpellingNotes.split(', ').map(note => note.replace('♯', '#').replace('♭', 'b'));
+    setExpectedNotes(spelledChordArray);
 
-    if (analysis === null || !analysis.chordSymbol) {
-      return generateNewQuestion(); // Recursively try again
-    } else {
-      setAnalyzedChord(analysis);
-      const spelledChordArray = analysis.spelledChord.split(', ').map(note => note.replace('♯', '#').replace('♭', 'b'));
-      setExpectedNotes(spelledChordArray);
-    }
+    console.log('New question generated:', newQuestion);
+    console.log('Analysis:', analysis);
 
     return newQuestion;
-  }, [questionMode, numNotes, availableNotes, analyzeChord]);
+  }, [questionMode, numNotes]);
 
   useEffect(() => {
   }, []);

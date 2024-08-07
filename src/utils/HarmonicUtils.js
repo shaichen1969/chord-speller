@@ -116,9 +116,11 @@ const invalidateQuestion = (question) => {
     return false;
 };
 
-const createHarmonicInterpretations = (question) => {
+const createHarmonicInterpretations = (question, questionMode) => {
+    console.log(questionMode);
     let interpretations = {};
-
+    if (questionMode ==='triadPlusTension')console.log('condition met!');
+ 
     question.forEach(root => {
         let harmonicFunctions = question.map(number =>
             harmonicFunctionMap[(number - root + 12) % 12]

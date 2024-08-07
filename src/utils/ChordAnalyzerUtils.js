@@ -25,17 +25,16 @@ const selectPreferredSpelling = (sharpSpelling, flatSpelling) => {
     return flatAccidentals <= sharpAccidentals ? 'flat' : 'sharp';
 };
 
-export const analyzeChord = (questionIndices) => {
-    if (!questionIndices || questionIndices.length === 0) {
+export const analyzeChord = (questionIndices, questionMode) => {
+    console.log('Analyzing chord. Mode:', questionMode, 'Indices:', questionIndices);
+
+    if (invalidateQuestion(questionIndices)) {
+        console.log('Question invalidated');
         return null;
     }
 
-    const invalid = invalidateQuestion(questionIndices);
-    if (invalid) {
-        return null;
-    }
-
-    const interpretations = createHarmonicInterpretations(questionIndices);
+    const interpretations = createHarmonicInterpretations(questionIndices, questionMode);
+    console.log('Harmonic interpretations:', interpretations);
 
     const bestChords = findMostStableChords(interpretations);
     if (bestChords.length === 0) {

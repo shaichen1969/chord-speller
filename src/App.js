@@ -189,8 +189,6 @@ function AppContent() {
   return (
     <div className="App">
       <Navbar
-        numNotes={numNotes}
-        setNumNotes={handleSetNumNotes}
         pianoSound={pianoSound}
         setPianoSound={setPianoSound}
         gameLength={gameLength}

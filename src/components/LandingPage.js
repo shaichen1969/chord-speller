@@ -4,9 +4,13 @@ import '../styles/LandingPage.css';
 
 const LandingPage = () => {
     const questionModes = [
-        { name: 'Standard', description: 'Practice with standard chord spellings', path: '/play/standard' },
-        { name: 'Triad Plus Tension', description: 'Identify triads with added tensions', path: '/play/triad-plus-tension' },
-        { name: 'Advanced', description: 'Challenge yourself with complex chord structures', path: '/play/advanced' },
+        { name: 'Triads', description: 'Learn how to build and identify basic three-note chords.', path: '/play/triad' },
+        { name: '7th Chords', description: 'Practice recognizing and spelling four-note seventh chords.', path: '/play/seventh' },
+        { name: 'Basic Tension', description: 'Learn how to identify triads with an added tension note.', path: '/play/triadPlusTension' },
+        { name: 'Jazz Chords', description: 'Challenge yourself with complex jazz chord structures.', path: '/play/jazzChords' },
+        { name: 'Random 3-Note Chords', description: 'Test your skills with random three-note combinations.', path: '/play/random3' },
+        { name: 'Random 4-Note Chords', description: 'Identify random four-note chords for advanced practice.', path: '/play/random4' },
+        { name: 'Random 5-Note Chords', description: 'Master complex harmony with random five-note chords.', path: '/play/random5' },
     ];
 
     return (

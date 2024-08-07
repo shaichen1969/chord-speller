@@ -108,13 +108,13 @@ const generateJazzChords = () => {
   return seventh.map(note => valueToNote[note] + '4');
 };
 
-export function generateCompleteChord(questionMode, numNotes = 4) {
+export function generateCompleteChord(questionMode) {
   let chord;
   let analysis;
   let attempts = 0;
   const MAX_ATTEMPTS = 10;
   while (attempts < MAX_ATTEMPTS) {
-    chord = generateChordByMode(questionMode, numNotes);
+    chord = generateChordByMode(questionMode);
     const questionIndices = chord.map(note => availableNotes.indexOf(note));
     analysis = analyzeChord(questionIndices, questionMode);
 
@@ -138,10 +138,8 @@ export function generateCompleteChord(questionMode, numNotes = 4) {
   };
 }
 
-function generateChordByMode(questionMode, numNotes) {
+function generateChordByMode(questionMode) {
   switch (questionMode) {
-    case 'random':
-      return generateRandomChord(numNotes);
     case 'triad':
       return generateTriad();
     case 'seventh':
@@ -150,7 +148,13 @@ function generateChordByMode(questionMode, numNotes) {
       return generateTriadPlusTension();
     case 'jazzChords':
       return generateJazzChords();
+    case 'random3':
+      return generateRandomChord(3);
+    case 'random4':
+      return generateRandomChord(4);
+    case 'random5':
+      return generateRandomChord(5);
     default:
-      return generateTriad();
+      return generateRandomChord(4);
   }
 }

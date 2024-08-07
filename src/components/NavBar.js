@@ -50,25 +50,7 @@ const Navbar = ({ numNotes, setNumNotes, pianoSound, setPianoSound, gameLength, 
                             </div>
                             <div className="dropdown-menu" id="settings-menu" role="menu">
                                 <div className="dropdown-content has-background-dark">
-                                    <div className="dropdown-item">
-                                        <div className="field">
-                                            <label className="label has-text-light">Chord Complexity</label>
-                                            <div className="control">
-                                                <div className="select is-fullwidth">
-                                                    <select
-                                                        value={numNotes}
-                                                        onChange={(e) => setNumNotes(Number(e.target.value))}
-                                                    >
-                                                        {[...Array(10)].map((_, i) => (
-                                                            <option key={i + 1} value={i + 1}>
-                                                                {i + 1}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                   
                                     <div className="dropdown-item">
                                         <div className="field">
                                             <label className="label has-text-light">Game Length</label>

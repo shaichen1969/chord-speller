@@ -328,7 +328,7 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
     // Handle altered 5th
     if (hasFlat5 && !hasSharp5 && !symbol.includes('ø') && !symbol.includes('°')) {
         extensions.push('♭5');
-    }  else if (hasFlat5 ) {
+    } else if (hasFlat5 && !symbol.includes('ø') ) {
         extensions.push('♭5');
     }
 

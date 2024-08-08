@@ -11,6 +11,7 @@ const LandingPage = () => {
         { name: 'Random 3-Note Chords', description: 'Test your skills with random three-note combinations.', path: '/play/random3' },
         { name: 'Random 4-Note Chords', description: 'Identify random four-note chords for advanced practice.', path: '/play/random4' },
         { name: 'Random 5-Note Chords', description: 'Master complex harmony with random five-note chords.', path: '/play/random5' },
+        { name: 'Major Scales', description: 'Practice identifying notes in major scales.', path: '/play/scale' },
     ];
 
     return (

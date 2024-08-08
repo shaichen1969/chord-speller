@@ -1,4 +1,5 @@
 import { analyzeChord } from './ChordAnalyzerUtils';
+import { majorScales } from './HarmonicUtils';
 
 const noteValues = {
   'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4, 'F': 5,
@@ -10,6 +11,12 @@ const valueToNote = Object.fromEntries(
 );
 
 const availableNotes = ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'];
+
+const generateScale = (scaleType) => {
+  const rootNote = availableNotes[Math.floor(Math.random() * availableNotes.length)].slice(0, -1);
+  const scale = majorScales[rootNote];
+  return scale.map(note => note + '4');
+};
 
 const generateRandomChord = (numNotes) => {
   const notesCopy = [...availableNotes];
@@ -108,13 +115,14 @@ const generateJazzChords = () => {
   return seventh.map(note => valueToNote[note] + '4');
 };
 
-export function generateCompleteChord(questionMode) {
+export function generateCompleteChord(questionMode, scaleType = 'major') {
   let chord;
   let analysis;
   let attempts = 0;
   const MAX_ATTEMPTS = 10;
+
   while (attempts < MAX_ATTEMPTS) {
-    chord = generateChordByMode(questionMode);
+    chord = generateChordByMode(questionMode, scaleType);
     const questionIndices = chord.map(note => availableNotes.indexOf(note));
     analysis = analyzeChord(questionIndices, questionMode);
 
@@ -124,6 +132,8 @@ export function generateCompleteChord(questionMode) {
 
     attempts++;
   }
+
+  // Fallback to default chord if no valid chord is generated
   return { 
     chord: ['C4', 'E4', 'G4'], 
     analysis: { 
@@ -138,7 +148,7 @@ export function generateCompleteChord(questionMode) {
   };
 }
 
-function generateChordByMode(questionMode) {
+function generateChordByMode(questionMode, scaleType) {
   switch (questionMode) {
     case 'triad':
       return generateTriad();
@@ -154,6 +164,8 @@ function generateChordByMode(questionMode) {
       return generateRandomChord(4);
     case 'random5':
       return generateRandomChord(5);
+    case 'scale':
+      return generateScale(scaleType);
     default:
       return generateRandomChord(4);
   }

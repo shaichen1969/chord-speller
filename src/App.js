@@ -8,6 +8,8 @@ import Practice from './components/Practice';
 import Quiz from './components/Quiz';
 import AppContent from './components/AppContent';
 import Documentation from './components/Documentation';
+import TriadsLearning from './components/LearningPages/triads';
+import SeventhChordLearning from './components/LearningPages/seventhChord';
 import './styles/App.css';
 
 function App() {
@@ -33,6 +35,8 @@ function App() {
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/learn" element={<Learn />} />
+              <Route path="/learn/triads" element={<TriadsLearning />} />
+              <Route path="/learn/seventh-chords" element={<SeventhChordLearning />} />
               <Route path="/practice" element={<Practice />} />
               <Route path="/quiz" element={<Quiz />} />
               <Route path="/play/:section/:mode" element={<AppContent pianoSound={pianoSound} gameLength={gameLength} />} />

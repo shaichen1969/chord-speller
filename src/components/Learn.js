@@ -4,8 +4,8 @@ import '../styles/LandingPage.css';  // Reuse the same styles as LandingPage
 
 const Learn = () => {
     const learnModes = [
-        { name: 'Triads', description: 'Learn how to build basic three-note chords.', path: '/play/learn/triad' },
-        { name: '7th Chords', description: 'Learn how to build four-note seventh chords.', path: '/play/learn/seventh' },
+        { name: 'Triads', description: 'Learn how to build basic three-note chords.', path: '/learn/triads' },
+        { name: '7th Chords', description: 'Learn how to build four-note seventh chords.', path: '/learn/seventh-chords' },
         // Add more learning modes as needed
     ];
 

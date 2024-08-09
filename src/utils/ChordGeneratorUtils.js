@@ -14,8 +14,22 @@ const availableNotes = ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4'
 
 const generateScale = (scaleType) => {
   const rootNote = availableNotes[Math.floor(Math.random() * availableNotes.length)].slice(0, -1);
-  const scale = majorScales[rootNote];
-  return scale.map(note => note + '4');
+  if (scaleType === 'major') {
+    // Normalize the root note to match the keys in majorScales
+    const normalizedRoot = rootNote.replace('b', '♭').replace('#', '♯');
+    let scale = majorScales[normalizedRoot];
+    
+    if (!scale || !Array.isArray(scale)) {
+      console.error(`No valid major scale found for root note: ${rootNote}`);
+      console.log('Available scales:', Object.keys(majorScales));
+      // Generate a C major scale as a fallback
+      scale = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+    }
+    return scale.map(note => note + '4');
+  } else {
+    console.warn(`Unsupported scale type: ${scaleType}`);
+    return availableNotes; // Fallback to all available notes for unsupported types
+  }
 };
 
 const generateRandomChord = (numNotes) => {
@@ -116,15 +130,21 @@ const generateJazzChords = () => {
 };
 
 export function generateCompleteChord(questionMode, scaleType = 'major') {
+  
   let chord;
   let analysis;
   let attempts = 0;
   const MAX_ATTEMPTS = 10;
 
   while (attempts < MAX_ATTEMPTS) {
-    chord = generateChordByMode(questionMode, scaleType);
+    if (questionMode === 'scale') {
+      chord = generateScale(scaleType);
+    } else {
+      chord = generateChordByMode(questionMode, scaleType);
+    }
     const questionIndices = chord.map(note => availableNotes.indexOf(note));
     analysis = analyzeChord(questionIndices, questionMode);
+    console.log('scaleType', chord);
 
     if (analysis && analysis.chordSymbol && analysis.chordSymbol !== "No stable chords found") {
       return { chord, analysis };

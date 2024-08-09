@@ -139,7 +139,6 @@ export function generateCompleteChord(questionMode) {
 
   chord = generateChordByMode(questionMode);
   const questionIndices = chord.map(note => availableNotes.indexOf(note));
-  console.log(questionIndices);
   analysis = analyzeChord(questionIndices, questionMode);
   console.log('Generated Scale Analysis:', analysis);
   return { chord, analysis };

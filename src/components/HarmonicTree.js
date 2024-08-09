@@ -2,7 +2,10 @@ import React from 'react';
 import '../styles/HarmonicTree.css';
 
 const HarmonicTree = ({ chordAnalysis, correctlyGuessedNotes }) => {
+    console.log('HarmonicTree props:', { chordAnalysis, correctlyGuessedNotes });
+
     if (!chordAnalysis || !chordAnalysis.spelledChord) {
+        console.log('Invalid chord analysis');
         return (
             <div className="harmonic-tree">
                 <div className="chord-symbol">Invalid Chord</div>
@@ -22,13 +25,16 @@ const HarmonicTree = ({ chordAnalysis, correctlyGuessedNotes }) => {
         return note.replace('♭', 'b').replace('♯', '#');
     };
 
-    const treeLevels = ['13', '11', '9', '7', '5', '3', '1']
-        .map(level => {
-            if (level === '7' && !harmonicFunctionsFound.includes('7') && harmonicFunctionsFound.includes('6')) {
-                return '6';
-            }
-            return level;
-        })
+    const isScale = harmonicFunctionsFound.length === 7 && 
+                    harmonicFunctionsFound.every((f, i) => f === (i + 1).toString());
+
+    const treeLevels = isScale 
+      ? ['7', '6', '5', '4', '3', '2', '1'].map((level, index) => ({
+          level,
+          note: notes[6 - index],
+          isGuessed: correctlyGuessedNotes.includes(notes[6 - index])
+        }))
+      : ['13', '11', '9', '7', '5', '3', '1']
         .filter(level => harmonicFunctionsFound.some(f => f.replace(/[♭♯]/, '') === level))
         .map((level) => {
             const func = harmonicFunctionsFound.find(f => f.replace(/[♭♯]/, '') === level) || '';

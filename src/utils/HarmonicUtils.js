@@ -384,9 +384,9 @@ export const availableNotes = [
 ];
 
 export const scaleFormulas = {
-  major: [2, 2, 1, 2, 2, 2, 1],
-  melodicMinor: [2, 1, 2, 2, 2, 2, 1],
-  harmonicMinor: [2, 1, 2, 2, 1, 3, 1]
+  major: [2, 2, 1, 2, 2, 2],
+  melodicMinor: [2, 1, 2, 2, 2, 2],
+  harmonicMinor: [2, 1, 2, 2, 1, 3]
 };
 
 // Function to generate a scale given a root note and a formula

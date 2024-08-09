@@ -1,35 +1,39 @@
 import { analyzeChord } from './ChordAnalyzerUtils';
-import { majorScales } from './HarmonicUtils';
+import { 
+  generateMajorScale, 
+  generateMelodicMinorScale, 
+  generateHarmonicMinorScale, 
+  noteValues, 
+  availableNotes,
+  valueToNote
+} from './HarmonicUtils';
 
-const noteValues = {
-  'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4, 'F': 5,
-  'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8, 'Ab': 8, 'A': 9, 'A#': 10, 'Bb': 10, 'B': 11
-};
-
-const valueToNote = Object.fromEntries(
-  Object.entries(noteValues).map(([note, value]) => [value, note])
-);
-
-const availableNotes = ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'];
-
-const generateScale = (scaleType) => {
-  const rootNote = availableNotes[Math.floor(Math.random() * availableNotes.length)].slice(0, -1);
-  if (scaleType === 'major') {
-    // Normalize the root note to match the keys in majorScales
-    const normalizedRoot = rootNote.replace('b', '♭').replace('#', '♯');
-    let scale = majorScales[normalizedRoot];
-    
-    if (!scale || !Array.isArray(scale)) {
-      console.error(`No valid major scale found for root note: ${rootNote}`);
-      console.log('Available scales:', Object.keys(majorScales));
-      // Generate a C major scale as a fallback
-      scale = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-    }
-    return scale.map(note => note + '4');
-  } else {
-    console.warn(`Unsupported scale type: ${scaleType}`);
-    return availableNotes; // Fallback to all available notes for unsupported types
+const generateScale = (scaleType = 'major') => {
+  const availableRootNotes = Object.keys(noteValues);
+  const rootNote = availableRootNotes[Math.floor(Math.random() * availableRootNotes.length)];
+  
+  let scale;
+  switch (scaleType) {
+    case 'major':
+      scale = generateMajorScale(rootNote);
+      break;
+    case 'melodicMinor':
+      scale = generateMelodicMinorScale(rootNote);
+      break;
+    case 'harmonicMinor':
+      scale = generateHarmonicMinorScale(rootNote);
+      break;
+    default:
+      console.warn(`Unsupported scale type: ${scaleType}. Falling back to major scale.`);
+      scale = generateMajorScale(rootNote);
   }
+  //map scale to valueToNote and add octave number
+  scale = scale.map(note => valueToNote[noteValues[note]] + '4');
+  console.log('scale', scale);
+  
+  // Add octave number to each note and ensure they're in availableNotes
+   
+  return scale;
 };
 
 const generateRandomChord = (numNotes) => {
@@ -129,46 +133,19 @@ const generateJazzChords = () => {
   return seventh.map(note => valueToNote[note] + '4');
 };
 
-export function generateCompleteChord(questionMode, scaleType = 'major') {
-  
+export function generateCompleteChord(questionMode) {
   let chord;
   let analysis;
-  let attempts = 0;
-  const MAX_ATTEMPTS = 10;
 
-  while (attempts < MAX_ATTEMPTS) {
-    if (questionMode === 'scale') {
-      chord = generateScale(scaleType);
-    } else {
-      chord = generateChordByMode(questionMode, scaleType);
-    }
-    const questionIndices = chord.map(note => availableNotes.indexOf(note));
-    analysis = analyzeChord(questionIndices, questionMode);
-    console.log('scaleType', chord);
-
-    if (analysis && analysis.chordSymbol && analysis.chordSymbol !== "No stable chords found") {
-      return { chord, analysis };
-    }
-
-    attempts++;
-  }
-
-  // Fallback to default chord if no valid chord is generated
-  return { 
-    chord: ['C4', 'E4', 'G4'], 
-    analysis: { 
-      chordSymbol: 'C', 
-      root: 'C', 
-      harmonicFunctionsFound: ['1', '3', '5'], 
-      preferredSpellingNotes: 'C4, E4, G4',
-      sharpSpelling: 'C4, E4, G4',
-      flatSpelling: 'C4, E4, G4',
-      questionMode
-    }
-  };
+  chord = generateChordByMode(questionMode);
+  const questionIndices = chord.map(note => availableNotes.indexOf(note));
+  console.log(questionIndices);
+  analysis = analyzeChord(questionIndices, questionMode);
+  console.log('Generated Scale Analysis:', analysis);
+  return { chord, analysis };
 }
 
-function generateChordByMode(questionMode, scaleType) {
+function generateChordByMode(questionMode) {
   switch (questionMode) {
     case 'triad':
       return generateTriad();
@@ -185,7 +162,7 @@ function generateChordByMode(questionMode, scaleType) {
     case 'random5':
       return generateRandomChord(5);
     case 'scale':
-      return generateScale(scaleType);
+      return generateScale();
     default:
       return generateRandomChord(4);
   }

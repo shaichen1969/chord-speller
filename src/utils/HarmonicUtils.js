@@ -118,8 +118,6 @@ const invalidateQuestion = (question) => {
 
 const createHarmonicInterpretations = (question, questionMode) => {
     let interpretations = {};
-    console.log('question mode is', questionMode);
-    
     question.forEach(root => {
         let harmonicFunctions = question.map(number =>
             harmonicFunctionMap[(number - root + 12) % 12]
@@ -363,6 +361,70 @@ export const convertHarmonicFunctionForDisplay = (func) => {
     }
     return func;
 };
+
+// Define noteValues
+export const noteValues = {
+  'C': 0, 'C♯': 1, 'D♭': 1, 'D': 2, 'D♯': 3, 'E♭': 3, 'E': 4,
+  'F': 5, 'F♯': 6, 'G♭': 6, 'G': 7, 'G♯': 8, 'A♭': 8, 'A': 9,
+  'A♯': 10, 'B♭': 10, 'B': 11
+};
+
+// Define valueToNote (inverse of noteValues)
+export const valueToNote = Object.fromEntries(
+  Object.entries(noteValues)
+    .filter(([, value], index, self) => 
+      self.findIndex(([, v]) => v === value) === index
+    )
+    .map(([note, value]) => [value, note])
+);
+
+// Define availableNotes
+export const availableNotes = [
+  'C4', 'C♯4', 'D4', 'D♯4', 'E4', 'F4', 'F♯4', 'G4', 'G♯4', 'A4', 'A♯4', 'B4'
+];
+
+export const scaleFormulas = {
+  major: [2, 2, 1, 2, 2, 2, 1],
+  melodicMinor: [2, 1, 2, 2, 2, 2, 1],
+  harmonicMinor: [2, 1, 2, 2, 1, 3, 1]
+};
+
+// Function to generate a scale given a root note and a formula
+export function generateScale(rootNote, formula) {
+  if (!noteValues.hasOwnProperty(rootNote)) {
+    console.error(`Invalid root note: ${rootNote}`);
+    return null;
+  }
+
+  let scale = [rootNote];
+  let currentNote = noteValues[rootNote];
+
+  for (let interval of formula) {
+    currentNote = (currentNote + interval) % 12;
+    const nextNote = valueToNote[currentNote];
+    if (!nextNote) {
+      console.error(`Invalid note value: ${currentNote}`);
+      return null;
+    }
+    scale.push(nextNote);
+  }
+  return scale;
+}
+
+// Function to generate a major scale
+export function generateMajorScale(rootNote) {
+  return generateScale(rootNote, scaleFormulas.major);
+}
+
+// Function to generate a melodic minor scale
+export function generateMelodicMinorScale(rootNote) {
+  return generateScale(rootNote, scaleFormulas.melodicMinor);
+}
+
+// Function to generate a harmonic minor scale
+export function generateHarmonicMinorScale(rootNote) {
+  return generateScale(rootNote, scaleFormulas.harmonicMinor);
+}
 
 export {
     noteMap,

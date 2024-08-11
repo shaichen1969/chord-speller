@@ -306,7 +306,6 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
     if (hasFlat3) {
         symbol += 'm';
     }
-
     // Handle diminished and half-diminished chords
     if (hasFlat3 && hasFlat5) {
         if (hasFlat7) {

@@ -87,7 +87,15 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
     console.log('Expected note:', nextExpectedNote);
     console.log('Expected function:', nextExpectedFunction);
 
-    const normalizeNote = (n) => n.replace(/♭/g, 'b').replace(/♯/g, '#').replace(/\d+$/, '');
+    const normalizeNote = (n) => {
+      const enharmonicEquivalents = {
+        'B#': 'C', 'C♭': 'B',
+        'E#': 'F', 'F♭': 'E',
+        'C♯': 'D♭', 'D♯': 'E♭', 'F♯': 'G♭', 'G♯': 'A♭', 'A♯': 'B♭'
+      };
+      n = n.replace(/♭/g, 'b').replace(/♯/g, '#').replace(/\d+$/, '');
+      return enharmonicEquivalents[n] || n;
+    };
 
     if (normalizeNote(note) === normalizeNote(nextExpectedNote)) {
       // Clear incorrect feedback and set the correct note as green

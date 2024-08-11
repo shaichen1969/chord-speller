@@ -72,11 +72,40 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
   };
 
   const handleGuess = (note) => {
-    if (currentQuestion.includes(note)) {
-      setFeedback((prevFeedback) => ({ ...prevFeedback, [note]: 'correct' }));
+    if (!analyzedChord || !analyzedChord.harmonicFunctionsFound || !analyzedChord.spelledChord) {
+      console.error('Invalid chord analysis:', analyzedChord);
+      return;
+    }
+
+    const harmonicFunctions = analyzedChord.harmonicFunctionsFound;
+    const chordNotes = analyzedChord.spelledChord.split(', ');
+
+    const nextExpectedIndex = correctlyGuessedNotes.length;
+    const nextExpectedNote = chordNotes[nextExpectedIndex];
+    const nextExpectedFunction = harmonicFunctions[nextExpectedIndex];
+
+    console.log('Expected note:', nextExpectedNote);
+    console.log('Expected function:', nextExpectedFunction);
+
+    const normalizeNote = (n) => n.replace(/♭/g, 'b').replace(/♯/g, '#').replace(/\d+$/, '');
+
+    if (normalizeNote(note) === normalizeNote(nextExpectedNote)) {
+      // Clear incorrect feedback
+      setFeedback((prevFeedback) => {
+        const newFeedback = {};
+        Object.keys(prevFeedback).forEach(key => {
+          if (prevFeedback[key] === 'correct') {
+            newFeedback[key] = 'correct';
+          }
+        });
+        newFeedback[note] = 'correct';
+        return newFeedback;
+      });
+
       setScore((prevScore) => prevScore + 1);
-      setCorrectlyGuessedNotes((prevNotes) => [...prevNotes, note]);
-      if (correctlyGuessedNotes.length + 1 === currentQuestion.length) {
+      setCorrectlyGuessedNotes((prevNotes) => [...prevNotes, nextExpectedFunction]);
+
+      if (correctlyGuessedNotes.length + 1 === harmonicFunctions.length) {
         setShowCheckmark(true);
         setTimeout(() => {
           setShowCheckmark(false);
@@ -86,6 +115,8 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
     } else {
       setFeedback((prevFeedback) => ({ ...prevFeedback, [note]: 'incorrect' }));
     }
+
+    console.log('Updated correctly guessed notes:', [...correctlyGuessedNotes, nextExpectedFunction]);
   };
 
   const handleSkip = () => {

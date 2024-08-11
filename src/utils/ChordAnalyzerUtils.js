@@ -37,6 +37,7 @@ export const analyzeChord = (questionIndices, questionMode) => {
     }
 
     const results = bestChords.map(bestChord => {
+        
         const harmonicFunctions = reorderHarmonicFunctions(bestChord.harmonicFunctions);
 
         const sharpRoot = bestChord.root.includes('♭') ? simplifyNoteWithSharps(bestChord.root) : bestChord.root;

@@ -11,6 +11,7 @@ const Practice = () => {
         { name: 'Random 3-Note Chords', description: 'Test your skills with random three-note combinations.', path: '/play/practice/random3' },
         { name: 'Random 4-Note Chords', description: 'Identify random four-note chords for advanced practice.', path: '/play/practice/random4' },
         { name: 'Random 5-Note Chords', description: 'Master complex harmony with random five-note chords.', path: '/play/practice/random5' },
+        { name: 'The Major Scale', description: 'Learn how to construct a major scale in 12 keys', path: '/play/practice/majorScales' },
     ];
 
     return (

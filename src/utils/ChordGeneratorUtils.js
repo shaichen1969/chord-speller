@@ -26,7 +26,7 @@ const generateTriad = () => {
   const rootNote = Math.floor(Math.random() * 12);
   const triadTypes = [[4, 3], [3, 4], [3, 3], [4, 4]]; // Major, Minor, Diminished, Augmented
   const selectedType = triadTypes[Math.floor(Math.random() * triadTypes.length)];
-  
+
   return [
     rootNote,
     (rootNote + selectedType[0]) % 12,
@@ -56,39 +56,39 @@ const generateTriadPlusTension = () => {
   let possibleTensions = [];
   // Check if it's a major triad
   const isMajorTriad = (third - root + 12) % 12 === 4;
-  
+
   // Rule 1: 9 is always a whole step above 1
   possibleTensions.push((root + 2) % 12);
-  
+
   // Rule 2: 11 needs to be a whole step above 3
   if ((third + 2) % 12 !== root) {
     possibleTensions.push((third + 2) % 12);
   }
-  
+
   // Rule 3: 13 always needs to be a whole step above 5
   if ((fifth + 2) % 12 !== root) {
     possibleTensions.push((fifth + 2) % 12);
   }
-  
+
   // Rule 4: Exception for major triads
   if (isMajorTriad) {
     possibleTensions.push((root + 1) % 12); // ♭9
     possibleTensions.push((root + 3) % 12); // ♯9
     possibleTensions.push((fifth + 1) % 12); // ♭13
   }
-  
+
   // Select a random tension from the possible ones
   const tension = possibleTensions[Math.floor(Math.random() * possibleTensions.length)];
-  
+
   // Add the tension to the triad
   triad.push(valueToNote[tension] + '4');
-  
+
   return triad;
 };
 
 const generateJazzChords = () => {
   const seventh = generateSeventh().map(note => noteValues[note.slice(0, -1)]);
-  let isDominant=false;
+  let isDominant = false;
   //check if chord contains major third and minor srevnth
   if (seventh[1] - seventh[0] === 4 && seventh[3] - seventh[0] === 10) {
     isDominant = true;
@@ -108,28 +108,43 @@ const generateJazzChords = () => {
   return seventh.map(note => valueToNote[note] + '4');
 };
 
+const generateMajorScale = () => {
+  // Generate a random root note (0-11)
+  const rootNote = Math.floor(Math.random() * 12);
+
+  // Major scale intervals (in semitones)
+  const majorScaleIntervals = [0, 2, 4, 5, 7, 9, 11];
+
+  // Generate the scale
+  const scale = majorScaleIntervals.map(interval =>
+    (rootNote + interval) % 12
+  );
+
+  // Convert scale to note names (with octave 4)
+  const scaleNotes = scale.map(note => valueToNote[note] + '4');
+  console.log(scaleNotes);
+
+    return scaleNotes;
+};
+
 export function generateCompleteChord(questionMode) {
   let chord;
   let analysis;
   let attempts = 0;
-  const MAX_ATTEMPTS = 10;
-  while (attempts < MAX_ATTEMPTS) {
-    chord = generateChordByMode(questionMode);
-    const questionIndices = chord.map(note => availableNotes.indexOf(note));
-    analysis = analyzeChord(questionIndices, questionMode);
+  chord = generateChordByMode(questionMode);
+  const questionIndices = chord.map(note => availableNotes.indexOf(note));
+  analysis = analyzeChord(questionIndices, questionMode);
 
-    if (analysis && analysis.chordSymbol && analysis.chordSymbol !== "No stable chords found") {
-      return { chord, analysis };
-    }
-
-    attempts++;
+  if (analysis && analysis.chordSymbol && analysis.chordSymbol !== "No stable chords found") {
+    return { chord, analysis };
   }
-  return { 
-    chord: ['C4', 'E4', 'G4'], 
-    analysis: { 
-      chordSymbol: 'C', 
-      root: 'C', 
-      harmonicFunctionsFound: ['1', '3', '5'], 
+
+  return {
+    chord: ['C4', 'E4', 'G4'],
+    analysis: {
+      chordSymbol: 'C',
+      root: 'C',
+      harmonicFunctionsFound: ['1', '3', '5'],
       preferredSpellingNotes: 'C4, E4, G4',
       sharpSpelling: 'C4, E4, G4',
       flatSpelling: 'C4, E4, G4',
@@ -154,6 +169,8 @@ function generateChordByMode(questionMode) {
       return generateRandomChord(4);
     case 'random5':
       return generateRandomChord(5);
+    case 'majorScale':
+      return generateMajorScale();
     default:
       return generateRandomChord(4);
   }

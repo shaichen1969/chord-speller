@@ -137,6 +137,9 @@ const createHarmonicInterpretations = (question, questionMode) => {
         if (harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♯5')) {
             return; // Skip this interpretation
         }
+        if (harmonicFunctions.includes('♭5') && harmonicFunctions.includes('6')) {
+            return; // Skip this interpretation
+        }
         if (harmonicFunctions.includes('3') && harmonicFunctions.includes('♯5') &&
             harmonicFunctions.includes('6')) {
             return; // Skip this interpretation
@@ -308,8 +311,12 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
     if (hasFlat3 && hasFlat5) {
         if (hasFlat7) {
             symbol = symbol.replace('m', '') + 'ø'; // Half-diminished
-        } else if (!has7 && !has6) {
-            symbol = symbol.replace('m', '') + '°'; // Fully diminished
+        }
+        else if (has6) {
+            symbol = symbol.replace('m', '') + '°7'; // full diminished seventh chord
+        }
+        else if (!has7 && !has6) {
+            symbol = symbol.replace('m', '') + '°'; // Fully diminished triad
         }
     }
     if (has3 && hasSharp5) {
@@ -328,7 +335,7 @@ export const buildChordSymbol = (root, harmonicFunctions) => {
     // Handle altered 5th
     if (hasFlat5 && !hasSharp5 && !symbol.includes('ø') && !symbol.includes('°')) {
         extensions.push('♭5');
-    } else if (hasFlat5 && !symbol.includes('ø') ) {
+    } else if (hasFlat5 && !symbol.includes('ø') && !symbol.includes('°')) {
         extensions.push('♭5');
     }
 

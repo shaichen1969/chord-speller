@@ -33,27 +33,25 @@
 .tree-level {
     display: flex;
     align-items: center;
-    height: 42px; /* Increased from 32px */
-    margin-bottom: 10px; /* Added margin between levels */
+    height: 42px;
+    margin-bottom: 10px;
 }
 
 .tree-level:last-child {
     margin-bottom: 0; /* Remove margin for the last level */
 }
 
-.level-label {
-    width: 26px; /* Increased from 20px */
-    font-size: 1.04rem; /* Increased from 0.8rem */
+.level-circle {
+    width: 26px;
+    font-size: 1.04rem;
     text-align: right;
-    margin-right: 10px; /* Increased from 8px */
+    margin-right: 10px;
     color: #bdc3c7;
 }
 
 .note-circle {
-    /*add mairgen right: ;*/
-    margin-left: 10px;
-    width: 36px; /* Increased from 28px */
-    height: 36px; /* Increased from 28px */
+    width: 36px;
+    height: 36px;
     border: 1px solid #34495e;
     border-radius: 50%;
     display: flex;

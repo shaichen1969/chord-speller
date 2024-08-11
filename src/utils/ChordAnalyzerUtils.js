@@ -30,14 +30,20 @@ export const analyzeChord = (questionIndices, questionMode) => {
         return null;
     }
 
-    const interpretations = createHarmonicInterpretations(questionIndices, questionMode);
+    let interpretations = createHarmonicInterpretations(questionIndices, questionMode);
+
+    // Force the root when in major scale mode
+    if (questionMode === 'majorScale') {
+        const forcedRoot = noteMap[questionIndices[0]];
+        interpretations = { [forcedRoot]: interpretations[forcedRoot] };
+    }
+
     const bestChords = findMostStableChords(interpretations);
     if (bestChords.length === 0) {
         return null;
     }
 
     const results = bestChords.map(bestChord => {
-        
         const harmonicFunctions = reorderHarmonicFunctions(bestChord.harmonicFunctions);
 
         const sharpRoot = bestChord.root.includes('♭') ? simplifyNoteWithSharps(bestChord.root) : bestChord.root;
@@ -51,7 +57,7 @@ export const analyzeChord = (questionIndices, questionMode) => {
         const preferredRoot = preferredSpelling === 'flat' ? flatRoot : sharpRoot;
         const preferredSpelledChord = preferredSpelling === 'flat' ? flatSpelledChord : sharpSpelledChord;
 
-        const chordSymbol = buildChordSymbol(preferredRoot, harmonicFunctions);
+        const chordSymbol = buildChordSymbol(preferredRoot, harmonicFunctions, questionMode);
 
         return {
             root: preferredRoot,
@@ -62,7 +68,8 @@ export const analyzeChord = (questionIndices, questionMode) => {
             enharmonicSpelledChord: (preferredSpelling === 'flat' ? sharpSpelledChord : flatSpelledChord).join(', '),
             preferredSpelling: preferredSpelling,
             preferredSpellingNotes: preferredSpelledChord.join(', '),
-            chordSymbol: chordSymbol
+            chordSymbol: chordSymbol,
+            forcedRoot: questionMode === 'majorScale' // Add this flag
         };
     });
 

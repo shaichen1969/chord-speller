@@ -1,4 +1,5 @@
 import { analyzeChord } from './ChordAnalyzerUtils';
+import { majorScales, noteMap } from './HarmonicUtils';
 
 const noteValues = {
   'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4, 'F': 5,
@@ -108,70 +109,97 @@ const generateJazzChords = () => {
   return seventh.map(note => valueToNote[note] + '4');
 };
 
-const generateMajorScale = () => {
-  // Generate a random root note (0-11)
-  const rootNote = Math.floor(Math.random() * 12);
+function generateMajorScale() {
+  const rootIndex = Math.floor(Math.random() * 12);
+  const root = availableNotes[rootIndex];
+  const scale = majorScales[noteMap[rootIndex]];
+  
+  console.log(`Generating major scale. Root: ${root}, Scale: ${scale}`);
 
-  // Major scale intervals (in semitones)
-  const majorScaleIntervals = [0, 2, 4, 5, 7, 9, 11];
-
-  // Generate the scale
-  const scale = majorScaleIntervals.map(interval =>
-    (rootNote + interval) % 12
-  );
-
-  // Convert scale to note names (with octave 4)
-  const scaleNotes = scale.map(note => valueToNote[note] + '4');
-  console.log(scaleNotes);
-
-    return scaleNotes;
-};
+  // Generate the full major scale
+  const fullScale = scale.map(note => note + '4');
+  
+  console.log(`Generated full major scale:`, fullScale);
+  return fullScale;
+}
 
 export function generateCompleteChord(questionMode) {
   let chord;
   let analysis;
   let attempts = 0;
-  chord = generateChordByMode(questionMode);
-  const questionIndices = chord.map(note => availableNotes.indexOf(note));
-  analysis = analyzeChord(questionIndices, questionMode);
+  const maxAttempts = 10;
 
-  if (analysis && analysis.chordSymbol && analysis.chordSymbol !== "No stable chords found") {
-    return { chord, analysis };
+  console.log(`Starting generateCompleteChord with questionMode: ${questionMode}`);
+
+  do {
+    console.log(`Attempt ${attempts + 1} to generate chord`);
+    
+    chord = generateChordByMode(questionMode);
+    console.log(`Generated chord:`, chord);
+
+    const questionIndices = chord.map(note => availableNotes.indexOf(note));
+    console.log(`Question indices:`, questionIndices);
+
+    analysis = analyzeChord(questionIndices, questionMode);
+    console.log(`Chord analysis:`, analysis);
+
+    attempts++;
+  } while ((!analysis || !analysis.chordSymbol || analysis.chordSymbol === "No stable chords found") && attempts < maxAttempts);
+
+  if (attempts >= maxAttempts) {
+    console.log(`Max attempts reached. Falling back to default C major chord.`);
+    return {
+      chord: ['C4', 'E4', 'G4'],
+      analysis: {
+        chordSymbol: 'C',
+        root: 'C',
+        harmonicFunctionsFound: ['1', '3', '5'],
+        preferredSpellingNotes: 'C4, E4, G4',
+        sharpSpelling: 'C4, E4, G4',
+        flatSpelling: 'C4, E4, G4',
+        questionMode
+      }
+    };
   }
 
-  return {
-    chord: ['C4', 'E4', 'G4'],
-    analysis: {
-      chordSymbol: 'C',
-      root: 'C',
-      harmonicFunctionsFound: ['1', '3', '5'],
-      preferredSpellingNotes: 'C4, E4, G4',
-      sharpSpelling: 'C4, E4, G4',
-      flatSpelling: 'C4, E4, G4',
-      questionMode
-    }
-  };
+  console.log(`Successfully generated chord after ${attempts} attempt(s)`);
+  console.log(`Final chord:`, chord);
+  console.log(`Final analysis:`, analysis);
+
+  return { chord, analysis };
 }
 
 function generateChordByMode(questionMode) {
+  console.log(`Generating chord for mode: ${questionMode}`);
+  let generatedChord;
   switch (questionMode) {
     case 'triad':
-      return generateTriad();
+      generatedChord = generateTriad();
+      break;
     case 'seventh':
-      return generateSeventh();
+      generatedChord = generateSeventh();
+      break;
     case 'triadPlusTension':
-      return generateTriadPlusTension();
+      generatedChord = generateTriadPlusTension();
+      break;
     case 'jazzChords':
-      return generateJazzChords();
+      generatedChord = generateJazzChords();
+      break;
     case 'random3':
-      return generateRandomChord(3);
+      generatedChord = generateRandomChord(3);
+      break;
     case 'random4':
-      return generateRandomChord(4);
+      generatedChord = generateRandomChord(4);
+      break;
     case 'random5':
-      return generateRandomChord(5);
+      generatedChord = generateRandomChord(5);
+      break;
     case 'majorScale':
-      return generateMajorScale();
+      generatedChord = generateMajorScale();
+      break;
     default:
-      return generateRandomChord(4);
+      generatedChord = generateRandomChord(4);
   }
+  console.log(`Generated chord for ${questionMode}:`, generatedChord);
+  return generatedChord;
 }

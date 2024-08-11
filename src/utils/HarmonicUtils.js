@@ -290,52 +290,53 @@ const calculateChordScore = (harmonicFunctions) => {
     return score;
 };
 
-export const buildChordSymbol = (root, harmonicFunctions) => {
+export const buildChordSymbol = (root, harmonicFunctions, questionMode) => {
+    if (questionMode === 'majorScale') {
+        // For major scale mode, simplify the chord symbol
+        let symbol = root + ' Major';
+        let accidentals = [];
+
+        harmonicFunctions.forEach(func => {
+            if (func.includes('♭') || func.includes('♯')) {
+                // Convert to perfect interval notation
+                let interval = func.replace(/[♭♯]/, '');
+                let accidental = func.includes('♭') ? 'b' : '#';
+                accidentals.push(accidental + interval);
+            }
+        });
+
+        if (accidentals.length > 0) {
+            symbol += ' (' + accidentals.join(',') + ')';
+        }
+
+        return symbol;
+    }
+
+    // Existing code for other modes...
     let symbol = root;
     let has3 = harmonicFunctions.includes('3');
     let hasFlat3 = harmonicFunctions.includes('♭3');
     let has5 = harmonicFunctions.includes('5');
     let hasFlat5 = harmonicFunctions.includes('♭5');
     let hasSharp5 = harmonicFunctions.includes('♯5');
-    let has6 = harmonicFunctions.includes('6');
     let has7 = harmonicFunctions.includes('7');
     let hasFlat7 = harmonicFunctions.includes('♭7');
     let extensions = [];
 
     // Handle triad quality
-    if (hasFlat3) {
-        symbol += 'm';
-    }
-    // Handle diminished and half-diminished chords
     if (hasFlat3 && hasFlat5) {
-        if (hasFlat7) {
-            symbol = symbol.replace('m', '') + 'ø'; // Half-diminished
-        }
-        else if (has6) {
-            symbol = symbol.replace('m', '') + '°7'; // full diminished seventh chord
-        }
-        else if (!has7 && !has6) {
-            symbol = symbol.replace('m', '') + '°'; // Fully diminished triad
-        }
-    }
-    if (has3 && hasSharp5) {
-            symbol += '+'; // Augmented
-    }
-    // Handle 6th and 7th chords
-    if (has6) {
-        symbol += '6';
-    }
-    if (has7) {
-        symbol += '△7'; // Using triangle symbol for major 7th
-    } else if (hasFlat7 && !symbol.includes('ø') && !symbol.includes('°')) {
-        symbol += '7';
+        symbol += '°'; // Diminished
+    } else if (hasFlat3) {
+        symbol += 'm'; // Minor
+    } else if (hasSharp5) {
+        symbol += '+'; // Augmented
     }
 
-    // Handle altered 5th
-    if (hasFlat5 && !hasSharp5 && !symbol.includes('ø') && !symbol.includes('°')) {
-        extensions.push('♭5');
-    } else if (hasFlat5 && !symbol.includes('ø') && !symbol.includes('°')) {
-        extensions.push('♭5');
+    // Handle 7th chords
+    if (has7) {
+        symbol += 'maj7';
+    } else if (hasFlat7) {
+        symbol += '7';
     }
 
     // Handle extensions and alterations

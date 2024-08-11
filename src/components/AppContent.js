@@ -79,6 +79,7 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
 
     const harmonicFunctions = analyzedChord.harmonicFunctionsFound;
     const chordNotes = analyzedChord.spelledChord.split(', ');
+    console.log(chordNotes);
 
     const nextExpectedIndex = correctlyGuessedNotes.length;
     const nextExpectedNote = chordNotes[nextExpectedIndex];

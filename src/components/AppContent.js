@@ -90,7 +90,7 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
     const normalizeNote = (n) => n.replace(/♭/g, 'b').replace(/♯/g, '#').replace(/\d+$/, '');
 
     if (normalizeNote(note) === normalizeNote(nextExpectedNote)) {
-      // Clear incorrect feedback
+      // Clear incorrect feedback and set the correct note as green
       setFeedback((prevFeedback) => {
         const newFeedback = {};
         Object.keys(prevFeedback).forEach(key => {

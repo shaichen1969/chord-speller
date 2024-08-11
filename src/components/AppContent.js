@@ -84,20 +84,32 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
     const nextExpectedNote = chordNotes[nextExpectedIndex];
     const nextExpectedFunction = harmonicFunctions[nextExpectedIndex];
 
-    console.log('Expected note:', nextExpectedNote);
-    console.log('Expected function:', nextExpectedFunction);
-
     const normalizeNote = (n) => {
-      const enharmonicEquivalents = {
-        'B#': 'C', 'C♭': 'B',
-        'E#': 'F', 'F♭': 'E',
-        'C♯': 'D♭', 'D♯': 'E♭', 'F♯': 'G♭', 'G♯': 'A♭', 'A♯': 'B♭'
-      };
-      n = n.replace(/♭/g, 'b').replace(/♯/g, '#').replace(/\d+$/, '');
-      return enharmonicEquivalents[n] || n;
+      return n.replace(/b/g, '♭')
+               .replace(/#/g, '♯')
+               .replace(/\d+$/, '')
+               .toUpperCase();
     };
 
-    if (normalizeNote(note) === normalizeNote(nextExpectedNote)) {
+    const enharmonicEquivalents = {
+      'C♯': 'D♭', 'D♭': 'C♯',
+      'D♯': 'E♭', 'E♭': 'D♯',
+      'F♯': 'G♭', 'G♭': 'F♯',
+      'G♯': 'A♭', 'A♭': 'G♯',
+      'A♯': 'B♭', 'B♭': 'A♯'
+    };
+
+    const normalizedExpectedNote = normalizeNote(nextExpectedNote);
+    const normalizedReceivedNote = normalizeNote(note);
+
+    console.log('Expected note:', nextExpectedNote);
+    console.log('Received note:', note);
+    console.log('Normalized expected note:', normalizedExpectedNote);
+    console.log('Normalized received note:', normalizedReceivedNote);
+    console.log('Expected function:', nextExpectedFunction);
+
+    if (normalizedReceivedNote === normalizedExpectedNote || 
+        enharmonicEquivalents[normalizedReceivedNote] === normalizedExpectedNote) {
       // Clear incorrect feedback and set the correct note as green
       setFeedback((prevFeedback) => {
         const newFeedback = {};
@@ -113,6 +125,8 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
       setScore((prevScore) => prevScore + 1);
       setCorrectlyGuessedNotes((prevNotes) => [...prevNotes, nextExpectedFunction]);
 
+      console.log('Correct guess! Updated correctly guessed notes:', [...correctlyGuessedNotes, nextExpectedFunction]);
+
       if (correctlyGuessedNotes.length + 1 === harmonicFunctions.length) {
         setShowCheckmark(true);
         setTimeout(() => {
@@ -121,10 +135,9 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
         }, 1000);
       }
     } else {
+      console.log('Incorrect guess');
       setFeedback((prevFeedback) => ({ ...prevFeedback, [note]: 'incorrect' }));
     }
-
-    console.log('Updated correctly guessed notes:', [...correctlyGuessedNotes, nextExpectedFunction]);
   };
 
   const handleSkip = () => {

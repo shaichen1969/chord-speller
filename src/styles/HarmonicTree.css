@@ -50,6 +50,8 @@
 }
 
 .note-circle {
+    /*add mairgen right: ;*/
+    margin-left: 10px;
     width: 36px; /* Increased from 28px */
     height: 36px; /* Increased from 28px */
     border: 1px solid #34495e;

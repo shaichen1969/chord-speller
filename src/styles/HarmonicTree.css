@@ -4,8 +4,8 @@
     display: flex;
     flex-direction: column;
     height: auto; /* Changed from fixed height */
-    min-height: 200px; /* Added minimum height */
-    max-height: 364px; /* Added maximum height */
+    min-height: 400px; /* Increased minimum height */
+    max-height: 450px; /* Increased maximum height */
     position: absolute;
     bottom: 26px; /* Adjusted from 20px */
     right: 26px; /* Adjusted from 20px */
@@ -27,14 +27,15 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; /* Changed from space-between */
+    justify-content: space-between; /* Changed from space-between */
+    padding-bottom: 10px; /* Added some padding at the bottom */
 }
 
 .tree-level {
     display: flex;
     align-items: center;
     height: 42px;
-    margin-bottom: 10px;
+    margin-bottom: 5px; /* Reduced margin to fit all levels */
 }
 
 .tree-level:last-child {

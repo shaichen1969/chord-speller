@@ -179,7 +179,7 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
         playNote={playNote}
         showCheckmark={showCheckmark}
       />
-      {currentQuestion.length < 6 && analyzedChord && (
+      { analyzedChord && (
         <HarmonicTree chordAnalysis={analyzedChord} correctlyGuessedNotes={correctlyGuessedNotes} />
       )}
     </div>

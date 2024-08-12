@@ -7,7 +7,8 @@ import {
     findMostStableChords,
     simplifyNoteWithFlats,
     simplifyNoteWithSharps,
-    buildChordSymbol
+    buildChordSymbol,
+    majorScales
 } from './HarmonicUtils';
 
 const countAccidentals = (notes) => {
@@ -23,6 +24,14 @@ const selectPreferredSpelling = (sharpSpelling, flatSpelling) => {
     const sharpAccidentals = countAccidentals(sharpSpelling);
     const flatAccidentals = countAccidentals(flatSpelling);
     return flatAccidentals <= sharpAccidentals ? 'flat' : 'sharp';
+};
+
+// Helper function to sort notes in scale order
+const sortNotesInScaleOrder = (notes, root) => {
+    const scaleOrder = majorScales[root];
+    return notes.sort((a, b) => {
+        return scaleOrder.indexOf(a.replace(/\d+$/, '')) - scaleOrder.indexOf(b.replace(/\d+$/, ''));
+    });
 };
 
 export const analyzeChord = (questionIndices, questionMode) => {
@@ -59,7 +68,7 @@ export const analyzeChord = (questionIndices, questionMode) => {
 
         const chordSymbol = buildChordSymbol(preferredRoot, harmonicFunctions, questionMode);
 
-        return {
+        let result = {
             root: preferredRoot,
             altRoot: preferredSpelling === 'flat' ? sharpRoot : flatRoot,
             notes: questionIndices.map(note => noteMap[note]),
@@ -69,8 +78,18 @@ export const analyzeChord = (questionIndices, questionMode) => {
             preferredSpelling: preferredSpelling,
             preferredSpellingNotes: preferredSpelledChord.join(', '),
             chordSymbol: chordSymbol,
-            forcedRoot: questionMode === 'majorScale' // Add this flag
+            forcedRoot: questionMode === 'majorScale'
         };
+
+        if (questionMode === 'majorScale') {
+            // Reshuffle notes for major scale mode
+            const sortedNotes = sortNotesInScaleOrder(preferredSpelledChord, preferredRoot);
+            result.spelledChord = sortedNotes.join(', ');
+            result.preferredSpellingNotes = sortedNotes.join(', ');
+            result.harmonicFunctionsFound = ['1', '2', '3', '4', '5', '6', '7'];
+        }
+
+        return result;
     });
 
     return results.length > 1 ? results : results[0];

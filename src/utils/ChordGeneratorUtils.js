@@ -110,29 +110,32 @@ const generateJazzChords = () => {
 };
 
 function generateMajorScale() {
-  const rootIndex = Math.floor(Math.random() * 12);
-  const root = availableNotes[rootIndex];
-  const scale = majorScales[noteMap[rootIndex]];
-  
-  console.log(`Generating major scale. Root: ${root}, Scale: ${scale}`);
+  // Major scale formula: W W H W W W H (where W = whole step, H = half step)
+  const majorScaleSteps = [2, 2, 1, 2, 2, 2, 1];
 
-  // Generate the full major scale
-  const fullScale = scale.map(note => note + '4');
-  
-  console.log(`Generated full major scale:`, fullScale);
-  return fullScale;
+  // Select a random starting note
+  const startIndex = Math.floor(Math.random() * availableNotes.length);
+  const startNote = availableNotes[startIndex];
+
+  let scale = [startNote];
+  let currentIndex = startIndex;
+
+  // Generate the rest of the scale
+  for (let step of majorScaleSteps) {
+    currentIndex = (currentIndex + step) % availableNotes.length;
+    scale.push(availableNotes[currentIndex]);
+  }
+
+  console.log(`Generated major scale. Root: ${startNote}, Scale: ${scale.join(', ')}`);
+  return scale;
 }
-
 export function generateCompleteChord(questionMode) {
   let chord;
   let analysis;
   let attempts = 0;
   const maxAttempts = 10;
 
-  console.log(`Starting generateCompleteChord with questionMode: ${questionMode}`);
-
   do {
-    console.log(`Attempt ${attempts + 1} to generate chord`);
     
     chord = generateChordByMode(questionMode);
     console.log(`Generated chord:`, chord);
@@ -147,7 +150,6 @@ export function generateCompleteChord(questionMode) {
   } while ((!analysis || !analysis.chordSymbol || analysis.chordSymbol === "No stable chords found") && attempts < maxAttempts);
 
   if (attempts >= maxAttempts) {
-    console.log(`Max attempts reached. Falling back to default C major chord.`);
     return {
       chord: ['C4', 'E4', 'G4'],
       analysis: {
@@ -161,8 +163,6 @@ export function generateCompleteChord(questionMode) {
       }
     };
   }
-
-  console.log(`Successfully generated chord after ${attempts} attempt(s)`);
   console.log(`Final chord:`, chord);
   console.log(`Final analysis:`, analysis);
 
@@ -170,7 +170,6 @@ export function generateCompleteChord(questionMode) {
 }
 
 function generateChordByMode(questionMode) {
-  console.log(`Generating chord for mode: ${questionMode}`);
   let generatedChord;
   switch (questionMode) {
     case 'triad':

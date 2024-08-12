@@ -118,8 +118,6 @@ const invalidateQuestion = (question) => {
 
 const createHarmonicInterpretations = (question, questionMode) => {
     let interpretations = {};
-    console.log('question mode is', questionMode);
-    
     question.forEach(root => {
         let harmonicFunctions = question.map(number =>
             harmonicFunctionMap[(number - root + 12) % 12]

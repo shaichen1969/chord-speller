@@ -127,7 +127,7 @@ function generateMajorScale() {
     scale.push(availableNotes[currentIndex]);
   }
 
-  console.log(`Generated major scale. Root: ${startNote}, Scale: ${scale.join(', ')}`);
+   
   return scale;
 }
 export function generateCompleteChord(questionMode) {
@@ -139,13 +139,10 @@ export function generateCompleteChord(questionMode) {
   do {
     
     chord = generateChordByMode(questionMode);
-    console.log(`Generated chord:`, chord);
 
     const questionIndices = chord.map(note => availableNotes.indexOf(note));
-    console.log(`Question indices:`, questionIndices);
 
     analysis = analyzeChord(questionIndices, questionMode);
-    console.log(`Chord analysis:`, analysis);
 
     attempts++;
   } while ((!analysis || !analysis.chordSymbol || analysis.chordSymbol === "No stable chords found") && attempts < maxAttempts);
@@ -164,8 +161,6 @@ export function generateCompleteChord(questionMode) {
       }
     };
   }
-  console.log(`Final chord:`, chord);
-  console.log(`Final analysis:`, analysis);
 
   return { chord, analysis };
 }
@@ -200,6 +195,5 @@ function generateChordByMode(questionMode) {
     default:
       generatedChord = generateRandomChord(4);
   }
-  console.log(`Generated chord for ${questionMode}:`, generatedChord);
   return generatedChord;
 }

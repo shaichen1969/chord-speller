@@ -92,7 +92,8 @@ const GameCenter = ({
     };
 
     const playScale = (scale) => {
-        const adjustedScale = scale.reduce((acc, note, index) => {
+        console.log('Playing scale:', scale);
+        const normalizedScale = scale.reduce((acc, note, index) => {
             if (index === 0) return [note];
             
             const prevNote = acc[index - 1];
@@ -108,13 +109,13 @@ const GameCenter = ({
                 currentOctave = prevOctave + 1;
             }
 
-            const adjustedNote = currentPitchClass + currentOctave;
-            return [...acc, adjustedNote];
+            const normalizedNote = currentPitchClass + currentOctave;
+            return [...acc, normalizedNote];
         }, []);
 
-        console.log('Adjusted scale:', adjustedScale);
+        console.log('Normalized scale:', normalizedScale);
 
-        adjustedScale.forEach((note, index) => {
+        normalizedScale.forEach((note, index) => {
             setTimeout(() => {
                 console.log(`Playing note: ${note}`);
                 playNote(note);

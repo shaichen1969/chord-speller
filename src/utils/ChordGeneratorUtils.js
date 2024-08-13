@@ -1,6 +1,8 @@
 import { analyzeChord } from './ChordAnalyzerUtils';
 import { majorScales, noteMap } from './HarmonicUtils';
 
+export const availableNotes = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+
 const noteValues = {
   'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4, 'F': 5,
   'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8, 'Ab': 8, 'A': 9, 'A#': 10, 'Bb': 10, 'B': 11
@@ -10,7 +12,6 @@ const valueToNote = Object.fromEntries(
   Object.entries(noteValues).map(([note, value]) => [value, note])
 );
 
-const availableNotes = ['C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4'];
 
 const generateRandomChord = (numNotes) => {
   const notesCopy = [...availableNotes];

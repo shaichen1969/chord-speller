@@ -79,7 +79,6 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
 
     const harmonicFunctions = analyzedChord.harmonicFunctionsFound;
     const chordNotes = analyzedChord.spelledChord.split(', ');
-    console.log(chordNotes);
 
     const nextExpectedIndex = correctlyGuessedNotes.length;
     const nextExpectedNote = chordNotes[nextExpectedIndex];
@@ -103,11 +102,7 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
     const normalizedExpectedNote = normalizeNote(nextExpectedNote);
     const normalizedReceivedNote = normalizeNote(note);
 
-    console.log('Expected note:', nextExpectedNote);
-    console.log('Received note:', note);
-    console.log('Normalized expected note:', normalizedExpectedNote);
-    console.log('Normalized received note:', normalizedReceivedNote);
-    console.log('Expected function:', nextExpectedFunction);
+    
 
     if (normalizedReceivedNote === normalizedExpectedNote || 
         enharmonicEquivalents[normalizedReceivedNote] === normalizedExpectedNote) {
@@ -126,7 +121,7 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
       setScore((prevScore) => prevScore + 1);
       setCorrectlyGuessedNotes((prevNotes) => [...prevNotes, nextExpectedFunction]);
 
-      console.log('Correct guess! Updated correctly guessed notes:', [...correctlyGuessedNotes, nextExpectedFunction]);
+      
 
       if (correctlyGuessedNotes.length + 1 === harmonicFunctions.length) {
         setShowCheckmark(true);
@@ -136,7 +131,6 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
         }, 1000);
       }
     } else {
-      console.log('Incorrect guess');
       setFeedback((prevFeedback) => ({ ...prevFeedback, [note]: 'incorrect' }));
     }
   };
@@ -157,6 +151,7 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
         currentQuestion={currentQuestion}
         generateNewQuestion={generateNewQuestion}
         playChord={playChord}
+        playNote={playNote}
         score={score}
         setScore={setScore}
         timeLeft={timeLeft}
@@ -169,6 +164,7 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
         gameLength={gameLength}
         finalScore={finalScore}
         showScore={showScore}
+        mode={mode}
       />
       <Piano
         feedback={feedback}

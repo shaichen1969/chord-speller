@@ -5,6 +5,7 @@ import '../styles/GameControlCenter.css';
 import { Play, SkipForward, Music, Square } from 'lucide-react';
 import * as Tone from 'tone';
 import { Tooltip } from 'react-tooltip';
+import { availableNotes, generateCompleteChord } from '../utils/ChordGeneratorUtils';
 
 const GameControls = ({ onPlay, onSkip, onPlayReference, onStop, gameState, roundActive }) => {
     return (
@@ -63,6 +64,7 @@ const GameCenter = ({
     currentQuestion,
     generateNewQuestion,
     playChord,
+    playNote,
     score,
     setScore,
     timeLeft,
@@ -74,13 +76,50 @@ const GameCenter = ({
     endRound,
     numNotes,
     gameLength,
-    finalScore
+    finalScore,
+    mode
 }) => {
     const handlePlay = async () => {
         if (Tone.context.state !== 'running') {
             await Tone.start();
         }
-        playChord(currentQuestion);
+        
+        if (mode === 'majorScale' || mode === 'majorScales') {
+            playScale(currentQuestion);
+        } else {
+            playChord(currentQuestion);
+        }
+    };
+
+    const playScale = (scale) => {
+        const adjustedScale = scale.reduce((acc, note, index) => {
+            if (index === 0) return [note];
+            
+            const prevNote = acc[index - 1];
+            const prevPitchClass = prevNote.slice(0, -1);
+            const prevOctave = parseInt(prevNote.slice(-1));
+            const currentPitchClass = note.slice(0, -1);
+            let currentOctave = parseInt(note.slice(-1));
+
+            const prevIndex = availableNotes.indexOf(prevPitchClass);
+            const currentIndex = availableNotes.indexOf(currentPitchClass);
+
+            if (currentIndex <= prevIndex && currentOctave <= prevOctave) {
+                currentOctave = prevOctave + 1;
+            }
+
+            const adjustedNote = currentPitchClass + currentOctave;
+            return [...acc, adjustedNote];
+        }, []);
+
+        console.log('Adjusted scale:', adjustedScale);
+
+        adjustedScale.forEach((note, index) => {
+            setTimeout(() => {
+                console.log(`Playing note: ${note}`);
+                playNote(note);
+            }, index * 500);
+        });
     };
 
     const handleSkip = () => {

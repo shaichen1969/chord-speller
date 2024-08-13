@@ -102,11 +102,15 @@ const GameCenter = ({
             const currentPitchClass = note.slice(0, -1);
             let currentOctave = parseInt(note.slice(-1));
 
-            const prevIndex = availableNotes.indexOf(prevPitchClass);
-            const currentIndex = availableNotes.indexOf(currentPitchClass);
+            const prevIndex = availableNotes.findIndex(n => n.startsWith(prevPitchClass));
+            const currentIndex = availableNotes.findIndex(n => n.startsWith(currentPitchClass));
 
-            if (currentIndex <= prevIndex && currentOctave <= prevOctave) {
+            if (currentIndex < prevIndex) {
+                // The pitch has actually dropped, so increment the octave
                 currentOctave = prevOctave + 1;
+            } else {
+                // The pitch hasn't dropped, so use the same octave as the previous note
+                currentOctave = prevOctave;
             }
 
             const normalizedNote = currentPitchClass + currentOctave;

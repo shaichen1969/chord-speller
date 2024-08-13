@@ -23,7 +23,7 @@
 .piano {
     display: flex;
     position: relative;
-    width: 560px;
+    width: 1120px;
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
 }
@@ -54,6 +54,25 @@
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
 }
 
+/* Positioning for black keys */
+.key:nth-child(2), .key:nth-child(14) { left: 55px; }
+.key:nth-child(4), .key:nth-child(16) { left: 135px; }
+.key:nth-child(7), .key:nth-child(19) { left: 295px; }
+.key:nth-child(9), .key:nth-child(21) { left: 375px; }
+.key:nth-child(11), .key:nth-child(23) { left: 455px; }
+
+/* Second octave black keys */
+.key:nth-child(14) { left: 615px; }
+.key:nth-child(16) { left: 695px; }
+.key:nth-child(19) { left: 855px; }
+.key:nth-child(21) { left: 935px; }
+.key:nth-child(23) { left: 1015px; }
+
+/* Ensure all keys that are not black are white */
+.key:not(.black) {
+    background: linear-gradient(to bottom, #f8f8f8, #fff);
+}
+
 .white:active,
 .white.active {
     background: linear-gradient(to bottom, #e6e6e6, #f2f2f2);
@@ -66,26 +85,6 @@
     background: linear-gradient(to bottom, #1a1a1a, #000);
     transform: translateY(2px);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-.key:nth-child(2) {
-    left: 55px;
-}
-
-.key:nth-child(4) {
-    left: 135px;
-}
-
-.key:nth-child(7) {
-    left: 295px;
-}
-
-.key:nth-child(9) {
-    left: 375px;
-}
-
-.key:nth-child(11) {
-    left: 455px;
 }
 
 .key-content {
@@ -147,14 +146,14 @@
     animation: keyPress 0.1s ease;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
     .piano-container {
-        height: 200px;
+        height: 250px;
     }
 
     .piano {
         width: 100%;
-        max-width: 420px;
+        max-width: 840px;
     }
 
     .white {
@@ -167,79 +166,98 @@
         height: 120px;
     }
 
-    .key:nth-child(2) {
-        left: 41px;
-    }
+    /* Update positioning for both octaves */
+    .key:nth-child(2), .key:nth-child(14) { left: 41px; }
+    .key:nth-child(4), .key:nth-child(16) { left: 101px; }
+    .key:nth-child(7), .key:nth-child(19) { left: 221px; }
+    .key:nth-child(9), .key:nth-child(21) { left: 281px; }
+    .key:nth-child(11), .key:nth-child(23) { left: 341px; }
 
-    .key:nth-child(4) {
-        left: 101px;
-    }
+    /* Second octave white keys */
+    .key:nth-child(13) { left: 420px; }
+    .key:nth-child(15) { left: 480px; }
+    .key:nth-child(17) { left: 540px; }
+    .key:nth-child(18) { left: 600px; }
+    .key:nth-child(20) { left: 660px; }
+    .key:nth-child(22) { left: 720px; }
+    .key:nth-child(24) { left: 780px; }
 
-    .key:nth-child(7) {
-        left: 221px;
-    }
-
-    .key:nth-child(9) {
-        left: 281px;
-    }
-
-    .key:nth-child(11) {
-        left: 341px;
-    }
-
-    .feedback-indicator {
-        font-size: 18px;
-    }
-
-    .big-checkmark {
-        font-size: 6rem;
-    }
+    /* Second octave black keys */
+    .key:nth-child(14) { left: 461px; }
+    .key:nth-child(16) { left: 521px; }
+    .key:nth-child(19) { left: 641px; }
+    .key:nth-child(21) { left: 701px; }
+    .key:nth-child(23) { left: 761px; }
 }
 
-@media (max-width: 480px) and (orientation: portrait) {
+@media (max-width: 880px) {
     .piano-container {
-        height: 150px;
-        padding: 10px;
+        height: 200px;
     }
 
     .piano {
         width: 100%;
-        max-width: 100%;
+        max-width: 630px;
     }
 
     .white {
-        width: 14.28%;
-        /* 100% / 7 white keys */
-        height: 130px;
+        width: 45px;
+        height: 150px;
     }
 
     .black {
-        width: 8%;
+        width: 25px;
+        height: 100px;
+    }
+
+    /* Update positioning for both octaves */
+    .key:nth-child(2), .key:nth-child(15) { left: 31px; }
+    .key:nth-child(4), .key:nth-child(17) { left: 76px; }
+    .key:nth-child(7), .key:nth-child(20) { left: 166px; }
+    .key:nth-child(9), .key:nth-child(22) { left: 211px; }
+    .key:nth-child(11), .key:nth-child(24) { left: 256px; }
+    
+    /* Second octave */
+    .key:nth-child(14) { left: 315px; }
+    .key:nth-child(16) { left: 360px; }
+    .key:nth-child(18) { left: 405px; }
+    .key:nth-child(19) { left: 450px; }
+    .key:nth-child(21) { left: 495px; }
+    .key:nth-child(23) { left: 540px; }
+}
+
+@media (max-width: 660px) {
+    .piano-container {
+        height: 150px;
+    }
+
+    .piano {
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .white {
+        width: 30px;
+        height: 120px;
+    }
+
+    .black {
+        width: 16px;
         height: 80px;
     }
 
-    .key:nth-child(2) {
-        left: 10.71%;
-        /* 75% of white key width */
-    }
-
-    .key:nth-child(4) {
-        left: 25%;
-    }
-
-    .key:nth-child(7) {
-        left: 53.57%;
-    }
-
-    .key:nth-child(9) {
-        left: 67.86%;
-    }
-
-    .key:nth-child(11) {
-        left: 82.14%;
-    }
-
-    .feedback-indicator {
-        font-size: 14px;
-    }
+    /* Update positioning for both octaves */
+    .key:nth-child(2), .key:nth-child(15) { left: 21px; }
+    .key:nth-child(4), .key:nth-child(17) { left: 51px; }
+    .key:nth-child(7), .key:nth-child(20) { left: 111px; }
+    .key:nth-child(9), .key:nth-child(22) { left: 141px; }
+    .key:nth-child(11), .key:nth-child(24) { left: 171px; }
+    
+    /* Second octave */
+    .key:nth-child(14) { left: 210px; }
+    .key:nth-child(16) { left: 240px; }
+    .key:nth-child(18) { left: 270px; }
+    .key:nth-child(19) { left: 300px; }
+    .key:nth-child(21) { left: 330px; }
+    .key:nth-child(23) { left: 360px; }
 }

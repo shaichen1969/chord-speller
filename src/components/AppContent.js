@@ -96,8 +96,7 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
       'D♯': 'E♭', 'E♭': 'D♯',
       'F♯': 'G♭', 'G♭': 'F♯',
       'G♯': 'A♭', 'A♭': 'G♯',
-      'A♯': 'B♭', 'B♭': 'A♯'
-    };
+      'A♯': 'B♭', 'B♭': 'A♯' ,'B': 'C♭','C♭': 'B' };
 
     const normalizedExpectedNote = normalizeNote(nextExpectedNote);
     const normalizedReceivedNote = normalizeNote(note);

@@ -13,16 +13,15 @@ const HarmonicTree = ({ chordAnalysis, correctlyGuessedNotes }) => {
 
     let treeLevels;
     if (forcedRoot) {  // This indicates it's a major scale
-        treeLevels = ['13', '11', '9', '7', '5', '3', '1'].map((level, index) => {
-            const scaleLevel = 7 - index;
+        treeLevels = ['1', '2', '3', '4', '5', '6', '7'].map((level, index) => {
             return {
-                level: scaleLevel.toString(),
-                note: notes[scaleLevel - 1] || '',
-                isGuessed: correctlyGuessedNotes.includes(scaleLevel.toString())
+                level,
+                note: notes[index] || '',
+                isGuessed: correctlyGuessedNotes.includes(level)
             };
         });
     } else {
-        treeLevels = ['13', '11', '9', '7', '5', '3', '1']
+        treeLevels = ['1', '3', '5', '7', '9', '11', '13']
             .map(level => {
                 if (level === '7' && !harmonicFunctionsFound.includes('7') && harmonicFunctionsFound.includes('6')) {
                     return '6';
@@ -46,15 +45,17 @@ const HarmonicTree = ({ chordAnalysis, correctlyGuessedNotes }) => {
     return (
         <div className="harmonic-tree">
             <div className="chord-symbol">{chordSymbol}</div>
-            <div className="tree-levels">
-                {treeLevels.map(({ level, note, isGuessed }) => (
-                    <div key={level} className={`tree-level ${isGuessed ? 'guessed' : ''}`}>
-                        <div className="level-circle">{level}</div>
-                        <div className="note-circle" style={{ backgroundColor: isGuessed ? 'green' : 'transparent' }}>
-                            {isGuessed ? note : ''}
+            <div className="tree-container">
+                <div className="tree-levels">
+                    {treeLevels.map(({ level, note, isGuessed }, index) => (
+                        <div key={level} className={`tree-level ${isGuessed ? 'guessed' : ''}`} style={{order: treeLevels.length - index}}>
+                            <div className="level-circle">{level}</div>
+                            <div className="note-circle" style={{ backgroundColor: isGuessed ? 'green' : 'transparent' }}>
+                                {isGuessed ? note : ''}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
         </div>
     );

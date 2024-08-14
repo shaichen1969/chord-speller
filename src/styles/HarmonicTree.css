@@ -3,14 +3,14 @@
     padding: 16px; /* Increased from 12px */
     display: flex;
     flex-direction: column;
-    height: auto; /* Changed from fixed height */
+    height: 100%; /* Changed from fixed height */
     min-height: 400px; /* Increased minimum height */
     max-height: 450px; /* Increased maximum height */
     position: absolute;
-    bottom: 26px; /* Adjusted from 20px */
+    bottom: 0; /* Adjusted from 20px */
     right: 26px; /* Adjusted from 20px */
     background-color: rgba(44, 62, 80, 0.9);
-    border-radius: 10px; /* Slightly increased for proportion */
+    border-radius: 10px 10px 0 0; /* Slightly increased for proportion */
     box-shadow: 0 5px 26px rgba(0, 0, 0, 0.3);
     color: #ecf0f1;
 }
@@ -27,19 +27,23 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Changed from space-between */
-    padding-bottom: 10px; /* Added some padding at the bottom */
+    justify-content: flex-end; /* Changed from space-between */
+}
+
+.tree-levels {
+    display: flex;
+    flex-direction: column;
 }
 
 .tree-level {
     display: flex;
     align-items: center;
     height: 42px;
-    margin-bottom: 5px; /* Reduced margin to fit all levels */
+    margin-top: 5px; /* Changed from margin-bottom */
 }
 
-.tree-level:last-child {
-    margin-bottom: 0; /* Remove margin for the last level */
+.tree-level:first-child {
+    margin-top: 0; /* Remove top margin from the first (bottom-most) rendered level */
 }
 
 .level-circle {

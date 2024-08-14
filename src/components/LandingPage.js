@@ -24,8 +24,7 @@ const LandingPage = () => {
     return (
         <div className="landing-content">
             <h1 className="title">Chord Spelling Master</h1>
-            <p className="subtitle">Explore Music Theory and Chord Construction</p>
-            
+            <p className="subtitle">Build Chords. Build Scales. Quickly.</p>
             <div className="card-container">
                 {modes.map((mode) => (
                     <Link key={mode.name} to={mode.path} className="card">

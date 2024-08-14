@@ -3,27 +3,62 @@ import { Link } from 'react-router-dom';
 import '../styles/LandingPage.css';
 
 const LandingPage = () => {
-    const questionModes = [
-        { name: 'Triads', description: 'Learn how to build and identify basic three-note chords.', path: '/play/triad' },
-        { name: '7th Chords', description: 'Practice recognizing and spelling four-note seventh chords.', path: '/play/seventh' },
-        { name: 'Basic Tension', description: 'Learn how to identify triads with an added tension note.', path: '/play/triadPlusTension' },
-        { name: 'Jazz Chords', description: 'Challenge yourself with complex jazz chord structures.', path: '/play/jazzChords' },
-        { name: 'Random 3-Note Chords', description: 'Test your skills with random three-note combinations.', path: '/play/random3' },
-        { name: 'Random 4-Note Chords', description: 'Identify random four-note chords for advanced practice.', path: '/play/random4' },
-        { name: 'Random 5-Note Chords', description: 'Master complex harmony with random five-note chords.', path: '/play/random5' },
+    const modes = [
+        {
+            name: 'Learn',
+            description: 'Explore interactive lessons on chord construction',
+            path: '/learn',
+            topics: ['Triads', '7th Chords', 'Chord Variations']
+        },
+        {
+            name: 'Practice',
+            description: 'Build chords at your own pace with instant feedback',
+            path: '/practice',
+            features: ['Untimed exercises', 'Immediate feedback']
+        },
+        {
+            name: 'Quiz',
+            description: 'Test your skills with timed challenges',
+            path: '/quiz',
+            features: ['Timed sessions', 'Progress tracking']
+        }
     ];
 
     return (
         <div className="landing-content">
-            <h1 className="title">Chord Spelling Master</h1>
-            <p className="subtitle">Choose your practice mode</p>
-            <div className="card-container">
-                {questionModes.map((mode) => (
-                    <Link to={mode.path} key={mode.name} className="card">
-                        <h2>{mode.name}</h2>
+            <h1 className="title">Build scales. Build chords. Quickly.</h1>
+            <p className="subtitle"></p>
+            
+            <div className="app-overview">
+                <p>
+                    Chord Spelling Master provides tools for learning and practicing chord and scale construction. Choose from three modes to enhance your skills:
+                </p>
+            </div>
+
+            <div className="mode-container">
+                {modes.map((mode) => (
+                    <div key={mode.name} className="mode-card">
+                        <h2>{mode.name} Mode</h2>
                         <p>{mode.description}</p>
-                    </Link>
+                        <ul>
+                            {mode.topics && mode.topics.map(topic => <li key={topic}>{topic}</li>)}
+                            {mode.features && mode.features.map(feature => <li key={feature}>{feature}</li>)}
+                        </ul>
+                        <Link to={mode.path} className="mode-button">
+                            Enter {mode.name} Mode
+                        </Link>
+                    </div>
                 ))}
+            </div>
+
+            <div className="usage-guide">
+                <h3>How to Use</h3>
+                <ul>
+                    <li><strong>Learning Mode:</strong> The essential theory of chord construction.</li>
+                    <li><strong>Practice Mode:</strong> For hands-on practice and skill development.</li>
+                    <li><strong>Quiz Mode:</strong> For graded proficiency under time constraints.</li>
+                    <li><strong>It's highly recomended to have a strong grasp of major scales before attempting to build chords.</strong></li>
+                </ul>
             </div>
         </div>
     );

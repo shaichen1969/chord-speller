@@ -19,7 +19,7 @@ const Navbar = ({ openDocumentation, pianoSound, setPianoSound, gameLength, setG
         <nav className="navbar is-dark" aria-label="main navigation">
             <div className="navbar-brand">
                 <Link to="/" className="navbar-item">
-                    <strong className="is-size-4">CHORD SPELLING MASTER</strong>
+                    <strong className="is-size-4">CHORDSPELLING MASTER</strong>
                 </Link>
                 <a
                     role="button"
@@ -48,12 +48,6 @@ const Navbar = ({ openDocumentation, pianoSound, setPianoSound, gameLength, setG
                 </div>
 
                 <div className="navbar-end">
-                    <Link to="/" className="navbar-item">
-                        <span className="icon is-small">
-                            <Home size={18} />
-                        </span>
-                        <span>Home</span>
-                    </Link>
                     <div className="navbar-item">
                         <button className="button is-dark" onClick={openDocumentation}>
                             <span className="icon is-small">

@@ -6,59 +6,35 @@ const LandingPage = () => {
     const modes = [
         {
             name: 'Learn',
-            description: 'Explore interactive lessons on chord construction',
-            path: '/learn',
-            topics: ['Triads', '7th Chords', 'Chord Variations']
+            description: 'learn the essential theory for scale and chord construction.',
+            path: '/learn'
         },
         {
             name: 'Practice',
-            description: 'Build chords at your own pace with instant feedback',
-            path: '/practice',
-            features: ['Untimed exercises', 'Immediate feedback']
+            description: 'Construct chords and scales at your own pace with instant, personalized feedback.',
+            path: '/practice'
         },
         {
             name: 'Quiz',
-            description: 'Test your skills with timed challenges',
-            path: '/quiz',
-            features: ['Timed sessions', 'Progress tracking']
+            description: 'Challenge yourself with timed, graded exercises to gauge and improve your proficiency.',
+            path: '/quiz'
         }
     ];
 
     return (
         <div className="landing-content">
-            <h1 className="title">Build scales. Build chords. Quickly.</h1>
-            <p className="subtitle"></p>
+            <h1 className="title">Chord Spelling Master</h1>
+            <p className="subtitle">Explore Music Theory and Chord Construction</p>
             
-            <div className="app-overview">
-                <p>
-                    Chord Spelling Master provides tools for learning and practicing chord and scale construction. Choose from three modes to enhance your skills:
-                </p>
-            </div>
-
-            <div className="mode-container">
+            <div className="card-container">
                 {modes.map((mode) => (
-                    <div key={mode.name} className="mode-card">
-                        <h2>{mode.name} Mode</h2>
-                        <p>{mode.description}</p>
-                        <ul>
-                            {mode.topics && mode.topics.map(topic => <li key={topic}>{topic}</li>)}
-                            {mode.features && mode.features.map(feature => <li key={feature}>{feature}</li>)}
-                        </ul>
-                        <Link to={mode.path} className="mode-button">
-                            Enter {mode.name} Mode
-                        </Link>
-                    </div>
+                    <Link key={mode.name} to={mode.path} className="card">
+                        <div className="card-content">
+                            <h2 className="card-title">{mode.name}</h2>
+                            <p className="card-description">{mode.description}</p>
+                        </div>
+                    </Link>
                 ))}
-            </div>
-
-            <div className="usage-guide">
-                <h3>How to Use</h3>
-                <ul>
-                    <li><strong>Learning Mode:</strong> The essential theory of chord construction.</li>
-                    <li><strong>Practice Mode:</strong> For hands-on practice and skill development.</li>
-                    <li><strong>Quiz Mode:</strong> For graded proficiency under time constraints.</li>
-                    <li><strong>It's highly recomended to have a strong grasp of major scales before attempting to build chords.</strong></li>
-                </ul>
             </div>
         </div>
     );

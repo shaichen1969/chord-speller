@@ -1,16 +1,13 @@
-.landing-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.landing-content {
+    text-align: center;
     padding: 2rem;
-    background-color: #2a2a2a;
-    min-height: 100vh;
-    color: #ffffff;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .title {
     font-size: 2.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .subtitle {
@@ -20,32 +17,43 @@
 
 .card-container {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    gap: 2rem;
+    gap: 4rem;
+    margin-top: 3rem;
 }
 
 .card {
-    background-color: #363636;
+    width: 300px;
+    height: 200px;
+    background-color: #1e1e1e;
     border-radius: 8px;
     padding: 1.5rem;
-    width: 250px;
-    text-align: center;
     text-decoration: none;
     color: #ffffff;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-.card h2 {
+.card-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-title {
     font-size: 1.5rem;
     margin-bottom: 1rem;
 }
 
-.card p {
+.card-description {
     font-size: 1rem;
+    color: #cccccc;
+    margin-top: auto;
 }

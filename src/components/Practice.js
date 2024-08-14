@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../styles/LandingPage.css';  // Reuse the same styles as LandingPage
+import '../styles/Practice.css';  
 
 const Practice = () => {
     const practiceModes = [

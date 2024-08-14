@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../styles/LandingPage.css';
+import '../styles/LandingPage.css';  // Make sure this import is present
 
 const LandingPage = () => {
     const modes = [
         {
             name: 'Learn',
-            description: 'learn the essential theory for scale and chord construction.',
+            description: 'Learn the essential theory for scale and chord construction.',
             path: '/learn'
         },
         {
@@ -22,16 +22,14 @@ const LandingPage = () => {
     ];
 
     return (
-        <div className="landing-content">
-            <h1 className="title">Chord Spelling Master</h1>
-            <p className="subtitle">Build Chords. Build Scales. Quickly.</p>
-            <div className="card-container">
+        <div className="landing-page">
+            <h1 className="landing-title">Chord Spelling Master</h1>
+            <p className="landing-subtitle">Build Chords. Build Scales. Quickly.</p>
+            <div className="landing-card-container">
                 {modes.map((mode) => (
-                    <Link key={mode.name} to={mode.path} className="card">
-                        <div className="card-content">
-                            <h2 className="card-title">{mode.name}</h2>
-                            <p className="card-description">{mode.description}</p>
-                        </div>
+                    <Link key={mode.name} to={mode.path} className="landing-card">
+                        <h2 className="landing-card-title">{mode.name}</h2>
+                        <p className="landing-card-description">{mode.description}</p>
                     </Link>
                 ))}
             </div>

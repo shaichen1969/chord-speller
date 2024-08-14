@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../styles/Practice.css';  
+import '../styles/Practice.css';
 
 const Practice = () => {
     const practiceModes = [
@@ -15,14 +15,14 @@ const Practice = () => {
     ];
 
     return (
-        <div className="landing-content">
-            <h1 className="title">Practice Chord Identification</h1>
-            <p className="subtitle">Choose your practice mode (No time limit)</p>
-            <div className="card-container">
+        <div className="practice-page">
+            <h1 className="practice-title">Practice Chord Identification</h1>
+            <p className="practice-subtitle">Choose your practice mode (No time limit)</p>
+            <div className="practice-card-container">
                 {practiceModes.map((mode) => (
-                    <Link to={mode.path} key={mode.name} className="card">
-                        <h2>{mode.name}</h2>
-                        <p>{mode.description}</p>
+                    <Link to={mode.path} key={mode.name} className="practice-card">
+                        <h2 className="practice-card-title">{mode.name}</h2>
+                        <p className="practice-card-description">{mode.description}</p>
                     </Link>
                 ))}
             </div>

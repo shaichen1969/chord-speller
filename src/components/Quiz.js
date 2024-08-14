@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../styles/LandingPage.css';  // Reuse the same styles as LandingPage
+import '../styles/Quiz.css';
 
 const Quiz = () => {
     const quizModes = [
@@ -15,14 +15,14 @@ const Quiz = () => {
     ];
 
     return (
-        <div className="landing-content">
-            <h1 className="title">Chord Spelling Quiz</h1>
-            <p className="subtitle">Choose your quiz mode (Time limited)</p>
-            <div className="card-container">
+        <div className="quiz-page">
+            <h1 className="quiz-title">Chord Spelling Quiz</h1>
+            <p className="quiz-subtitle">Choose your quiz mode (Time limited)</p>
+            <div className="quiz-card-container">
                 {quizModes.map((mode) => (
-                    <Link to={mode.path} key={mode.name} className="card">
-                        <h2>{mode.name}</h2>
-                        <p>{mode.description}</p>
+                    <Link to={mode.path} key={mode.name} className="quiz-card">
+                        <h2 className="quiz-card-title">{mode.name}</h2>
+                        <p className="quiz-card-description">{mode.description}</p>
                     </Link>
                 ))}
             </div>

@@ -1,33 +1,55 @@
-.card-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
+.learn-page {
+    text-align: center;
     padding: 2rem;
     max-width: 1200px;
     margin: 0 auto;
+    color: #ffffff;
+    background-color: #2a2a2a;
 }
 
-.card {
+.learn-title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.learn-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 3rem;
+    color: #cccccc;
+}
+
+.learn-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    justify-content: center;
+}
+
+.learn-card {
     background-color: #1e1e1e;
     border-radius: 8px;
-    padding: 1rem;
+    padding: 1.5rem;
     text-decoration: none;
     color: #ffffff;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    height: 150px;
+    justify-content: space-between;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
 }
 
-.card-title {
-    font-size: 1.2rem;
+.learn-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.learn-card-title {
+    font-size: 1.5rem;
     margin-bottom: 0.5rem;
 }
 
-.card-description {
-    font-size: 0.9rem;
+.learn-card-description {
+    font-size: 1rem;
     color: #cccccc;
 }

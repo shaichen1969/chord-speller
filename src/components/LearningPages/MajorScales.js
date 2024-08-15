@@ -13,7 +13,7 @@ const MajorScales = () => {
 
                 {/* Add the Circle of Fifths diagram here */}
                 <div className="has-text-centered mb-4">
-                    <img src={CircleOfFifths} alt="Circle of Fifths" style={{ maxWidth: '900px', width: '100%' }} />
+                    <img src={CircleOfFifths} alt="Circle of Fifths" style={{ maxWidth: '600px', width: '100%' }} />
                 </div>
 
                 <p className="mb-4">
@@ -63,6 +63,86 @@ const MajorScales = () => {
                 <p className="mb-4">
                     This method teaches how to build all 12 major scales using the Circle of Fifths.
                 </p>
+
+                <h2 className="title is-4">Major Scales Chart (Up to 6 Flats and 6 Sharps)</h2>
+                <div className="table-container">
+                    <table className="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Sharps/Flats</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>C major</td>
+                                <td>-</td>
+                                <td>C D E F G A B</td>
+                            </tr>
+                            <tr>
+                                <td>G major</td>
+                                <td>F♯</td>
+                                <td>G A B C D E F♯</td>
+                            </tr>
+                            <tr>
+                                <td>D major</td>
+                                <td>F♯, C♯</td>
+                                <td>D E F♯ G A B C♯</td>
+                            </tr>
+                            <tr>
+                                <td>A major</td>
+                                <td>F♯, C♯, G♯</td>
+                                <td>A B C♯ D E F♯ G♯</td>
+                            </tr>
+                            <tr>
+                                <td>E major</td>
+                                <td>F♯, C♯, G♯, D♯</td>
+                                <td>E F♯ G♯ A B C♯ D♯</td>
+                            </tr>
+                            <tr>
+                                <td>B major</td>
+                                <td>F♯, C♯, G♯, D♯, A♯</td>
+                                <td>B C♯ D♯ E F♯ G♯ A♯</td>
+                            </tr>
+                            <tr>
+                                <td>F♯ major</td>
+                                <td>F♯, C♯, G♯, D♯, A♯, E♯</td>
+                                <td>F♯ G♯ A♯ B C♯ D♯ E♯</td>
+                            </tr>
+                            <tr>
+                                <td>F major</td>
+                                <td>B♭</td>
+                                <td>F G A B♭ C D E</td>
+                            </tr>
+                            <tr>
+                                <td>B♭ major</td>
+                                <td>B♭, E♭</td>
+                                <td>B♭ C D E♭ F G A</td>
+                            </tr>
+                            <tr>
+                                <td>E♭ major</td>
+                                <td>B♭, E♭, A♭</td>
+                                <td>E♭ F G A♭ B♭ C D</td>
+                            </tr>
+                            <tr>
+                                <td>A♭ major</td>
+                                <td>B♭, E♭, A♭, D♭</td>
+                                <td>A♭ B♭ C D♭ E♭ F G</td>
+                            </tr>
+                            <tr>
+                                <td>D♭ major</td>
+                                <td>B♭, E♭, A♭, D♭, G♭</td>
+                                <td>D♭ E♭ F G♭ A♭ B♭ C</td>
+                            </tr>
+                            <tr>
+                                <td>G♭ major</td>
+                                <td>B♭, E♭, A♭, D♭, G♭, C♭</td>
+                                <td>G♭ A♭ B♭ C♭ D♭ E♭ F</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );

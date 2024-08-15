@@ -12,6 +12,7 @@ import Documentation from './components/Documentation';
 import MajorScales from './components/LearningPages/MajorScales';
 import Triads from './components/LearningPages/Triads';
 import SeventhChord from './components/LearningPages/SeventhChord';
+import Tensions from './components/LearningPages/Tensions';
 import './styles/App.css';
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
               <Route path="/learn/MajorScales" element={<MajorScales />} />
               <Route path="/learn/Triads" element={<Triads />} />
               <Route path="/learn/SeventhChord" element={<SeventhChord />} />
+              <Route path="/learn/Tensions" element={<Tensions />} />
               <Route path="/practice" element={<Practice />} />
               <Route path="/quiz" element={<Quiz />} />
               <Route path="/play/:section/:mode" element={<AppContent pianoSound={pianoSound} gameLength={gameLength} />} />

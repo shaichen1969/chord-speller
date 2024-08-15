@@ -1,4 +1,5 @@
 import React from 'react';
+import CircleOfFifths from '../../assets/icons/Circle Of Fifths.svg';
 
 const MajorScales = () => {
     return (
@@ -10,10 +11,19 @@ const MajorScales = () => {
                     To build major scales using the Circle of Fifths and understand sharps or flats, follow these guidelines:
                 </p>
 
+                {/* Add the Circle of Fifths diagram here */}
+                <div className="has-text-centered mb-4">
+                    <img src={CircleOfFifths} alt="Circle of Fifths" style={{ maxWidth: '900px', width: '100%' }} />
+                </div>
+
+                <p className="mb-4">
+                    The Circle of Fifths diagram above shows the relationships between the 12 major scales. Moving clockwise adds sharps, while moving counterclockwise adds flats.
+                </p>
+
                 <h2 className="title is-4">Order of Sharps and Flats</h2>
                 <ul className="mb-4">
-                    <li><strong>Order of Sharps:</strong> F#, C#, G#, D#, A#, E#, B#</li>
-                    <li><strong>Order of Flats:</strong> Bb, Eb, Ab, Db, Gb, Cb, Fb</li>
+                    <li><strong>Order of Sharps:</strong> F#, C#, G#, D#, A#, E#</li>
+                    <li><strong>Order of Flats:</strong> Bb, Eb, Ab, Db, Gb, Cb</li>
                 </ul>
                 <p className="mb-4">When adding sharps or flats to a key, follow these orders.</p>
 

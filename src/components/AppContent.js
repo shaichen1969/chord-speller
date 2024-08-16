@@ -5,6 +5,7 @@ import Piano from './Piano';
 import HarmonicTree from './HarmonicTree';
 import { usePiano } from '../PianoContext';
 import { generateCompleteChord } from '../utils/ChordGeneratorUtils';
+import { correct as correctSound } from '../assets/media/piano';
 
 function AppContent({ pianoSound, gameLength: defaultGameLength }) {
   const { section, mode } = useParams();
@@ -21,6 +22,7 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
   const [showCheckmark, setShowCheckmark] = useState(false);
   const [correctlyGuessedNotes, setCorrectlyGuessedNotes] = useState([]);
   const [finalScore, setFinalScore] = useState(0);
+  const correctAudio = new Audio(correctSound);
 
   const { playNote, playChord } = usePiano();
 
@@ -101,8 +103,6 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
     const normalizedExpectedNote = normalizeNote(nextExpectedNote);
     const normalizedReceivedNote = normalizeNote(note);
 
-    
-
     if (normalizedReceivedNote === normalizedExpectedNote || 
         enharmonicEquivalents[normalizedReceivedNote] === normalizedExpectedNote) {
       // Clear incorrect feedback and set the correct note as green
@@ -120,10 +120,9 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
       setScore((prevScore) => prevScore + 1);
       setCorrectlyGuessedNotes((prevNotes) => [...prevNotes, nextExpectedFunction]);
 
-      
-
       if (correctlyGuessedNotes.length + 1 === harmonicFunctions.length) {
         setShowCheckmark(true);
+        correctAudio.play();  // Play the correct sound
         setTimeout(() => {
           setShowCheckmark(false);
           generateNewQuestion();

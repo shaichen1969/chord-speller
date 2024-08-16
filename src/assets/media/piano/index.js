@@ -35,5 +35,4 @@ export { default as A4 } from './sound_33.mp3';
 export { default as Bb4 } from './sound_34.mp3';
 export { default as B4 } from './sound_35.mp3';
 export { default as C1 } from './click.wav';
- 
- 
+export { default as correct } from './correct.mp3';

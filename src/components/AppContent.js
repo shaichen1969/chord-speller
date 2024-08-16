@@ -6,6 +6,7 @@ import HarmonicTree from './HarmonicTree';
 import { usePiano } from '../PianoContext';
 import { generateCompleteChord } from '../utils/ChordGeneratorUtils';
 import correctSound from '../assets/media/piano/correct.mp3';
+import { useAnalytics } from '../useAnalytics';
 
 function AppContent({ pianoSound, gameLength: defaultGameLength }) {
   const { section, mode } = useParams();
@@ -23,6 +24,7 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
   const [correctlyGuessedNotes, setCorrectlyGuessedNotes] = useState([]);
   const [finalScore, setFinalScore] = useState(0);
   const correctAudio = new Audio(correctSound);
+  const { logCustomEvent } = useAnalytics();
 
   const { playNote, playChord } = usePiano();
 
@@ -123,7 +125,7 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
       if (correctlyGuessedNotes.length + 1 === harmonicFunctions.length) {
         setShowCheckmark(true);
         correctAudio.play(); 
-        console.log('correctAudio played');
+        logCustomEvent('chord_guessed_correctly', { mode: mode });
         setTimeout(() => {
           setShowCheckmark(false);
           generateNewQuestion();
@@ -131,6 +133,7 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
       }
     } else {
       setFeedback((prevFeedback) => ({ ...prevFeedback, [note]: 'incorrect' }));
+      logCustomEvent('incorrect_guess', { mode: mode });
     }
   };
 

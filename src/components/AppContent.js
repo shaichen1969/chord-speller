@@ -12,7 +12,6 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
   const { section, mode } = useParams();
   const [gameLength, setGameLength] = useState(defaultGameLength);
   const [showScore, setShowScore] = useState(true);
-  const { mode: gameMode } = useParams();
   const [gameState, setGameState] = useState('idle');
   const [currentQuestion, setCurrentQuestion] = useState([]);
   const [analyzedChord, setAnalyzedChord] = useState(null);
@@ -105,35 +104,44 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
     const normalizedExpectedNote = normalizeNote(nextExpectedNote);
     const normalizedReceivedNote = normalizeNote(note);
 
-    if (normalizedReceivedNote === normalizedExpectedNote || 
-        enharmonicEquivalents[normalizedReceivedNote] === normalizedExpectedNote) {
-      // Clear incorrect feedback and set the correct note as green
+    const isCorrectGuess = normalizedReceivedNote === normalizedExpectedNote || 
+                           enharmonicEquivalents[normalizedReceivedNote] === normalizedExpectedNote;
+
+    if (isCorrectGuess) {
+      // Correct guess logic
       setFeedback((prevFeedback) => {
-        const newFeedback = {};
-        Object.keys(prevFeedback).forEach(key => {
-          if (prevFeedback[key] === 'correct') {
-            newFeedback[key] = 'correct';
-          }
-        });
+        const newFeedback = { ...prevFeedback };
         newFeedback[note] = 'correct';
         return newFeedback;
       });
 
-      setScore((prevScore) => prevScore + 1);
       setCorrectlyGuessedNotes((prevNotes) => [...prevNotes, nextExpectedFunction]);
 
       if (correctlyGuessedNotes.length + 1 === harmonicFunctions.length) {
+        // Entire chord guessed correctly
         setShowCheckmark(true);
         correctAudio.play(); 
         logCustomEvent('chord_guessed_correctly', { mode: mode });
+
+        // Update score for quiz mode only when the entire chord is guessed
+        if (section === 'quiz') {
+          setScore((prevScore) => prevScore + 10 * harmonicFunctions.length);
+        }
+
         setTimeout(() => {
           setShowCheckmark(false);
           generateNewQuestion();
         }, 1000);
       }
     } else {
+      // Incorrect guess logic
       setFeedback((prevFeedback) => ({ ...prevFeedback, [note]: 'incorrect' }));
       logCustomEvent('incorrect_guess', { mode: mode });
+
+      // Apply penalty in quiz mode
+      if (section === 'quiz') {
+        setScore((prevScore) => Math.max(0, prevScore - 5)); // Ensure score doesn't go below 0
+      }
     }
   };
 
@@ -167,6 +175,7 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
         finalScore={finalScore}
         showScore={showScore}
         mode={mode}
+        section={section}
       />
       <Piano
         feedback={feedback}

@@ -34,7 +34,7 @@ export const PianoProvider = ({ children }) => {
         };
     }, []);
 
-    const playNote = (note, duration = '2n') => {
+    const playNote = (note, duration = '8n') => {
         if (sampler) {
             sampler.triggerAttackRelease(note, duration);
         }

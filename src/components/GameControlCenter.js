@@ -121,7 +121,6 @@ const GameCenter = ({
 
         normalizedScale.forEach((note, index) => {
             setTimeout(() => {
-                console.log(`Playing note: ${note}`);
                 playNote(note);
             }, index * 500);
         });

@@ -16,7 +16,7 @@ export const PianoProvider = ({ children }) => {
             samplerUrls[note] = pianoSounds[note];
         });
 
-        const volume = new Tone.Volume(-6).toDestination(); // -6dB is approximately half volume
+        const volume = new Tone.Volume(-12).toDestination(); // -6dB is approximately half volume
 
         const newSampler = new Tone.Sampler({
             urls: samplerUrls,

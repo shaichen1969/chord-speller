@@ -139,7 +139,11 @@ const GameCenter = ({
 
     let instructionText = '';
     if (roundActive) {
-        instructionText = 'Listen to the chord and guess the notes!';
+        if (mode === 'majorScale' || mode === 'majorScales') {
+            instructionText = 'Spell the notes in the scale!';
+        } else {
+            instructionText = 'Spell the notes in the chord!';
+        }
     } else if (gameState === 'finished') {
         instructionText = `Round finished! Your score: ${finalScore}`;
     } else {

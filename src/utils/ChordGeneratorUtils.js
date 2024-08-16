@@ -112,7 +112,6 @@ const generateJazzChords = () => {
 };
 
 function generateMajorScale() {
-  console.log('generating scale');
   // Major scale formula: W W H W W W H (where W = whole step, H = half step)
   const majorScaleSteps = [2, 2, 1, 2, 2, 2, 1];
 

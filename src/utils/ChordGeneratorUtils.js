@@ -12,7 +12,6 @@ const valueToNote = Object.fromEntries(
   Object.entries(noteValues).map(([note, value]) => [value, note])
 );
 
-
 const generateRandomChord = (numNotes) => {
   const notesCopy = [...availableNotes];
   let newChord = [];
@@ -25,12 +24,9 @@ const generateRandomChord = (numNotes) => {
 };
 
 const generateTriad = () => {
-  console.log(`[generateTriad] Starting`);
   const rootNote = Math.floor(Math.random() * 12);
   const triadTypes = [[4, 3], [3, 4], [3, 3], [4, 4]]; // Major, Minor, Diminished, Augmented
   const selectedType = triadTypes[Math.floor(Math.random() * triadTypes.length)];
-
-  console.log(`[generateTriad] Root note: ${rootNote}, Selected type: ${selectedType}`);
 
   const triad = [
     rootNote,
@@ -38,7 +34,6 @@ const generateTriad = () => {
     (rootNote + selectedType[0] + selectedType[1]) % 12
   ].map(note => valueToNote[note] + '4');
 
-  console.log(`[generateTriad] Generated triad:`, triad);
   return triad;
 };
 
@@ -90,7 +85,6 @@ const generateTriadPlusTension = () => {
 
   // Add the tension to the triad
   triad.push(valueToNote[tension] + '4');
-  console.log('Generated triad with tension:', triad);
 
   return triad;
 };
@@ -118,6 +112,7 @@ const generateJazzChords = () => {
 };
 
 function generateMajorScale() {
+  console.log('generating scale');
   // Major scale formula: W W H W W W H (where W = whole step, H = half step)
   const majorScaleSteps = [2, 2, 1, 2, 2, 2, 1];
 
@@ -134,32 +129,25 @@ function generateMajorScale() {
     scale.push(availableNotes[currentIndex]);
   }
 
-   
   return scale;
 }
 export function generateCompleteChord(questionMode) {
-  console.log(`[generateCompleteChord] Starting with mode: ${questionMode}`);
   let chord;
   let analysis;
   let attempts = 0;
   const maxAttempts = 10;
 
   do {
-    console.log(`[generateCompleteChord] Attempt ${attempts + 1}`);
     chord = generateChordByMode(questionMode);
-    console.log(`[generateCompleteChord] Generated chord:`, chord);
 
     const questionIndices = chord.map(note => availableNotes.indexOf(note));
-    console.log(`[generateCompleteChord] Question indices:`, questionIndices);
 
     analysis = analyzeChord(questionIndices, questionMode);
-    console.log(`[generateCompleteChord] Chord analysis:`, analysis);
 
     attempts++;
   } while ((!analysis || !analysis.chordSymbol || analysis.chordSymbol === "No stable chords found") && attempts < maxAttempts);
 
   if (attempts >= maxAttempts) {
-    console.log(`[generateCompleteChord] Max attempts reached. Returning default chord.`);
     return {
       chord: ['C4', 'E4', 'G4'],
       analysis: {
@@ -174,17 +162,13 @@ export function generateCompleteChord(questionMode) {
     };
   }
 
-  console.log(`[generateCompleteChord] Final chord:`, chord);
-  console.log(`[generateCompleteChord] Final analysis:`, analysis);
   return { chord, analysis };
 }
 
 function generateChordByMode(questionMode) {
-  console.log(`[generateChordByMode] Starting with mode: ${questionMode}`);
   let generatedChord;
   switch (questionMode) {
     case 'triad':
-      console.log(`[generateChordByMode] Calling generateTriad`);
       generatedChord = generateTriad();
       break;
     case 'seventh':
@@ -209,9 +193,7 @@ function generateChordByMode(questionMode) {
       generatedChord = generateMajorScale();
       break;
     default:
-      console.log(`[generateChordByMode] Unknown mode, using random4`);
       generatedChord = generateRandomChord(4);
   }
-  console.log(`[generateChordByMode] Returned chord:`, generatedChord);
   return generatedChord;
 }

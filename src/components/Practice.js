@@ -4,7 +4,7 @@ import '../styles/Practice.css';
 
 const Practice = () => {
     const practiceModes = [
-        { name: 'The Major Scale', description: 'Learn how to construct a major scale in 12 keys', path: '/play/practice/majorScales' },
+        { name: 'The Major Scale', description: 'Learn how to construct a major scale in 12 keys', path: '/play/practice/majorScale' },
         { name: 'Triads', description: 'Practice identifying basic three-note chords.', path: '/play/practice/triad' },
         { name: '7th Chords', description: 'Practice recognizing four-note seventh chords.', path: '/play/practice/seventh' },
         { name: 'Basic Tension', description: 'Practice identifying triads with an added tension note.', path: '/play/practice/triadPlusTension' },

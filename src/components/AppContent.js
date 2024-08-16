@@ -30,7 +30,7 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
   useEffect(() => {
     if (section === 'practice') {
       setGameLength(Infinity);
-      setShowScore(false);
+      setShowScore(true);
     } else if (section === 'learn') {
       setGameLength(Infinity);
       setShowScore(false);
@@ -123,10 +123,8 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
         correctAudio.play(); 
         logCustomEvent('chord_guessed_correctly', { mode: mode });
 
-        // Update score for quiz mode only when the entire chord is guessed
-        if (section === 'quiz') {
-          setScore((prevScore) => prevScore + 10 * harmonicFunctions.length);
-        }
+        // Update score for both quiz and practice modes when the entire chord is guessed
+        setScore((prevScore) => prevScore + 10 * harmonicFunctions.length);
 
         setTimeout(() => {
           setShowCheckmark(false);
@@ -138,7 +136,7 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
       setFeedback((prevFeedback) => ({ ...prevFeedback, [note]: 'incorrect' }));
       logCustomEvent('incorrect_guess', { mode: mode });
 
-      // Apply penalty in quiz mode
+      // Apply penalty only in quiz mode
       if (section === 'quiz') {
         setScore((prevScore) => Math.max(0, prevScore - 5)); // Ensure score doesn't go below 0
       }

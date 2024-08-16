@@ -119,11 +119,23 @@ const GameCenter = ({
 
         console.log('Normalized scale:', normalizedScale);
 
-        normalizedScale.forEach((note, index) => {
-            setTimeout(() => {
-                playNote(note);
-            }, index * 500);
-        });
+        // Create a new Part
+        const scalePart = new Tone.Part((time, note) => {
+            playNote(note, '4n'); // Use quarter note duration for scale playback
+        }, normalizedScale.map((note, index) => [index * 0.5, note]));
+
+        // Set the Part to loop once
+        scalePart.loop = false;
+
+        // Start the Transport and the Part
+        Tone.Transport.start();
+        scalePart.start(0);
+
+        // Stop the Transport after the scale has finished playing
+        Tone.Transport.schedule(() => {
+            Tone.Transport.stop();
+            scalePart.dispose(); // Clean up the Part
+        }, normalizedScale.length * 0.5);
     };
 
     const handleSkip = () => {

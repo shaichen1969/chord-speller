@@ -2,13 +2,13 @@ import { initializeApp } from 'firebase/app';
 import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
-  apiKey: "YOUR_VALID_API_KEY",
+  apiKey: "AIzaSyBkhfoI5bbXbW1ag3PACjO2c3zGc5qu5T8",
   authDomain: "chord-spelling-master.firebaseapp.com",
   projectId: "chord-spelling-master",
   storageBucket: "chord-spelling-master.appspot.com",
-  messagingSenderId: "YOUR_VALID_MESSAGING_SENDER_ID",
-  appId: "YOUR_VALID_APP_ID",
-  measurementId: "YOUR_VALID_MEASUREMENT_ID"
+  messagingSenderId: "258056635792",
+  appId: "1:258056635792:web:27d6a51d002595595e1f15",
+  measurementId: "G-H19KCJM6B3"
 };
 
 const app = initializeApp(firebaseConfig);

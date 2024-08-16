@@ -2,12 +2,12 @@
 
 import React from 'react';
 import '../styles/GameControlCenter.css';
-import { Play, SkipForward, Music, Square } from 'lucide-react';
+import { Play, SkipForward, Square } from 'lucide-react';
 import * as Tone from 'tone';
 import { Tooltip } from 'react-tooltip';
 import { availableNotes, generateCompleteChord } from '../utils/ChordGeneratorUtils';
 
-const GameControls = ({ onPlay, onSkip, onPlayReference, onStop, gameState, roundActive }) => {
+const GameControls = ({ onPlay, onSkip, onStop, gameState, roundActive }) => {
     return (
         <div className="buttons">
             <button
@@ -31,16 +31,6 @@ const GameControls = ({ onPlay, onSkip, onPlayReference, onStop, gameState, roun
                 <SkipForward />
             </button>
             <button
-                className="button is-success is-medium"
-                onClick={onPlayReference}
-                disabled={!roundActive}
-                aria-label="Play Reference"
-                data-tooltip-id="reference-tooltip"
-                data-tooltip-content="Play reference C"
-            >
-                <Music />
-            </button>
-            <button
                 className="button is-danger is-medium"
                 onClick={onStop}
                 disabled={!roundActive}
@@ -52,7 +42,6 @@ const GameControls = ({ onPlay, onSkip, onPlayReference, onStop, gameState, roun
             </button>
             <Tooltip id="play-tooltip" place="top" effect="solid" />
             <Tooltip id="skip-tooltip" place="top" effect="solid" />
-            <Tooltip id="reference-tooltip" place="top" effect="solid" />
             <Tooltip id="stop-tooltip" place="top" effect="solid" />
         </div>
     );
@@ -71,7 +60,6 @@ const GameCenter = ({
     setTimeLeft,
     roundActive,
     startRound,
-    onPlayReference,
     onSkip,
     endRound,
     numNotes,
@@ -142,10 +130,6 @@ const GameCenter = ({
         onSkip();
     };
 
-    const handlePlayReference = () => {
-        onPlayReference();
-    };
-
     const formatTime = (seconds) => {
         if (seconds === Infinity) return 'Eternity';
         const minutes = Math.floor(seconds / 60);
@@ -189,7 +173,6 @@ const GameCenter = ({
                         <GameControls
                             onPlay={handlePlay}
                             onSkip={handleSkip}
-                            onPlayReference={handlePlayReference}
                             onStop={endRound}
                             gameState={gameState}
                             roundActive={roundActive}

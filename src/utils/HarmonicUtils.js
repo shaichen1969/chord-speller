@@ -89,7 +89,7 @@ const convertToTensions = (harmonicFunctions) => {
             return '♯9';
         } else if (func === '♭5' && contains5) {
             return '♯11';
-        } else if (func === '♯5' && (contains5 || containsFlat5)) {
+        } else if (func === '���5' && (contains5 || containsFlat5)) {
             return '♭13';
         } else if (func === '6' && (containsFlat7 || containsMajor7)) {
             return '13';
@@ -123,6 +123,14 @@ const createHarmonicInterpretations = (question, questionMode) => {
             harmonicFunctionMap[(number - root + 12) % 12]
         );
         
+        // Skip interpretations with 1, ♭3, ♭5, and ♯5
+        if (harmonicFunctions.includes('1') && 
+            harmonicFunctions.includes('♭3') && 
+            harmonicFunctions.includes('♭5') && 
+            harmonicFunctions.includes('♯5')) {
+            return; // Skip this interpretation
+        }
+
         if (questionMode === 'triadPlusTension') {
             if (harmonicFunctions.includes('♭7') || harmonicFunctions.includes('7')) {
                 return; // Skip this interpretation
@@ -131,7 +139,6 @@ const createHarmonicInterpretations = (question, questionMode) => {
                 return; // Skip this interpretation
             }
         }
-        // Existing validation checks
         if (harmonicFunctions.includes('♭3') && harmonicFunctions.includes('♯5')) {
             return; // Skip this interpretation
         }
@@ -292,6 +299,7 @@ const calculateChordScore = (harmonicFunctions) => {
 };
 
 export const buildChordSymbol = (root, harmonicFunctions, questionMode) => {
+    console.log('buildChordSymbol input:', { root, harmonicFunctions, questionMode });
     if (questionMode === 'majorScale') {
         // For major scale mode, simplify the chord symbol
         let symbol = root + ' Major';
@@ -322,22 +330,31 @@ export const buildChordSymbol = (root, harmonicFunctions, questionMode) => {
     let hasSharp5 = harmonicFunctions.includes('♯5');
     let has7 = harmonicFunctions.includes('7');
     let hasFlat7 = harmonicFunctions.includes('♭7');
+    let has6 = harmonicFunctions.includes('6');
     let extensions = [];
 
-    // Handle triad quality
-    if (hasFlat3 && hasFlat5) {
+    // Handle triad quality and 7th chords together
+    if (hasFlat3 && hasFlat5 && hasFlat7) {
+        symbol += 'ø'; // Half-diminished
+    } else if (hasFlat3 && hasFlat5) {
         symbol += '°'; // Diminished
     } else if (hasFlat3) {
         symbol += 'm'; // Minor
+        if (hasFlat7) symbol += '7';
+        else if (has7) symbol += 'maj7';
     } else if (hasSharp5) {
         symbol += '+'; // Augmented
+        if (hasFlat7) symbol += '7';
+        else if (has7) symbol += 'maj7';
+    } else {
+        // Major
+        if (hasFlat7) symbol += '7';
+        else if (has7) symbol += 'maj7';
     }
 
-    // Handle 7th chords
-    if (has7) {
-        symbol += 'maj7';
-    } else if (hasFlat7) {
-        symbol += '7';
+    // Handle 6th chord if not already handled
+    if (has6 && !symbol.includes('7') && !symbol.includes('ø') && !symbol.includes('°')) {
+        symbol += '6';
     }
 
     // Handle extensions and alterations
@@ -356,10 +373,11 @@ export const buildChordSymbol = (root, harmonicFunctions, questionMode) => {
     if (!has3 && !hasFlat3 && harmonicFunctions.length > 1) {
         symbol += ' no 3';
     }
-    if (!has5 && !hasFlat5 && !hasSharp5 && harmonicFunctions.length > 1 && !symbol.includes('°')) {
+    if (!has5 && !hasFlat5 && !hasSharp5 && harmonicFunctions.length > 1 && !symbol.includes('°') && !symbol.includes('ø')) {
         symbol += ' no 5';
     }
 
+    console.log('buildChordSymbol output:', symbol);
     return symbol;
 };
 

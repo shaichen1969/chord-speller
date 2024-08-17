@@ -138,6 +138,9 @@ const createHarmonicInterpretations = (question, questionMode) => {
         if (harmonicFunctions.includes('♭5') && harmonicFunctions.includes('6')) {
             return; // Skip this interpretation
         }
+        if (harmonicFunctions.includes('♯5') && harmonicFunctions.includes('6')) {
+            return; // Skip this interpretation
+        }
         if (harmonicFunctions.includes('3') && harmonicFunctions.includes('♯5') &&
             harmonicFunctions.includes('6')) {
             return; // Skip this interpretation

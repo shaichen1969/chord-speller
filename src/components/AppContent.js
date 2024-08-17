@@ -114,6 +114,12 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
       setFeedback((prevFeedback) => {
         const newFeedback = { ...prevFeedback };
         newFeedback[note] = 'correct';
+        // Clear all 'incorrect' feedback
+        Object.keys(newFeedback).forEach(key => {
+          if (newFeedback[key] === 'incorrect') {
+            delete newFeedback[key];
+          }
+        });
         return newFeedback;
       });
 

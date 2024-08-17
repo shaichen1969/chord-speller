@@ -111,31 +111,27 @@
 
 /* Piano Sound Button Styles */
 .piano-sound-btn {
-    background-color: #363636;
-    /* Background color for piano sound button */
-    color: #ffffff;
-    /* White color for piano sound button */
-    border: none;
-    /* No border for piano sound button */
-    transition: all 0.3s ease;
-    /* Transition effect for piano sound button */
+    background-color: #363636 !important;
+    color: #ffffff !important;
+    border: none !important;
+    transition: background-color 0.3s ease !important;
 }
 
-.piano-sound-btn:hover {
-    background-color: #4a4a4a;
-    /* Background color for piano sound button on hover */
+.piano-sound-btn.is-on {
+    background-color: #1a5f2a !important;
+    box-shadow: 0 0 10px rgba(26, 95, 42, 0.5) !important;
 }
 
-.piano-sound-btn.is-active {
-    background-color: #1a5f2a;
-    /* Background color for active piano sound button */
-    box-shadow: 0 0 10px rgba(26, 95, 42, 0.5);
-    /* Box shadow for active piano sound button */
+.piano-sound-btn:hover,
+.piano-sound-btn:focus,
+.piano-sound-btn:active {
+    background-color: #363636 !important;
 }
 
-.piano-sound-btn.is-active:hover {
-    background-color: #236b34;
-    /* Background color for active piano sound button on hover */
+.piano-sound-btn.is-on:hover,
+.piano-sound-btn.is-on:focus,
+.piano-sound-btn.is-on:active {
+    background-color: #1a5f2a !important;
 }
 
 /* Dark theme adjustments */

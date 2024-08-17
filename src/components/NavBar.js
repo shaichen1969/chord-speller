@@ -74,29 +74,6 @@ const Navbar = ({ openDocumentation, pianoSound, setPianoSound, gameLength, setG
                             <div className="dropdown-menu" id="settings-menu" role="menu">
                                 <div className="dropdown-content">
                                     <div className="dropdown-item">
-                                        <p>Piano Sound</p>
-                                        <div className="control">
-                                            <label className="radio">
-                                                <input
-                                                    type="radio"
-                                                    name="pianoSound"
-                                                    checked={pianoSound}
-                                                    onChange={() => setPianoSound(true)}
-                                                />
-                                                On
-                                            </label>
-                                            <label className="radio">
-                                                <input
-                                                    type="radio"
-                                                    name="pianoSound"
-                                                    checked={!pianoSound}
-                                                    onChange={() => setPianoSound(false)}
-                                                />
-                                                Off
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div className="dropdown-item">
                                         <p>Game Length</p>
                                         <div className="select">
                                             <select
@@ -108,6 +85,17 @@ const Navbar = ({ openDocumentation, pianoSound, setPianoSound, gameLength, setG
                                                 <option value={180}>3 Minutes</option>
                                                 <option value={Infinity}>Eternity</option>
                                             </select>
+                                        </div>
+                                    </div>
+                                    <div className="dropdown-item">
+                                        <p>Piano Sound</p>
+                                        <div className="control">
+                                            <button
+                                                className={`button is-fullwidth piano-sound-btn ${pianoSound ? 'is-on' : ''}`}
+                                                onClick={() => setPianoSound(!pianoSound)}
+                                            >
+                                                Piano Sound
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

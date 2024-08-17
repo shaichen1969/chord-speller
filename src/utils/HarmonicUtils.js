@@ -122,16 +122,6 @@ const createHarmonicInterpretations = (question, questionMode) => {
         let harmonicFunctions = question.map(number =>
             harmonicFunctionMap[(number - root + 12) % 12]
         );
-        
-        // Skip interpretations with 1, ♭3, ♭5, and ♯5
-        if (harmonicFunctions.includes('1') && 
-            harmonicFunctions.includes('♭3') && 
-            harmonicFunctions.includes('♭5') && 
-            harmonicFunctions.includes('♯5')) {
-            return; // Skip this interpretation
-        }
-        
-
         // Skip interpretations with both 5 and ♯5
         if (harmonicFunctions.includes('5') && harmonicFunctions.includes('♯5')) {
             return; // Skip this interpretation
@@ -163,6 +153,10 @@ const createHarmonicInterpretations = (question, questionMode) => {
         }
         if (harmonicFunctions.includes('1') && harmonicFunctions.includes('♭3') &&
             harmonicFunctions.includes('♭5') && harmonicFunctions.includes('6') && harmonicFunctions.includes('♭7')) {
+            return; // Skip this interpretation
+        }
+        if (harmonicFunctions.includes('1') && harmonicFunctions.includes('♭9') &&
+            harmonicFunctions.includes('11') && harmonicFunctions.includes('6') ) {
             return; // Skip this interpretation
         }
         // Special case for diminished seventh chord with 9th

@@ -17,7 +17,7 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
   const [analyzedChord, setAnalyzedChord] = useState(null);
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState({});
-  const [timeLeft, setTimeLeft] = useState(gameLength);
+  const [timeLeft, setTimeLeft] = useState(defaultGameLength);
   const [roundActive, setRoundActive] = useState(false);
   const [showCheckmark, setShowCheckmark] = useState(false);
   const [correctlyGuessedNotes, setCorrectlyGuessedNotes] = useState([]);
@@ -30,13 +30,15 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
   useEffect(() => {
     if (section === 'practice') {
       setGameLength(Infinity);
+      setTimeLeft(Infinity);
       setShowScore(true);
     } else if (section === 'learn') {
       setGameLength(Infinity);
+      setTimeLeft(Infinity);
       setShowScore(false);
-      // Add any additional setup for learn mode
     } else if (section === 'quiz') {
       setGameLength(defaultGameLength);
+      setTimeLeft(defaultGameLength);
       setShowScore(true);
     }
   }, [section, defaultGameLength]);

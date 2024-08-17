@@ -89,7 +89,7 @@ const convertToTensions = (harmonicFunctions) => {
             return '♯9';
         } else if (func === '♭5' && contains5) {
             return '♯11';
-        } else if (func === '���5' && (contains5 || containsFlat5)) {
+        } else if (func === '♯5' && (contains5 || containsFlat5)) {
             return '♭13';
         } else if (func === '6' && (containsFlat7 || containsMajor7)) {
             return '13';
@@ -128,6 +128,12 @@ const createHarmonicInterpretations = (question, questionMode) => {
             harmonicFunctions.includes('♭3') && 
             harmonicFunctions.includes('♭5') && 
             harmonicFunctions.includes('♯5')) {
+            return; // Skip this interpretation
+        }
+        
+
+        // Skip interpretations with both 5 and ♯5
+        if (harmonicFunctions.includes('5') && harmonicFunctions.includes('♯5')) {
             return; // Skip this interpretation
         }
 
@@ -334,10 +340,17 @@ export const buildChordSymbol = (root, harmonicFunctions, questionMode) => {
     let extensions = [];
 
     // Handle triad quality and 7th chords together
-    if (hasFlat3 && hasFlat5 && hasFlat7) {
-        symbol += 'ø'; // Half-diminished
+    if (hasFlat3 && hasFlat5 && has7) {
+        symbol += 'ø7'; // Half-diminished
+    } else if (hasFlat3 && hasFlat5 && hasFlat7) {
+        symbol += '°7'; // Fully diminished
     } else if (hasFlat3 && hasFlat5) {
-        symbol += '°'; // Diminished
+        symbol += '°'; // Diminished triad
+        if (has7) {
+            symbol += '7'; // Diminished 7th (fully diminished)
+        } else if (hasFlat7) {
+            symbol += '7'; // Half-diminished (m7b5)
+        }
     } else if (hasFlat3) {
         symbol += 'm'; // Minor
         if (hasFlat7) symbol += '7';

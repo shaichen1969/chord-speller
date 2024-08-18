@@ -17,7 +17,6 @@ const Quiz = () => {
     return (
         <div className="quiz-page">
             <h1 className="quiz-title">Chord Spelling Quiz</h1>
-            <p className="quiz-subtitle">Choose your quiz mode (Time limited)</p>
             <div className="quiz-card-container">
                 {quizModes.map((mode) => (
                     <Link to={mode.path} key={mode.name} className="quiz-card">

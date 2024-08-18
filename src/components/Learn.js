@@ -14,7 +14,6 @@ const Learn = () => {
     return (
         <div className="learn-page">
             <h1 className="learn-title">Learn Chord Building</h1>
-            <p className="learn-subtitle">Choose a topic to learn about chord construction</p>
             <div className="learn-card-container">
                 {learnModes.map((mode) => (
                     <Link to={mode.path} key={mode.name} className="learn-card">

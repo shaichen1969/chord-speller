@@ -92,6 +92,9 @@ const Documentation = ({ isOpen, onClose }) => {
                     </ul>
 
                     <p>Happy practicing, may the fourth (and the third) be with you...</p>
+
+                    <h3>Contact</h3>
+                    <p>For any questions, support, or feedback, please email us at: <a href="mailto:musicq264@gmail.com">musicq264@gmail.com</a></p>
                 </div>
             </div>
         </div>

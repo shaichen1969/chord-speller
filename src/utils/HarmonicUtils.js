@@ -122,7 +122,6 @@ const createHarmonicInterpretations = (question, questionMode) => {
         let harmonicFunctions = question.map(number =>
             harmonicFunctionMap[(number - root + 12) % 12]
         );
-        console.log(interpretations);
         // Skip interpretations with both 5 and ♯5
         if (harmonicFunctions.includes('5') && harmonicFunctions.includes('♯5')) {
             return; // Skip this interpretation
@@ -160,14 +159,6 @@ const createHarmonicInterpretations = (question, questionMode) => {
             harmonicFunctions.includes('11') && harmonicFunctions.includes('6') ) {
             return; // Skip this interpretation
         }
-        //wrap in queation mode isnt triadPlusTension
-        if (questionMode !== 'triadPlusTension') {
-            if (harmonicFunctions.includes('1') && harmonicFunctions.includes('3') &&
-                harmonicFunctions.includes('6')) {
-                return; // Skip this interpretation
-            }
-        }
-        
         // Special case for diminished seventh chord with 9th
         if (harmonicFunctions.includes('1') && harmonicFunctions.includes('♭3') &&
             harmonicFunctions.includes('♭5') && harmonicFunctions.includes('13')) {
@@ -308,6 +299,7 @@ const calculateChordScore = (harmonicFunctions) => {
 };
 
 export const buildChordSymbol = (root, harmonicFunctions, questionMode) => {
+    console.log('buildChordSymbol input:', { root, harmonicFunctions, questionMode });
     if (questionMode === 'majorScale') {
         // For major scale mode, simplify the chord symbol
         let symbol = root + ' Major';
@@ -391,6 +383,8 @@ export const buildChordSymbol = (root, harmonicFunctions, questionMode) => {
     if (!has5 && !hasFlat5 && !hasSharp5 && harmonicFunctions.length > 1 && !symbol.includes('°') && !symbol.includes('ø')) {
         symbol += ' no 5';
     }
+
+    console.log('buildChordSymbol output:', symbol);
     return symbol;
 };
 

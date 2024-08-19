@@ -4,9 +4,9 @@ import '../styles/Learn.css';
 
 const Learn = () => {
     const learnModes = [
-        { name: 'construction Major Scales', description: 'Learn how to construct major scales using the circle of fifths.', path: '/learn/MajorScales' },
-        { name: 'construction Triads', description: 'Learn how to build basic three-note chords.', path: '/learn/Triads' },
-        { name: 'construction 7th Chords', description: 'Learn how to build four-note seventh chords.', path: '/learn/SeventhChord' },
+        { name: 'Constructing Major Scales', description: 'Learn how to construct major scales using the circle of fifths.', path: '/learn/MajorScales' },
+        { name: 'Constructing Triads', description: 'Learn how to construvt basic three-note chords.', path: '/learn/Triads' },
+        { name: 'Constructing 7th Chords', description: 'Learn how to build four-note seventh chords.', path: '/learn/SeventhChord' },
         { name: 'How to Add Tensions to Chords', description: 'Learn how to add tensions to create more complex and colorful harmonies.', path: '/learn/Tensions' },
         // Add more learning modes as needed
     ];

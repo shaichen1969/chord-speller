@@ -89,10 +89,8 @@ const Documentation = ({ isOpen, onClose }) => {
                         <li>Practice identifying the root and quality of the chord from the symbol.</li>
                         <li>Use the harmonic tree to understand the relationship between notes in the chord.</li>
                         <li>Gradually increase chord complexity as you improve.</li>
+                        <li>Happy practicing, may the fourth (and the third) be with you...</li>
                     </ul>
-
-                    <p>Happy practicing, may the fourth (and the third) be with you...</p>
-
                     <h3>Contact</h3>
                     <p>For any questions, support, or feedback, please email us at: <a href="mailto:musicq264@gmail.com">musicq264@gmail.com</a></p>
                 </div>

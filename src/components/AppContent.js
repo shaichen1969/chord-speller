@@ -81,13 +81,15 @@ function AppContent({ pianoSound, gameLength: defaultGameLength }) {
       console.error('Invalid chord analysis:', analyzedChord);
       return;
     }
-
+    
     const harmonicFunctions = analyzedChord.harmonicFunctionsFound;
     const chordNotes = analyzedChord.spelledChord.split(', ');
-
     const nextExpectedIndex = correctlyGuessedNotes.length;
     const nextExpectedNote = chordNotes[nextExpectedIndex];
     const nextExpectedFunction = harmonicFunctions[nextExpectedIndex];
+    console.log('Harmonic Functions:', JSON.stringify(harmonicFunctions, null, 2)); 
+
+
 
     const normalizeNote = (n) => {
       return n.replace(/b/g, '♭')

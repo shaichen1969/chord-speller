@@ -334,20 +334,18 @@ export const buildChordSymbol = (root, harmonicFunctions, questionMode) => {
     let extensions = [];
 
     // Handle triad quality and 7th chords together
-    if (hasFlat3 && hasFlat5 && has7) {
+    if (hasFlat3 && hasFlat5 && hasFlat7) {
         symbol += 'ø7'; // Half-diminished
     }
     else if (has3 && hasFlat5) {
         symbol += ' ♭5';
-    } else if (hasFlat3 && hasFlat5 && hasFlat7) {
+    } else if (hasFlat3 && hasFlat5 && has6) {
         symbol += '°7'; // Fully diminished
     } else if (hasFlat3 && hasFlat5) {
         symbol += '°'; // Diminished triad
         if (has7) {
-            symbol += '7'; // Diminished 7th (fully diminished)
-        } else if (hasFlat7) {
-            symbol += '7'; // Half-diminished (m7b5)
-        }
+            symbol += 'maj7'; // Diminished 7th (fully diminished)
+        }  
     } else if (hasFlat3) {
         symbol += 'm'; // Minor
         if (hasFlat7) symbol += '7';
@@ -357,12 +355,7 @@ export const buildChordSymbol = (root, harmonicFunctions, questionMode) => {
         if (hasFlat7) symbol += '7';
         else if (has7) symbol += 'maj7';
     }
-    
-    
-    
-    
     else {
-        // Major
         if (hasFlat7) symbol += '7';
         else if (has7) symbol += 'maj7';
     }
